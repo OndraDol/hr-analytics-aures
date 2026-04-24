@@ -1,0 +1,254 @@
+{
+  "headcount": {
+    "red": [
+      "Odchylka HC od plánu přesáhla kritický práh. V automotive retailu platí, že každá neobsazená výkopová pozice (prodejce, F&I) generuje denní výpadek příjmů. Doporučuji okamžitý nábor sprint a zmapování důvodů odchylky — jde o nevyužitou kapacitu, nebo o organizační změnu?",
+      "Výrazná podstav HC může odrážet systematický problém v náboru nebo vyšší než plánovanou fluktuaci. Historicky podobné situace vedly k přetížení stávajících zaměstnanců a kaskádovému efektu na fluktuaci. Priorita: nastavit realtime nábor dashboard pro vedení."
+    ],
+    "acceptable": [
+      "HC je v přijatelném pásmu, ale trendem k podcílení. Pokud pokles pokračuje, může dojít ke kapacitním problémům v sezóně. Doporučuji pipelines review a navýšení hiring kapacity preventivně."
+    ],
+    "green": [
+      "HC je v cílovém pásmu — kapacita pro obsluhu zákazníků je zajištěna. Příležitost: identifikovat, které divize mají nejstabilnější HC (nízká fluktuace + dobrý nábor) a zdokumentovat jejich best practices."
+    ]
+  },
+  "fte_ratio": {
+    "red": [
+      "Nízký FTE ratio naznačuje přílišné využívání zkrácených úvazků (DPP/DPČ) oproti HPP. To sice snižuje fixní mzdové náklady, ale zvyšuje riziko fluktuace a snižuje loajalitu. Přezkoumat strategii pracovních poměrů."
+    ],
+    "acceptable": [
+      "FTE/HC je pod cílem, ale ještě v přijatelném pásmu. Sledovat trend — pokud klesá, signalizuje to rostoucí podíl zkrácených úvazků."
+    ],
+    "green": [
+      "Zdravý poměr FTE/HC svědčí o převaze plnoúvazkových zaměstnanců, což je pozitivní signál pro stabilitu a engagement."
+    ]
+  },
+  "gender_pay_gap": {
+    "red": [
+      "Gender pay gap nad červeným prahem je reputační i právní riziko — zejména v kontextu ESRS reportingu, kde bude gap zveřejněn. Nezapomeňte, že raw gap zahrnuje roli-mix efekt: část rozdílu je způsobena tím, že ženy jsou více zastoupeny na nižších pozicích. Adjusted gap ukáže skutečnou diskriminaci.",
+      "Tento výsledek pravděpodobně bude zmíněn v auditu ESG reportingu. Doporučuji ihned spustit analýzu příčin (job-leveling study) a připravit roadmapu ke snížení gapu — s konkrétními milníky pro představenstvo."
+    ],
+    "acceptable": [
+      "Gap je v přijatelném pásmu, ale stále nad nulou. ESRS S1 vyžaduje aktivní kroky ke snižování nerovností. Zavedení pravidelného salary review procesu by mělo být standardem."
+    ],
+    "green": [
+      "Nízký gender pay gap je silný signál rovného odměňování — dobré pro employer brand i ESG reporting. Zveřejnit v sustainability reportu jako pozitivní datový bod."
+    ]
+  },
+  "women_in_management": {
+    "red": [
+      "Nízký podíl žen v managementu může signalizovat skleněný strop v organizaci. V kombinaci s gender pay gap jde o systematický problém. Doporučuji talent review se zaměřením na ženy v high potential programu a mentoring od senior leaderů."
+    ],
+    "acceptable": [
+      "Podíl žen v managementu je pod cílem. Příčiny mohou být v náboru (málo ženských kandidátek na manažerské role) nebo v interním postupu. Data z performance review (rating × grade × gender) pomůžou identifikovat, kde se pipe láme."
+    ],
+    "green": [
+      "Solidní zastoupení žen v managementu — pozitivní signál pro DEI report i pro kulturní vnímání firmy. Udržet trend cíleným rozvojem a nepolevovat v sledování."
+    ]
+  },
+  "employees_in": {
+    "red": [
+      "Počet nástupů výrazně pod nebo nad plánem naznačuje problém v náboru nebo přeplánování. Zkontrolujte, zda jsou pipeline a schválené headcounty realistické."
+    ],
+    "acceptable": [
+      "Nástupy jsou mírně mimo plán. Pravděpodobně jde o dočasné zpoždění v procesu — sledovat v příštím měsíci."
+    ],
+    "green": [
+      "Nástupy odpovídají plánu. Nábor je v dobré kondici."
+    ]
+  },
+  "employees_out": {
+    "red": [
+      "Zvýšené odchody mohou signalizovat vlnu resignací — v retailu typicky v Q1 (po bonusové sezóně) nebo po reorganizaci. Exit interview analýza je kritická: identifikujte, zda dominují finanční nebo kulturní důvody odchodů.",
+      "Pokud odchody převyšují nástupy, HC klesá a kapacita pro zákazníky se snižuje. V automotive retailu je každý odchod prodejce přímý výpadek marže. Okamžitá akce: zmapovat open role a urychlit hiring."
+    ],
+    "acceptable": [
+      "Odchody mírně nad normou. Zkontrolujte složení — jde o výkonnostní odchody (žádoucí) nebo o resignace klíčových lidí?"
+    ],
+    "green": [
+      "Úroveň odchodů je v normě. Dobrý signál stability."
+    ]
+  },
+  "untaken_holiday": {
+    "red": [
+      "Vysoký zůstatek nevybrané dovolené je právní a finanční riziko — nevybraná dovolená se přenáší do dalšího roku nebo vyplácí. Zároveň je to signál přetíženosti: zaměstnanci nestíhají čerpat, protože nemají kapacitu. Spustit kampaň a monitoring per divize."
+    ],
+    "acceptable": [
+      "Zůstatky dovolené jsou lehce nad cílem. Připomenout manažerům povinnost umožnit čerpání."
+    ],
+    "green": [
+      "Dovolená se čerpá v normě — zaměstnanci si berou odpočinek, což je dobrý wellbeing signál."
+    ]
+  },
+  "sickness_rate": {
+    "red": [
+      "Vysoká nemocnost může indikovat burnout, špatné pracovní podmínky nebo sezónní výkyv. Automotive retail fyzicky náročná práce zvyšuje riziko muskuloskeletálních problémů. Preventivní medicina a ergonomické audity mohou mít ROI."
+    ],
+    "acceptable": [
+      "Nemocnost je mírně zvýšená. Sledovat trend — pokud roste, spustit wellbeing program."
+    ],
+    "green": [
+      "Nemocnost pod cílem. Pokračovat v preventivních programech."
+    ]
+  },
+  "avg_wage": {
+    "red": [
+      "Průměrná mzda pod tržní hodnotou je hlavní rizikový faktor fluktuace, zejména v prodejních pozicích kde trh odměňování je transparentní. Doporučuji benchmarkingovou studii a připravit mzdový nárůst pro přezkum radou."
+    ],
+    "acceptable": [
+      "Průměrná mzda je pod cílem, ale v přijatelném pásmu. Sledovat, zda odchody nekorelují s tímto trendem."
+    ],
+    "green": [
+      "Průměrná mzda je na nebo nad cílovým levelem — dobrý základ pro retenci."
+    ]
+  },
+  "wage_kpi": {
+    "red": [
+      "Výrazná odchylka mzdových nákladů od plánu vyžaduje okamžitý přezkum s financemi. Identifikujte, zda je způsobena přečerpáním (vyšší prémie, mimořádné mzdy) nebo plánový deficit (HC nižší než plán)."
+    ],
+    "acceptable": [
+      "Mzdové náklady mírně mimo plán. Aktualizujte forecast pro CFO."
+    ],
+    "green": [
+      "Mzdové náklady odpovídají plánu — HR a finance jsou sladěny."
+    ]
+  },
+  "cap_kpi": {
+    "red": [
+      "Nízké plnění kapacitního plánu (CAP KPI) signalizuje systémový problém s obsazováním pozic. Každý 1% podplnění FTE v retail networku znamená výpadek zákaznické obsluhy. Prioritizovat nábor pro nejvíce podplněné divize."
+    ],
+    "acceptable": [
+      "CAP KPI je pod cílem, ale v přijatelném pásmu. Identifikujte divize s největší vacancy rate."
+    ],
+    "green": [
+      "Kapacitní plán je naplněn — síť pracuje na projektované kapacitě."
+    ]
+  },
+  "hc_per_division": {
+    "red": [
+      "Velká rozptyl HC odchylek po divisions naznačuje nerovnoměrné kapacitní problémy. Některé divize jsou přeplněné (plýtvání), jiné podplněné (výpadek výkonu). Crossdivisional realokace nebo diferenciovaný nábor by mohl pomoci."
+    ],
+    "acceptable": [
+      "Odchylky HC od plánu jsou mírné. Mapa per divize ukáže, kde je potřeba zaměřit nábor."
+    ],
+    "green": [
+      "HC je dobře distribuován dle plánů across divisions."
+    ]
+  },
+  "time_to_fill": {
+    "red": [
+      "TTF nad 55 dny je v retailu kritické — prázdná pozice prodejce nebo technika má přímý dopad na zákaznickou obsluhu a příjmy. Analyzujte bottlenecky: je problém v time-to-post inzerátu, ve screening fázi, nebo v decision speed?",
+      "Dlouhé TTF může signalizovat slabou employer brand (málo uchazečů), přísná kritéria výběru, nebo kapacitní problém v HR týmu. Přidání přijatých zdrojů (Profesia.sk, LinkedIn) nebo zjednodušení procesu mohou zkrátit TTF o 30–40%."
+    ],
+    "acceptable": [
+      "TTF je nad cílem, ale ne kritické. Zkontrolujte, v jaké fázi se nejvíce ztrácí čas (typicky scheduling interviews)."
+    ],
+    "green": [
+      "TTF je v cílovém pásmu — nábor je efektivní."
+    ]
+  },
+  "ttf_critical": {
+    "red": [
+      "TTF pro kritické pozice je alarmující. Každý den, kdy klíčová pozice zeje prázdnotou, je strategické riziko. Pro kritické role doporučuji talent pipelining (udržovat pasivní kandidáty v kontaktu) a executive search pro seniorní role.",
+      "Dlouhé obsazování kritických rolí naznačuje, že firma není připravena na neplánované odchody. Succession plánování a talent pipeline jsou klíčové investice."
+    ],
+    "acceptable": [
+      "TTF pro kritické pozice nad cílem. Zavedení dedikovaného recruitera pro kritické role by mohlo pomoci."
+    ],
+    "green": [
+      "Kritické pozice se obsazují rychle — dobrý talent pipeline nebo silná employer brand."
+    ]
+  },
+  "cost_per_hire": {
+    "red": [
+      "Vysoké náklady na nábor mohou odrážet přílišné spoléhání na agentury nebo ineffektivitu procesu. Zvýšení podílu přímého náboru (AAA Career portál, interní doporučení) může dramaticky snížit CpH."
+    ],
+    "acceptable": [
+      "CpH je nad cílem. Přezkoumat mix zdrojů a využití agentur."
+    ],
+    "green": [
+      "Náklady na nábor jsou pod kontrolou. Dobré využití interních kanálů."
+    ]
+  },
+  "quality_of_hire": {
+    "red": [
+      "Vysoká early attrition (odchody do 3 měsíců) signalizuje buď špatnou selekci (nesprávní lidé na nesprávných pozicích) nebo slabý onboarding (lidi přijdou a jsou zklamáni realitou). Exit interview s těmito lidmi je kritické — důvody odchodů v prvních 90 dnech jsou jiné než u zkušených zaměstnanců.",
+      "Early attrition má přímý finanční dopad: průměrně 1,5–3x roční plat stojí nahrazení zaměstnance. Investice do strukturovaného onboardingu a realistického job preview (RJP) mají typicky rychlou návratnost."
+    ],
+    "acceptable": [
+      "Early attrition je mírně nad cílem. Přezkoumat onboarding program a selekční kritéria."
+    ],
+    "green": [
+      "Kvalita náboru je dobrá — noví zaměstnanci zůstávají. Dobrý sign pro employer brand i pro investici do náboru."
+    ]
+  },
+  "employer_evaluation": {
+    "red": [
+      "Nízké hodnocení kandidátů naznačuje problém s candidate experience — pravděpodobně pomalý feedback, nerealistická očekávání v nabídce, nebo chování v interview procesu. V době sociálních sítí se špatná zkušenost šíří rychle a poškozuje employer brand."
+    ],
+    "acceptable": [
+      "Hodnocení je pod cílem. Zberu feedback od odmítnutých kandidátů a identifikuju konkrétní body na zlepšení."
+    ],
+    "green": [
+      "Kandidáti hodnotí firmu dobře — pozitivní employer brand, který usnadňuje nábor."
+    ]
+  },
+  "fluctuation_rate": {
+    "red": [
+      "Fluktuace nad 30 % (rolling 12M) je systémový problém — firma prakticky každé 3 roky obmění celou populaci. To je obrovský skrytý náklad: nábor, onboarding, ztráta znalostí, přetížení manažerů. Okamžité exit interview analýza a stay interviews se středními manažery jsou nutné.",
+      "Výrazná fluktuace v kombinaci s nízkým eNPS nebo klesající průměrnou mzdou vs. trhu naznačuje systémový problém s kulturou nebo odměňováním. Tato kombinace vyžaduje strategickou intervenanci na úrovni vedení — ne jen HR iniciativy."
+    ],
+    "acceptable": [
+      "Fluktuace je v přijatelném pásmu, ale trend je varovný. Pokud odcházejí mainly zkušení zaměstnanci (tenure > 2 roky), celkové číslo podhodnocuje skutečný dopad. Sledovat složení odchodů."
+    ],
+    "green": [
+      "Stabilní fluktuace odráží dobrou retenci. Příležitost: identifikujte, které divize nebo manažeři mají nejnižší fluktuaci a sdílejte jejich best practices napříč organizací."
+    ]
+  },
+  "fluctuation_critical": {
+    "red": [
+      "Fluktuace kritických pozic je strategicky nebezpečná. Odchod klíčového manažera nebo specialisty znamená ztrátu znalostí, zákaznických vztahů a týmové stability. Okamžitá akce: 1:1 s přímými nadřízenými rizikových lidí, retention balíčky, succession review.",
+      "Pokud fluktuace kritických pozic dlouhodobě překračuje 15 %, je to signal, že firma není schopna udržet talent na strategicky důležitých místech. Přezkoumat, zda tito lidé mají jasnou kariérní cestu a kompetitivní odměnění."
+    ],
+    "acceptable": [
+      "Fluktuace kritických pozic je mírně nad cílem. Proaktivní 1:1 s těmito zaměstnanci by mohlo odhalit rizika dříve, než se zmaterializují."
+    ],
+    "green": [
+      "Kritické pozice jsou stabilní — nízká fluktuace signalizuje dobrou retenci klíčového talentu. Sukces succession plánu a kariérního rozvoje."
+    ]
+  },
+  "succession_rate": {
+    "red": [
+      "Méně než polovina kritických pozic má identifikovaného nástupce. To je obrovské riziko — jeden neplánovaný odchod může způsobit operační krizi. Urgent talent review a akcelerovaný development plán pro potenciální nástupce.",
+      "Nízká míra nástupnictví naznačuje, že talent management je reaktivní, ne proaktivní. Systémové řešení: zaveďte strukturovaný succession planning proces s ročním reviewem a jasnou odpovědností HR + businessu."
+    ],
+    "acceptable": [
+      "Succession rate pod cílem. Identifikujte, které kritické pozice jsou nejzranitelnější a začněte s nimi."
+    ],
+    "green": [
+      "Solidní succession rate — klíčové pozice mají nástupce. Dobrý znak organizační resilience."
+    ]
+  },
+  "enps": {
+    "red": [
+      "Negativní nebo velmi nízký eNPS je silný varovný signál — firma má více detractorů než promoterů mezi vlastními zaměstnanci. Detractoři aktivně poškozují employer brand i zákaznickou zkušenost. Focus groups s detractory (anonymně) mohou odhalit systémové problémy.",
+      "Nízký eNPS v kombinaci s rostoucí fluktuací je kombinace, která naznačuje hluboký kulturní nebo manažerský problém. Doporučuji engagement survey s otevřenými otázkami — čísla ukáží stav, otevřené odpovědi ukáží příčiny."
+    ],
+    "acceptable": [
+      "eNPS je nízký, ale kladný. Analyzujte segmenty — kde je eNPS nejnižší? Které manažerské týmy mají nejnižší skóre? Cílená intervence na spodní kvartil může výrazně pohnout celkovým číslem."
+    ],
+    "green": [
+      "Dobrý eNPS — zaměstnanci jsou ochotni doporučit firmu jako zaměstnavatele. To je přímý benefit pro nábor (doporučení) i retenci (pozitivní kultura). Udržet trend."
+    ]
+  },
+  "talent_ratio": {
+    "red": [
+      "Nízký podíl high potential zaměstnanců může signalizovat buď nedostatek talentů (problém s náborem a rozvojem) nebo příliš přísná kritéria identifikace. Přezkoumat, zda talent identifikace probíhá systematicky a zda manažeři správně rozumí kritériím."
+    ],
+    "acceptable": [
+      "Talent ratio je pod cílem. Rozšířit talent management program — identifikace talentů by měla být součástí pravidelného performance review."
+    ],
+    "green": [
+      "Zdravý podíl high potential zaměstnanců — firma má talent pipeline pro budoucí vedení. Zajistit, aby tito lidé měli aktivní development plány a visibility u top managementu."
+    ]
+  }
+}
