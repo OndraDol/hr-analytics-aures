@@ -330,6 +330,30 @@ Uživatel do adresáře nahrál 3 exporty. **Staly se kostrou datového modelu**
 
 **Rozhodnutí: NEČEKÁME na další data.** S tím, co máme, je datový základ pevný. Uživatel paralelně doplní mock, integrace proběhne v implementaci.
 
+## 11) Stav implementace (2026-04-24 16:45)
+
+**GitHub:** https://github.com/OndraDol/hr-analytics-aures (private, branch `main`)
+
+**Hotovo (pushed, zelené):**
+- ✅ M0 kompletní — Next.js 15 App Router + strict TypeScript + Tailwind v4 + Geist/Instrument Serif fonty + AURES paleta (Deep Blue + Orange) light/dark tokeny + Vitest setup + runtime/dev dependencies.
+- ✅ M1 progress: doménové typy (`lib/types.ts`), 3 Excel parsery (Staffplan, Nastupy_vystupy, recruitment_report) + fixture generátor + 11 unit testů.
+- ✅ ESLint 9 / Next.js 15 flat config compatibility vyřešena (FlatCompat).
+
+**Kompletní verifikace:** `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — **všechno zelené**.
+
+**Aktuální rozpracování:**
+- **Další na řadě: Task 11 — Name pseudonymizer** (`lib/data/parsers/names.ts`). Adresář `lib/data/heuristics/` existuje (připraven pro tasky 12–13).
+- Mezi Taskem 10 a 11 neexistuje žádná rozpracovaná změna v tree (`git status` čistý).
+
+**Navazování z jiné session / mobilu:**
+1. `git clone https://github.com/OndraDol/hr-analytics-aures` → `pnpm install` → `pnpm test` (musí projít 11 testů).
+2. Otevři `docs/plans/2026-04-24-m0-m1-foundation-and-data.md`, najdi **Progress tracker** → první řádek s `⏭️`.
+3. Pokračuj implementací Tasku 11 (Pseudonymizer) přesně dle sekce „Task 11: Anonymizační vrstva" v plánu — kompletní kód, testy i commit zpráva jsou v plánu.
+4. Po každém dokončeném tasku: `git push origin main` (drží repo aktuální pro další přepojení).
+
+**Otevřené drobnosti:**
+- `HR_reporting_ver2.xlsx` je stále otevřený v Excelu na workstationu — nelze přesunout do `data-sources/raw/`. Až uzavřeš, spusť `mv HR_reporting_ver2.xlsx data-sources/raw/ && git add data-sources/raw/HR_reporting_ver2.xlsx && git commit -m "chore: move HR reporting návrh into data-sources/raw" && git push`.
+
 ## 9) LLM revize — implementace bez API (2026-04-24)
 
 Místo živých volání Claude API použijeme **pre-written „AI insights"** v JSON. V UI to vypadá jako AI vrstva, ale je to ručně napsaný text per KPI / per scénář mock dat.

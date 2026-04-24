@@ -1,5 +1,7 @@
 # Implementační plán — Milník 0 (Foundation) + Milník 1 (Data layer)
 
+> **Stav k 2026-04-24 16:45:** Tasky 1–9 **hotové a pushed** (`fb50ab3`). Další na řadě je **Task 10 (Pseudonymizer)** — prázdný adresář `lib/data/heuristics/` existuje, ale reálný kód ještě nevznikl. Pro navázání viz sekci „Progress tracker" níže.
+
 > **Pro agentic workery:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (doporučeno) nebo superpowers:executing-plans pro krok-za-krokem provedení. Kroky používají checkbox (`- [ ]`) syntax.
 
 **Cíl:** Postavit základ Next.js 15 projektu s kompletním datovým modelem, který načte reálná AURES data jako kostru, dopočte heuristiky (grade, kritičnost pozice) a dogeneruje mock fakta (payroll, absence, eNPS, performance, training, succession, accidents). Výstupem je funkční Data Provider s konzistentními daty pro všech 20 KPI.
@@ -9,6 +11,48 @@
 **Tech Stack:** Next.js 15, TypeScript 5.6+, pnpm, Vitest (testing), xlsx (Excel parsing), zod (validace), date-fns (práce s daty), seedrandom (deterministická PRNG).
 
 **Navazující plány:** Po dokončení a reviewu tohoto plánu budou vytvořeny další plány pro M2 (KPI core) → M3 (Reference sekce V Retention) → M4 (Executive Dashboard) → M5–M9.
+
+---
+
+## Progress tracker (aktualizováno průběžně)
+
+| Task | Stav | Commit |
+|---|---|---|
+| 1. Init git + data-sources/raw/ + .gitignore | ✅ hotovo | `9ecec29` (initial) |
+| 2. Install pnpm + Next.js 15 scaffold | ✅ hotovo | `a6228ce` + `ad7d1c6` (eslint fix) |
+| 3. Strict TypeScript config | ✅ hotovo | `8777ead` |
+| 4. Runtime + dev deps + scripts | ✅ hotovo | `98ce84d` (spolu s Task 5) |
+| 5. Vitest config + smoke test | ✅ hotovo | `98ce84d` |
+| 6. Fonts + base layout + CSS tokeny | ✅ hotovo | `d66cb0b` |
+| 7. Domain types (`lib/types.ts`) | ✅ hotovo | `6fe0b11` |
+| 8. Staffplan parser + fixture | ✅ hotovo | `fb50ab3` (trojice parserů) |
+| 9. Workforce events parser | ✅ hotovo | `fb50ab3` |
+| 10. Recruitment parser | ✅ hotovo | `fb50ab3` |
+| **11. Name pseudonymizer** | ⏭️ **další na řadě** | — |
+| 12. Grade heuristika | ⏳ pending | — |
+| 13. Critical position heuristika | ⏳ pending | — |
+| 14. Payroll mock generator | ⏳ pending | — |
+| 15. Ostatní mock generátory | ⏳ pending | — |
+| 16. DataProvider interface | ⏳ pending | — |
+| 17. gen-data orchestrátor | ⏳ pending | — |
+| 18. MockDataProvider | ⏳ pending | — |
+| 19. Consistency check + smoke testy | ⏳ pending | — |
+| 20. Dokumentace M0+M1 | ⏳ pending | — |
+| Final verification + tag | ⏳ pending | — |
+
+**Aktuální stav projektu:**
+- Kompletní Next.js 15 scaffolding s přísným TypeScriptem, light+dark CSS tokeny, AURES paletou.
+- 11 unit testů passuje (1 smoke + 3 Staffplan + 4 Workforce + 3 Recruitment).
+- `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — všechny zelené.
+- GitHub: https://github.com/OndraDol/hr-analytics-aures (private).
+- Lokální adresář: `C:\Users\ondrej.dolejs\Desktop\Projekty\HR_Analytics`
+- Orphan soubor `HR_reporting_ver2.xlsx` v rootu (Excel jej stále blokuje) — po zavření přesunout do `data-sources/raw/` a commitnout.
+
+**Jak navázat (např. z mobilu / jiné session):**
+1. `git clone https://github.com/OndraDol/hr-analytics-aures` (nebo pull, pokud už je klonován)
+2. `pnpm install`
+3. `pnpm test` — ověř, že 11 testů projde
+4. Otevři tento plán, najdi první `⏭️` v trackeru a pokračuj podle definice tasku níže.
 
 ---
 
