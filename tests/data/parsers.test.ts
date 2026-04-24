@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseStaffplan } from '@/lib/data/parsers/staffplan';
 import { parseWorkforceEvents } from '@/lib/data/parsers/workforce-events';
 import { parseRecruitment } from '@/lib/data/parsers/recruitment';
+import { createNamePseudonymizer } from '@/lib/data/parsers/names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_SP = path.resolve(__dirname, '../fixtures/mini-staffplan.xlsx');
@@ -80,5 +81,36 @@ describe('parseRecruitment', () => {
     const result = parseRecruitment(FIXTURE_R);
     expect(result.genderCounts.male).toBe(1);
     expect(result.genderCounts.female).toBe(1);
+  });
+});
+
+describe('createNamePseudonymizer', () => {
+  it('returns same pseudonym for same employeeId (stable)', () => {
+    const p = createNamePseudonymizer(42);
+    const a = p.pseudonymize('23_10001.01', 'male');
+    const b = p.pseudonymize('23_10001.01', 'male');
+    expect(a).toEqual(b);
+  });
+
+  it('returns different pseudonyms for different ids', () => {
+    const p = createNamePseudonymizer(42);
+    const a = p.pseudonymize('23_10001.01', 'male');
+    const b = p.pseudonymize('23_10002.01', 'female');
+    // either first or last name must differ for distinct ids in most cases
+    expect(a.firstName === b.firstName && a.lastName === b.lastName).toBe(false);
+  });
+
+  it('produces non-empty first and last names', () => {
+    const p = createNamePseudonymizer(42);
+    const male = p.pseudonymize('23_10001.01', 'male');
+    expect(male.firstName.length).toBeGreaterThan(0);
+    expect(male.lastName.length).toBeGreaterThan(0);
+  });
+
+  it('applies Czech female form to last names', () => {
+    const p = createNamePseudonymizer(42);
+    const female = p.pseudonymize('23_10002.01', 'female');
+    // female last names must end with á or ová
+    expect(female.lastName.endsWith('á') || female.lastName.endsWith('ová')).toBe(true);
   });
 });

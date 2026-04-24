@@ -28,17 +28,17 @@
 | 8. Staffplan parser + fixture | ✅ hotovo | `fb50ab3` (trojice parserů) |
 | 9. Workforce events parser | ✅ hotovo | `fb50ab3` |
 | 10. Recruitment parser | ✅ hotovo | `fb50ab3` |
-| **11. Name pseudonymizer** | ⏭️ **další na řadě** | — |
-| 12. Grade heuristika | ⏳ pending | — |
-| 13. Critical position heuristika | ⏳ pending | — |
-| 14. Payroll mock generator | ⏳ pending | — |
-| 15. Ostatní mock generátory | ⏳ pending | — |
-| 16. DataProvider interface | ⏳ pending | — |
-| 17. gen-data orchestrátor | ⏳ pending | — |
-| 18. MockDataProvider | ⏳ pending | — |
-| 19. Consistency check + smoke testy | ⏳ pending | — |
-| 20. Dokumentace M0+M1 | ⏳ pending | — |
-| Final verification + tag | ⏳ pending | — |
+| 11. Name pseudonymizer | ✅ hotovo | — |
+| 12. Grade heuristika | ✅ hotovo | — |
+| 13. Critical position heuristika | ✅ hotovo | — |
+| 14. Payroll mock generator | ✅ hotovo | — |
+| 15. Ostatní mock generátory | ✅ hotovo | — |
+| 16. DataProvider interface | ✅ hotovo | — |
+| 17. gen-data orchestrátor | ✅ hotovo | — |
+| 18. MockDataProvider | ✅ hotovo | — |
+| 19. Consistency check + smoke testy | ✅ hotovo | — |
+| 20. Dokumentace M0+M1 | ✅ hotovo | — |
+| Final verification + tag | ✅ hotovo | — |
 
 **Aktuální stav projektu:**
 - Kompletní Next.js 15 scaffolding s přísným TypeScriptem, light+dark CSS tokeny, AURES paletou.

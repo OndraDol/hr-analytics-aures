@@ -330,29 +330,67 @@ Uživatel do adresáře nahrál 3 exporty. **Staly se kostrou datového modelu**
 
 **Rozhodnutí: NEČEKÁME na další data.** S tím, co máme, je datový základ pevný. Uživatel paralelně doplní mock, integrace proběhne v implementaci.
 
-## 11) Stav implementace (2026-04-24 16:45)
+## 11) Stav implementace (2026-04-24)
 
-**GitHub:** https://github.com/OndraDol/hr-analytics-aures (private, branch `main`)
+**GitHub:** https://github.com/OndraDol/hr-analytics-aures (private, branch `claude/review-and-continue-project-8mw04`)
 
 **Hotovo (pushed, zelené):**
 - ✅ M0 kompletní — Next.js 15 App Router + strict TypeScript + Tailwind v4 + Geist/Instrument Serif fonty + AURES paleta (Deep Blue + Orange) light/dark tokeny + Vitest setup + runtime/dev dependencies.
-- ✅ M1 progress: doménové typy (`lib/types.ts`), 3 Excel parsery (Staffplan, Nastupy_vystupy, recruitment_report) + fixture generátor + 11 unit testů.
+- ✅ M1 kompletní — doménové typy, 3 Excel parsery (Staffplan, Nastupy_vystupy, recruitment_report), pseudonymizer, heuristiky (grade B0-B3 + kritičnost), 7 mock generátorů (payroll/absence/eNPS/perf/training/succession/accidents), DataProvider interface, MockDataProvider, orchestrátor `pnpm gen:data`, consistency check, 44 unit testů.
 - ✅ ESLint 9 / Next.js 15 flat config compatibility vyřešena (FlatCompat).
 
-**Kompletní verifikace:** `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — **všechno zelené**.
+**Kompletní verifikace:** `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test`, `pnpm gen:data`, `pnpm check:data` — **všechno zelené**.
 
-**Aktuální rozpracování:**
-- **Další na řadě: Task 11 — Name pseudonymizer** (`lib/data/parsers/names.ts`). Adresář `lib/data/heuristics/` existuje (připraven pro tasky 12–13).
-- Mezi Taskem 10 a 11 neexistuje žádná rozpracovaná změna v tree (`git status` čistý).
+**Velikost vygenerovaného datasetu:**
+- 10 362 zaměstnanců (z 17 932 workforce událostí)
+- 2 182 pozic (se heuristicky dopočtenou grade a kritičností)
+- 69 972 záznamů payroll (2023-01 až 2026-03)
+- 44 941 záznamů absence, 23 555 training completions
+- 5 145 performance reviews (2024 + 2025 cyklus), 1 106 eNPS odpovědí (2025-Q4)
+- 88 pracovních úrazů, 48 succession plánů pro kritické pozice
 
-**Navazování z jiné session / mobilu:**
-1. `git clone https://github.com/OndraDol/hr-analytics-aures` → `pnpm install` → `pnpm test` (musí projít 11 testů).
-2. Otevři `docs/plans/2026-04-24-m0-m1-foundation-and-data.md`, najdi **Progress tracker** → první řádek s `⏭️`.
-3. Pokračuj implementací Tasku 11 (Pseudonymizer) přesně dle sekce „Task 11: Anonymizační vrstva" v plánu — kompletní kód, testy i commit zpráva jsou v plánu.
-4. Po každém dokončeném tasku: `git push origin main` (drží repo aktuální pro další přepojení).
+## 12) Stav implementace — M0 + M1 (hotovo)
 
-**Otevřené drobnosti:**
-- `HR_reporting_ver2.xlsx` je stále otevřený v Excelu na workstationu — nelze přesunout do `data-sources/raw/`. Až uzavřeš, spusť `mv HR_reporting_ver2.xlsx data-sources/raw/ && git add data-sources/raw/HR_reporting_ver2.xlsx && git commit -m "chore: move HR reporting návrh into data-sources/raw" && git push`.
+**Datum:** 2026-04-24
+
+### Foundation (M0)
+- ✅ Next.js 15 App Router + TypeScript strict mode
+- ✅ Tailwind v4, shadcn/ui připraven (samotné komponenty přijdou v M3)
+- ✅ Fonty: Geist Sans / Geist Mono / Instrument Serif
+- ✅ CSS proměnné pro paletu (Deep Blue + Orange + status barvy, light/dark)
+- ✅ Vitest + tsx + pnpm scripts
+- ✅ Git repo, .gitignore, landing placeholder
+
+### Data layer (M1)
+- ✅ Doménové typy pro 15+ entit (`lib/types.ts`)
+- ✅ Parsery tří Excelů: Staffplan, Nastupy_vystupy, recruitment_report (`lib/data/parsers/*`)
+- ✅ Anonymizace reálných jmen (stable pseudonymizer seeded by employeeId)
+- ✅ Heuristiky: grade B0-B3 (regex nad názvem pozice), kritičnost pozice (grade × role family × singleton)
+- ✅ Mock generátory: payroll, absence, eNPS, performance, training, succession, accidents — deterministické, konzistentní
+- ✅ `DataProvider` interface + `MockDataProvider` nad generovanými TS moduly
+- ✅ `pnpm gen:data` orchestruje pipeline end-to-end (parsery → heuristiky → mock → `lib/data/generated/*.ts`)
+- ✅ `pnpm check:data` ověřuje referenční integritu (0 chyb)
+- ✅ Test suite: parsers, heuristics, mock-generators, consistency smoke — 44 testů zelených
+
+### Jak spustit
+```bash
+pnpm install
+pnpm gen:data      # zregeneruj datové moduly
+pnpm check:data    # validace konzistence
+pnpm test          # test suite (44 testů)
+pnpm dev           # dev server (landing)
+```
+
+### Otevřené body pro M2
+- KPI katalog všech 20 KPI (`lib/kpi/catalog.ts`) s prahovými hodnotami z `NÁVRH_do_BI`
+- Analytická vrstva: KPIEvaluator, DriverAnalyzer, AnomalyDetector, NarrativeGenerator, ActionRecommender
+- AIInsightProvider (mock z JSON, architektura API-ready)
+
+### Navazování z jiné session
+1. `git clone https://github.com/OndraDol/hr-analytics-aures` → `pnpm install`
+2. `pnpm gen:data` (potřebné k regeneraci `lib/data/generated/`, není v gitu)
+3. `pnpm test` — ověř, že 44 testů projde
+4. Pokračovat dle plánu `docs/plans/2026-04-24-m0-m1-foundation-and-data.md` nebo vytvořit nový plán pro M2.
 
 ## 9) LLM revize — implementace bez API (2026-04-24)
 
