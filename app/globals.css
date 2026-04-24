@@ -1,43 +1,104 @@
 @import "tailwindcss";
 
+/* ── AURES design tokens ────────────────────────────────────────── */
 :root {
-  --color-bg: #fafafa;
+  /* surfaces */
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
-  --color-text-primary: #09090b;
-  --color-text-secondary: #71717a;
-  --color-border: #e4e4e7;
+  --color-surface-2: #f1f5f9;
+  --color-surface-3: #e2e8f0;
+
+  /* text */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+
+  /* borders */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+
+  /* brand */
   --color-primary: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  --color-primary-hover: #1e40af;
   --color-accent: #f97316;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #f43f5e;
+  --color-accent-light: #ffedd5;
+
+  /* status */
+  --color-green: #10b981;
+  --color-green-bg: #d1fae5;
+  --color-green-border: #6ee7b7;
+  --color-amber: #f59e0b;
+  --color-amber-bg: #fef3c7;
+  --color-amber-border: #fcd34d;
+  --color-red: #f43f5e;
+  --color-red-bg: #ffe4e6;
+  --color-red-border: #fda4af;
+
+  /* sidebar */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0a0a0a;
-    --color-surface: #18181b;
-    --color-text-primary: #fafafa;
-    --color-text-secondary: #a1a1aa;
-    --color-border: #27272a;
-  }
+.dark {
+  --color-bg: #0a0f1e;
+  --color-surface: #111827;
+  --color-surface-2: #1e2535;
+  --color-surface-3: #2d3748;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-border: #1e2d4e;
+  --color-border-strong: #2d3e5f;
+  --color-primary-light: #1e3a8a;
+  --color-green-bg: #064e3b;
+  --color-amber-bg: #78350f;
+  --color-red-bg: #881337;
 }
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-instrument-serif);
+  --color-border: var(--color-border);
 }
 
-html,
-body {
+/* ── Base ───────────────────────────────────────────────────────── */
+html, body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-.font-mono {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+/* ── Utility classes ────────────────────────────────────────────── */
+.surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
 }
 
-.font-serif {
-  font-family: var(--font-instrument-serif), Georgia, serif;
+.surface-2 {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
 }
+
+.text-primary   { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted     { color: var(--color-text-muted); }
+
+/* ── Animations ─────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-ring {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+.animate-fade-up {
+  animation: fade-up 0.4s ease both;
+}
+
+/* stagger helper — set --delay via style */
+.stagger { animation-delay: var(--delay, 0ms); }
