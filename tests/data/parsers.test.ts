@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseStaffplan } from '@/lib/data/parsers/staffplan';
 import { parseWorkforceEvents } from '@/lib/data/parsers/workforce-events';
 import { parseRecruitment } from '@/lib/data/parsers/recruitment';
+import { createNamePseudonymizer } from '@/lib/data/parsers/names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_SP = path.resolve(__dirname, '../fixtures/mini-staffplan.xlsx');
@@ -80,5 +81,36 @@ describe('parseRecruitment', () => {
     const result = parseRecruitment(FIXTURE_R);
     expect(result.genderCounts.male).toBe(1);
     expect(result.genderCounts.female).toBe(1);
+  });
+});
+
+describe('createNamePseudonymizer', () => {
+  it('returns the same pseudonym for the same employee id', () => {
+    const pseudonymizer = createNamePseudonymizer(42);
+    const first = pseudonymizer.pseudonymize('23_10001.01', 'male');
+    const second = pseudonymizer.pseudonymize('23_10001.01', 'male');
+
+    expect(first).toEqual(second);
+  });
+
+  it('returns different pseudonyms for different employee ids', () => {
+    const pseudonymizer = createNamePseudonymizer(42);
+    const first = pseudonymizer.pseudonymize('23_10001.01', 'male');
+    const second = pseudonymizer.pseudonymize('23_10002.01', 'female');
+
+    expect(`${first.firstName} ${first.lastName}`).not.toBe(
+      `${second.firstName} ${second.lastName}`,
+    );
+  });
+
+  it('respects gendered first-name banks and surname forms', () => {
+    const pseudonymizer = createNamePseudonymizer(42);
+    const female = pseudonymizer.pseudonymize('23_10002.01', 'female');
+    const male = pseudonymizer.pseudonymize('23_10001.01', 'male');
+
+    expect(female.firstName.length).toBeGreaterThan(0);
+    expect(female.lastName.endsWith('a') || female.lastName.endsWith('ova')).toBe(true);
+    expect(male.firstName.length).toBeGreaterThan(0);
+    expect(male.lastName.length).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,6 @@
 # Implementační plán — Milník 0 (Foundation) + Milník 1 (Data layer)
 
-> **Stav k 2026-04-24 16:45:** Tasky 1–9 **hotové a pushed** (`fb50ab3`). Další na řadě je **Task 10 (Pseudonymizer)** — prázdný adresář `lib/data/heuristics/` existuje, ale reálný kód ještě nevznikl. Pro navázání viz sekci „Progress tracker" níže.
+> **Stav k 2026-04-24 23:20 UTC:** Milník 0 + Milník 1 jsou implementované. Tasky 11–20 doplnily pseudonymizaci, heuristiky, mock generátory, `DataProvider`, `MockDataProvider`, `pnpm gen:data`, `pnpm check:data` a dokumentaci. Generované moduly jsou záměrně memory-friendly (`JSON.parse` payload místo velkých TS objektových literálů), aby prošel typecheck/test i v mobilním Termux prostředí.
 
 > **Pro agentic workery:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (doporučeno) nebo superpowers:executing-plans pro krok-za-krokem provedení. Kroky používají checkbox (`- [ ]`) syntax.
 
@@ -28,22 +28,22 @@
 | 8. Staffplan parser + fixture | ✅ hotovo | `fb50ab3` (trojice parserů) |
 | 9. Workforce events parser | ✅ hotovo | `fb50ab3` |
 | 10. Recruitment parser | ✅ hotovo | `fb50ab3` |
-| **11. Name pseudonymizer** | ⏭️ **další na řadě** | — |
-| 12. Grade heuristika | ⏳ pending | — |
-| 13. Critical position heuristika | ⏳ pending | — |
-| 14. Payroll mock generator | ⏳ pending | — |
-| 15. Ostatní mock generátory | ⏳ pending | — |
-| 16. DataProvider interface | ⏳ pending | — |
-| 17. gen-data orchestrátor | ⏳ pending | — |
-| 18. MockDataProvider | ⏳ pending | — |
-| 19. Consistency check + smoke testy | ⏳ pending | — |
-| 20. Dokumentace M0+M1 | ⏳ pending | — |
-| Final verification + tag | ⏳ pending | — |
+| **11. Name pseudonymizer** | ✅ hotovo | navazující M1 commit |
+| 12. Grade heuristika | ✅ hotovo | navazující M1 commit |
+| 13. Critical position heuristika | ✅ hotovo | navazující M1 commit |
+| 14. Payroll mock generator | ✅ hotovo | navazující M1 commit |
+| 15. Ostatní mock generátory | ✅ hotovo | navazující M1 commit |
+| 16. DataProvider interface | ✅ hotovo | navazující M1 commit |
+| 17. gen-data orchestrátor | ✅ hotovo | navazující M1 commit |
+| 18. MockDataProvider | ✅ hotovo | navazující M1 commit |
+| 19. Consistency check + smoke testy | ✅ hotovo | navazující M1 commit |
+| 20. Dokumentace M0+M1 | ✅ hotovo | navazující M1 commit |
+| Final verification + tag | ✅ hotovo lokálně | `milestone-1-data-layer-complete` |
 
 **Aktuální stav projektu:**
 - Kompletní Next.js 15 scaffolding s přísným TypeScriptem, light+dark CSS tokeny, AURES paletou.
-- 11 unit testů passuje (1 smoke + 3 Staffplan + 4 Workforce + 3 Recruitment).
-- `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — všechny zelené.
+- 39 unit/smoke testů passuje (smoke, parsery, pseudonymizer, heuristiky, mock generátory, MockDataProvider).
+- `pnpm gen:data`, `pnpm check:data`, `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — všechny zelené.
 - GitHub: https://github.com/OndraDol/hr-analytics-aures (private).
 - Lokální adresář: `C:\Users\ondrej.dolejs\Desktop\Projekty\HR_Analytics`
 - Orphan soubor `HR_reporting_ver2.xlsx` v rootu (Excel jej stále blokuje) — po zavření přesunout do `data-sources/raw/` a commitnout.
@@ -51,8 +51,9 @@
 **Jak navázat (např. z mobilu / jiné session):**
 1. `git clone https://github.com/OndraDol/hr-analytics-aures` (nebo pull, pokud už je klonován)
 2. `pnpm install`
-3. `pnpm test` — ověř, že 11 testů projde
-4. Otevři tento plán, najdi první `⏭️` v trackeru a pokračuj podle definice tasku níže.
+3. `pnpm gen:data` — vygeneruje lokální `lib/data/generated/*.ts` moduly (jsou ignorované gitem)
+4. `pnpm check:data && pnpm test` — ověř konzistenci a test suite
+5. Pokračuj dalším plánem M2 (KPI core).
 
 ---
 
