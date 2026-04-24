@@ -330,6 +330,166 @@ Uživatel do adresáře nahrál 3 exporty. **Staly se kostrou datového modelu**
 
 **Rozhodnutí: NEČEKÁME na další data.** S tím, co máme, je datový základ pevný. Uživatel paralelně doplní mock, integrace proběhne v implementaci.
 
+## 12) Stav implementace + plán navázání na M4/M5 (2026-04-24, session 2)
+
+### 12.1 Posouzení dokončenosti projektu
+
+| Milník | Popis | Stav | Příspěvek k celku |
+|---|---|---|---|
+| M0 | Foundation (Next.js, TS, Tailwind, Vitest, fonty, layout) | ✅ 100 % | 10 % |
+| M1 | Data layer (parsery ✅, mock generátory + DataProvider ⏳) | ~50 % | 5 % |
+| M2 | KPI core engine (evaluator, drivers, anomaly, narrativy, akce) | ❌ 0 % | 0 % |
+| M3 | Sekce V. Retention — referenční end-to-end implementace | ❌ 0 % | 0 % |
+| M4 | Executive Dashboard (Health Score, Alerts, Scorecards, Summary) | ❌ 0 % | 0 % |
+| M5 | 7 zbývajících sekcí (I, II, III, IV, VI, VII, VIII) | ❌ 0 % | 0 % |
+| M6 | Cross-cutting drill-downy (Attrition, Recruitment Funnel, Comp, Absence) | ❌ 0 % | 0 % |
+| M7 | Operativní pohledy (Hired/Fired, Org Chart, Dovolené, eNPS, ESG) | ❌ 0 % | 0 % |
+| M8 | AI Copilot (sidebar, pre-canned queries, typewriter) | ❌ 0 % | 0 % |
+| M9 | Polish & demo setup (animace, Vercel preview, showcase script) | ❌ 0 % | 0 % |
+| **CELKEM** | | | **~15 %** |
+
+### 12.2 Co bylo zamýšleno dokončit v session 2
+
+M4 + M5 = Executive Dashboard + všech 8 sekcí. Kvůli přerušení (uživatel zastavil) bylo pouze:
+- ✅ Vytvořena adresářová struktura (`components/`, `lib/data/`, `lib/kpi/`, `lib/analytics/`, `content/`, `app/sekce/`)
+- ✅ Analyzovány všechny vstupní dokumenty a specifikace
+- ✅ Větev `claude/complete-m4-m5-modules-HfEpd` pushnutá
+- ❌ Samotný kód M4/M5 **nebyl zapsán** — session přerušena před prvním souborem
+
+### 12.3 Plán navázání — přesný postup pro příští session
+
+**Větev:** `claude/complete-m4-m5-modules-HfEpd`
+
+**Krok 0 — Setup:**
+```bash
+git pull origin claude/complete-m4-m5-modules-HfEpd
+pnpm install
+pnpm test   # musí projít 11 testů
+```
+
+**Krok 1 — Říci agentovi toto:**
+> „Přečti PROJEKT_ZAZNAM.md sekci 12 a implementuj M4 + M5 podle plánu navázání v sekci 12.4."
+
+### 12.4 Detailní implementační plán M4 + M5 (pro agenta)
+
+#### Prioritní strategie
+M1 zbývající tasky (11–20) přeskočit a nahradit **inline mock daty** v `lib/data/mock-data.ts`. Data pipeline je nice-to-have; UI je cíl. Generátor (scripts/gen-data.ts) lze doplnit v M9.
+
+#### Soubory k vytvoření (v pořadí)
+
+**[A] Datová vrstva — M1 zjednodušená + M2**
+
+1. `lib/data/mock-data.ts` — Statické TS konstanty s pre-computed daty:
+   - `COMPANY` (přehled firmy: HC=1847, FTE=1735, země, divize)
+   - `KPI_EVALUATIONS: Record<KPICode, KPIEvaluation>` — 20 KPI s hodnotou, sparkline[12], momDelta, yoyDelta, status, drivers[3], narrative, aiInsight, action
+   - `SECTION_DATA` — Section-specific chart data (gender split, age distribution, monthly flows, funnel, atd.)
+   - `HEALTH_SCORE` = 68 (vypočteno z KPI statuses)
+   - Embedded "stories": fluktuace kritické=12.4% (red), TTF critical=43 dní (red), OPS SK succession gap, eNPS OPS pokles
+
+2. `lib/kpi/catalog.ts` — `KPI_CATALOG: Record<KPICode, KPIDefinition>` s 20 KPI:
+   - nameCs, section, priority, unit, direction, thresholds (target/green/amber/red), frequency, formulaCs, riskCs, actionCs
+
+3. `lib/analytics/evaluator.ts` — Čisté pure functions:
+   - `evaluateStatus(value, thresholds, direction)` → 'green'|'amber'|'red'
+   - `detectAnomaly(sparkline: number[])` → boolean (rolling z-score)
+   - `formatKPIValue(value, unit)` → string
+   - `computeHealthScore(evaluations)` → number
+
+4. `lib/store.ts` — Zustand store:
+   - `selectedCountry: 'ALL'|'CZ'|'SK'|'PL'`
+   - `selectedDivision: string`
+   - `isSidebarOpen: boolean`
+   - `isCopilotOpen: boolean`
+
+**[B] Layout komponenty**
+
+5. `components/layout/AppShell.tsx` — Wrapper: sidebar + main content, responsive
+6. `components/layout/Sidebar.tsx` — Navigace: logo, sekce I–VIII linky, AI Copilot tlačítko
+7. `components/layout/Header.tsx` — Název stránky, filter chips (Země/Divize), dark/light toggle
+
+**[C] KPI komponenty**
+
+8. `components/kpi/StatusBadge.tsx` — Pill 🟢/🟡/🔴 s textem
+9. `components/kpi/TrendBadge.tsx` — ↑↓ s MoM deltou, barevná
+10. `components/charts/SparklineChart.tsx` — Recharts LineChart mini (client component)
+11. `components/kpi/KPICard.tsx` — Full card se všemi 5 vrstvami (status, hodnota, trend, prahy, sparkline, drivers, narrativ, AI insight, akce)
+12. `components/kpi/CompactKPICard.tsx` — Zkrácená verze pro section scorecards
+
+**[D] Chart komponenty**
+
+13. `components/charts/BarChartSimple.tsx` — Recharts BarChart wrapper
+14. `components/charts/DonutChartSimple.tsx` — Recharts PieChart donut
+15. `components/charts/LineChartFull.tsx` — Recharts LineChart full-size
+
+**[E] Dashboard komponenty — M4**
+
+16. `components/dashboard/HealthScoreHero.tsx` — Velké číslo + gradient ring + hero KPI tiles (HC, Fluktuace, eNPS)
+17. `components/dashboard/TopAlerts.tsx` — 5 karet nejhorších KPI
+18. `components/dashboard/WhatChanged.tsx` — 3 sloupce: ↑Zlepšení | ⚠️Problémy | 👀Sledování
+19. `components/dashboard/SectionScorecards.tsx` — 8 sekcí v gridu (kompaktní karta pro každou)
+20. `components/dashboard/AIExecutiveSummary.tsx` — Pre-written "AI" shrnutí (✨ badge)
+
+**[F] AI Copilot**
+
+21. `components/copilot/CopilotButton.tsx` — FAB tlačítko v pravém rohu
+22. `components/copilot/CopilotPanel.tsx` — Slide-in panel se 8 clickable queries + typewriter efekt
+23. `content/copilot-queries.json` — 8–10 dotazů s odpověďmi v češtině
+
+**[G] Hlavní stránky — M4 + M5**
+
+24. `app/layout.tsx` — aktualizovat: přidat AppShell wrapper
+25. `app/page.tsx` — **Executive Dashboard** (M4): volá HealthScoreHero, TopAlerts, WhatChanged, SectionScorecards, AIExecutiveSummary
+26. `app/sekce/layout.tsx` — Layout sekce (breadcrumbs, sekce nav)
+27. `app/sekce/i-hr-statistics/page.tsx` — HC/FTE hero, gender donut, age histogram, DEI tiles, pay gap table
+28. `app/sekce/ii-workforce-movement/page.tsx` — Net change hero, 12M bar chart, per-country waterfall, division table
+29. `app/sekce/iii-cost-structure/page.tsx` — Payroll YTD hero, wage structure stacked bar, HC/FTE vs budget, avg wage trend
+30. `app/sekce/iv-recruitment/page.tsx` — TTF hero, funnel, cost per hire, quality, employer eval
+31. `app/sekce/v-retention/page.tsx` — Fluktuace hero + kritické, reasons donut, by-division table, attrition sparkline
+32. `app/sekce/vi-succession/page.tsx` — Succession rate gauge, critical positions tabulka, risk exposure
+33. `app/sekce/vii-engagement/page.tsx` — eNPS hero, promoter/detractor stacked, trend 24M, by-segment
+34. `app/sekce/viii-talent-growth/page.tsx` — Growth potential hero, 9-box, talent pool count, IM rate, training
+
+#### Vizuální konstanty
+- Paleta z `globals.css`: primary=`#1d4ed8`, accent=`#f97316`, success=`#10b981`, warning=`#f59e0b`, danger=`#f43f5e`
+- Status barvy: green=emerald, amber=amber, red=rose
+- Karty: `bg-white rounded-xl border border-zinc-200 p-6 shadow-sm`
+- KPI hodnoty: `font-mono text-4xl font-bold`
+- Všechny Recharts komponenty: `"use client"` directive
+- Framer Motion stagger na grid karet: 50ms delay
+
+#### Mock data příběhy (povinné pro demo kvalitu)
+| Příběh | KPI | Hodnota | Status | Driver |
+|---|---|---|---|---|
+| Fluktuace kritických rolí roste | FLUCT_CRIT | 12.4 % | 🔴 red | Sales CZ +3, OPS SK +2 Team Leadři |
+| Doba obsazení kritických rolí | TTF_CRIT | 43 dní | 🔴 red | Marketing + IT role |
+| OPS SK bez nástupce | SUCCESSION | 61 % | 🟡 amber | OPS SK 2 pozice bez coverage |
+| eNPS klesá v OPS | ENPS | +14 | 🟡 amber | OPS SK −8 bodů po reorganizaci |
+| Mzdový gap B2 | (v Comp sekci) | 7 % raw / 2 % adj | — | F&I divize |
+| Celkový Health Score | — | 68 / 100 | 🟡 amber | 2 red KPI, 8 amber KPI |
+
+#### Technická pravidla
+- TypeScript strict + `noUncheckedIndexedAccess`: vždy ošetřit `arr[0] ?? defaultValue`
+- `"use client"` povinně v: všech chart komponentách, AppShell, CopilotPanel, Header (kvůli interaktivitě)
+- Server components: page.tsx soubory (čtou mock data, pass jako props)
+- Žádné `any` pokud je to možné — místo toho proper typy nebo `unknown`
+- Po dokončení spustit: `pnpm typecheck && pnpm build` → musí být zelené
+
+#### Commit strategie
+Po každé ucelené skupině (A, B, C, D, E, F, G) jeden commit na větev `claude/complete-m4-m5-modules-HfEpd`.
+
+### 12.5 Stav adresářové struktury (po přerušení session 2)
+
+Vytvořeny prázdné adresáře (jen mkdir, žádný kód):
+```
+components/layout/   components/kpi/   components/charts/
+components/dashboard/   components/copilot/
+lib/data/   lib/kpi/   lib/analytics/
+content/   app/sekce/
+```
+Tyto adresáře jsou prázdné — není v nich žádný kód. Kód teprve přijde.
+
+---
+
 ## 11) Stav implementace (2026-04-24 16:45)
 
 **GitHub:** https://github.com/OndraDol/hr-analytics-aures (private, branch `main`)
