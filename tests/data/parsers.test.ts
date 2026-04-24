@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parseStaffplan } from '@/lib/data/parsers/staffplan';
 import { parseWorkforceEvents } from '@/lib/data/parsers/workforce-events';
 import { parseRecruitment } from '@/lib/data/parsers/recruitment';
+import { createNamePseudonymizer } from '@/lib/data/parsers/names';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_SP = path.resolve(__dirname, '../fixtures/mini-staffplan.xlsx');
@@ -26,7 +27,6 @@ describe('parseStaffplan', () => {
 
   it('extracts distinct department entries (by hier code) and unique names set', () => {
     const result = parseStaffplan(FIXTURE_SP);
-    // Fixture has 3 distinct hier codes (0101196, 0101, 0403) → 3 dept entries
     expect(result.departments).toHaveLength(3);
     const uniqueNames = Array.from(new Set(result.departments.map((d) => d.name))).sort();
     expect(uniqueNames).toEqual([
@@ -80,5 +80,28 @@ describe('parseRecruitment', () => {
     const result = parseRecruitment(FIXTURE_R);
     expect(result.genderCounts.male).toBe(1);
     expect(result.genderCounts.female).toBe(1);
+  });
+});
+
+describe('createNamePseudonymizer', () => {
+  it('returns same pseudonym for same employeeId (stable)', () => {
+    const p = createNamePseudonymizer(42);
+    const a = p.pseudonymize('23_10001.01', 'male');
+    const b = p.pseudonymize('23_10001.01', 'male');
+    expect(a).toEqual(b);
+  });
+
+  it('returns different pseudonyms for different ids', () => {
+    const p = createNamePseudonymizer(42);
+    const a = p.pseudonymize('23_10001.01', 'male');
+    const b = p.pseudonymize('23_10002.01', 'female');
+    expect(a.firstName).not.toBe(b.firstName);
+  });
+
+  it('respects gender — pseudonym is not empty', () => {
+    const p = createNamePseudonymizer(42);
+    const male = p.pseudonymize('23_10001.01', 'male');
+    expect(male.firstName.length).toBeGreaterThan(0);
+    expect(male.lastName.length).toBeGreaterThan(0);
   });
 });
