@@ -17,10 +17,12 @@ import { parseWorkforceEvents } from '@/lib/data/parsers/workforce-events';
 import type {
   AbsenceRecord,
   Employee,
+  FunnelCount,
   Gender,
   PayrollMonth,
   PerformanceReview,
   Position,
+  RecruitmentRequisition,
   SuccessionPlan,
   TerminationReason,
   TrainingCompletion,
@@ -57,6 +59,8 @@ const TYPE_IMPORTS: Record<string, string> = {
   ACCIDENTS: 'WorkAccident',
   SUCCESSION: 'SuccessionPlan',
   WORKFORCE_EVENTS: 'WorkforceEvent',
+  REQUISITIONS: 'RecruitmentRequisition',
+  FUNNEL_COUNTS: 'FunnelCount',
 };
 
 const writeTsModule = (filename: string, exportName: string, data: unknown): void => {
@@ -87,6 +91,17 @@ const inferGenderFromName = (firstName: string, employeeId: string): Gender => {
   const rng = seedrandom(`${SEED}:gender:${employeeId}`);
   return rng() < 0.75 ? 'male' : 'female';
 };
+
+const addDays = (isoDate: string, days: number): string => {
+  const date = new Date(`${isoDate}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+};
+
+const roleTokens = (value: string): string[] =>
+  normalizeForMatch(value)
+    .split(/[^a-z0-9]+/g)
+    .filter((token) => token.length >= 4);
 
 const activeInCycle = (employee: Employee, cycle: string): boolean => {
   const year = Number(cycle);
@@ -159,6 +174,20 @@ const main = (): void => {
     });
 
     return byRoleFamily ?? firstPosition;
+  };
+
+  const matchRecruitmentPosition = (refNumber: string, title: string): Position => {
+    const tokens = roleTokens(title);
+    const scored = positions
+      .map((position) => {
+        const haystack = normalizeForMatch(`${position.title} ${position.roleFamily}`);
+        const score = tokens.reduce((total, token) => total + (haystack.includes(token) ? 1 : 0), 0);
+        return { position, score };
+      })
+      .sort((a, b) => b.score - a.score);
+    const best = scored[0];
+    if (best && best.score > 0) return best.position;
+    return pick(positions, seedrandom(`${SEED}:recruitment-position:${refNumber}`));
   };
 
   const employees: Employee[] = [];
@@ -266,6 +295,75 @@ const main = (): void => {
     type: event.type,
   }));
 
+  const recruitmentRowsByRef = new Map<string, typeof recruitment.rows>();
+  for (const row of recruitment.rows) {
+    if (!row.refNumber) continue;
+    const rows = recruitmentRowsByRef.get(row.refNumber) ?? [];
+    rows.push(row);
+    recruitmentRowsByRef.set(row.refNumber, rows);
+  }
+
+  const requisitions: RecruitmentRequisition[] = [];
+  const funnelCounts: FunnelCount[] = [];
+  for (const [refNumber, vacancy] of recruitment.vacancies) {
+    if (!vacancy.createdAt) continue;
+    const rows = recruitmentRowsByRef.get(refNumber) ?? [];
+    const rng = seedrandom(`${SEED}:requisition:${refNumber}`);
+    const position = matchRecruitmentPosition(refNumber, vacancy.title);
+    const approvedDate = vacancy.createdAt;
+    const publishedDate = addDays(approvedDate, 1 + Math.floor(rng() * 4));
+    const firstInterviewDate = addDays(publishedDate, 4 + Math.floor(rng() * 12));
+    const offerDate = addDays(firstInterviewDate, 7 + Math.floor(rng() * 14));
+    const hireProbability = rows.length >= 20 ? 0.82 : rows.length >= 10 ? 0.68 : rows.length >= 4 ? 0.46 : 0.25;
+    const hired = rng() < hireProbability;
+    const hireDate = hired ? addDays(offerDate, 10 + Math.floor(rng() * 28)) : null;
+    const canceled = !hired && rng() < 0.18;
+    const sourceCounts = new Map<string, number>();
+    for (const row of rows) {
+      if (row.source) sourceCounts.set(row.source, (sourceCounts.get(row.source) ?? 0) + 1);
+    }
+    const channel =
+      Array.from(sourceCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'Direct';
+    const agencyMultiplier = /agent|person|extern/i.test(channel) ? 1.45 : 1;
+    const cost = Math.round((18_000 + rows.length * 1_450 + rng() * 22_000) * agencyMultiplier);
+    const critical =
+      position.criticalFlag ||
+      /manager|vedouc|regional|specialista|technik|account|leader/i.test(vacancy.title);
+
+    requisitions.push({
+      id: refNumber,
+      positionId: position.id,
+      divisionId: position.divisionId,
+      approvedDate,
+      publishedDate,
+      firstInterviewDate,
+      offerDate: hired || rng() > 0.35 ? offerDate : null,
+      acceptedDate: hired ? addDays(offerDate, 3 + Math.floor(rng() * 8)) : null,
+      hireDate,
+      cost,
+      channel,
+      critical,
+      canceled,
+    });
+
+    const longlist = Math.max(rows.length, 1);
+    const presented = Math.max(1, Math.round(longlist * (0.55 + rng() * 0.18)));
+    const firstInterview = Math.max(1, Math.round(presented * (0.42 + rng() * 0.16)));
+    const secondInterview = Math.max(hired ? 1 : 0, Math.round(firstInterview * (0.34 + rng() * 0.16)));
+    const offers = Math.max(hired ? 1 : 0, Math.round(secondInterview * (0.28 + rng() * 0.18)));
+    const stageCounts: Array<[FunnelCount['stage'], number, string]> = [
+      ['longlist', longlist, approvedDate],
+      ['presented', presented, publishedDate],
+      ['1st_interview', firstInterview, firstInterviewDate],
+      ['2nd_interview', secondInterview, addDays(firstInterviewDate, 6)],
+      ['offer_sent', offers, offerDate],
+      ['hired', hired ? 1 : 0, hireDate ?? addDays(offerDate, 14)],
+    ];
+    for (const [stage, count, dateRecorded] of stageCounts) {
+      funnelCounts.push({ requisitionId: refNumber, stage, count, dateRecorded });
+    }
+  }
+
   writeTsModule('employees.ts', 'EMPLOYEES', employees);
   writeTsModule('positions.ts', 'POSITIONS', positions);
   writeTsModule('departments.ts', 'DEPARTMENTS', staffplan.departments);
@@ -278,9 +376,11 @@ const main = (): void => {
   writeTsModule('accidents.ts', 'ACCIDENTS', accidents);
   writeTsModule('succession.ts', 'SUCCESSION', succession);
   writeTsModule('workforce-events.ts', 'WORKFORCE_EVENTS', workforceEvents);
+  writeTsModule('requisitions.ts', 'REQUISITIONS', requisitions);
+  writeTsModule('funnel-counts.ts', 'FUNNEL_COUNTS', funnelCounts);
 
   console.log(
-    `Generated: ${employees.length} employees, ${payroll.length} payroll rows, ${absence.length} absence rows, ${training.length} training rows`,
+    `Generated: ${employees.length} employees, ${payroll.length} payroll rows, ${absence.length} absence rows, ${training.length} training rows, ${requisitions.length} requisitions`,
   );
   console.log(`Done: ${OUT_DIR}`);
 };

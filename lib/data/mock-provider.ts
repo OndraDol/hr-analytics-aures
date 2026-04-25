@@ -4,9 +4,11 @@ import { DEPARTMENTS } from '@/lib/data/generated/departments';
 import { DIVISIONS } from '@/lib/data/generated/divisions';
 import { EMPLOYEES } from '@/lib/data/generated/employees';
 import { ENPS } from '@/lib/data/generated/enps';
+import { FUNNEL_COUNTS } from '@/lib/data/generated/funnel-counts';
 import { PAYROLL } from '@/lib/data/generated/payroll';
 import { PERFORMANCE } from '@/lib/data/generated/performance';
 import { POSITIONS } from '@/lib/data/generated/positions';
+import { REQUISITIONS } from '@/lib/data/generated/requisitions';
 import { SUCCESSION } from '@/lib/data/generated/succession';
 import { TRAINING } from '@/lib/data/generated/training';
 import { WORKFORCE_EVENTS } from '@/lib/data/generated/workforce-events';
@@ -33,6 +35,7 @@ import type {
 const employees = [...EMPLOYEES] satisfies Employee[];
 const positions = [...POSITIONS] satisfies Position[];
 const employeeById = new Map(employees.map((employee) => [employee.id, employee]));
+const divisionById = new Map(DIVISIONS.map((division) => [division.id, division]));
 
 const inPeriod = (date: string, period: Period): boolean => date >= period.from && date <= period.to;
 
@@ -58,6 +61,20 @@ const factEmployeeMatches = (
   employeeId: string,
   filter: CommonFilter | undefined,
 ): boolean => matchesFilter(employeeById.get(employeeId), filter);
+
+const requisitionMatches = (
+  requisition: RecruitmentRequisition,
+  filter: CommonFilter | undefined,
+): boolean => {
+  if (!filter) return true;
+  if (filter.divisionIds?.length && !filter.divisionIds.includes(requisition.divisionId)) return false;
+  if (filter.country) {
+    const countries = Array.isArray(filter.country) ? filter.country : [filter.country];
+    const division = divisionById.get(requisition.divisionId);
+    if (!division || !countries.includes(division.country)) return false;
+  }
+  return true;
+};
 
 export class MockDataProvider implements DataProvider {
   async getEmployees(filter?: CommonFilter): Promise<Employee[]> {
@@ -103,12 +120,18 @@ export class MockDataProvider implements DataProvider {
     return [];
   }
 
-  async getRequisitions(): Promise<RecruitmentRequisition[]> {
-    return [];
+  async getRequisitions(period: Period, filter?: CommonFilter): Promise<RecruitmentRequisition[]> {
+    return REQUISITIONS.filter((row) => {
+      const touchesPeriod =
+        inPeriod(row.approvedDate, period) ||
+        (row.hireDate ? inPeriod(row.hireDate, period) : false) ||
+        (row.offerDate ? inPeriod(row.offerDate, period) : false);
+      return touchesPeriod && requisitionMatches(row, filter);
+    });
   }
 
-  async getFunnelCounts(): Promise<FunnelCount[]> {
-    return [];
+  async getFunnelCounts(period: Period): Promise<FunnelCount[]> {
+    return FUNNEL_COUNTS.filter((row) => inPeriod(row.dateRecorded, period));
   }
 
   async getPerformanceReviews(cycle: string, filter?: CommonFilter): Promise<PerformanceReview[]> {

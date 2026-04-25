@@ -492,3 +492,31 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - sekce VI. Nástupnictví,
 - sekce VII. Engagement,
 - sekce VIII. Talent & Growth.
+
+## 15) Stav implementace — M5 Full section dashboards (2026-04-25 07:35 UTC)
+
+**Hotovo:**
+- ✅ `/sekce/[slug]` generuje statické stránky pro všechny nové sekce kromě Retention, která zůstává samostatný referenční detail.
+- ✅ Sekce I. HR statistiky — HC/FTE, gender mix, management mix, věková struktura a raw gender pay gap signál.
+- ✅ Sekce II. Nástupy a odchody — hires, leavers, net change, divizní movement a rizikové čisté změny.
+- ✅ Sekce III. Náklady a struktura — wage cost, cost components, avg wage, CAP/FTE gap a top cost divize.
+- ✅ Sekce IV. Recruitment — requisitions, funnel, critical roles, channel mix a recruitment risk list.
+- ✅ Sekce VI. Nástupnictví — readiness portfolio, gaps podle divizí a role bez pokrytí.
+- ✅ Sekce VII. Engagement — eNPS, participace, promoters/passives/detractors, segmenty a vazba na odchody.
+- ✅ Sekce VIII. Talent & Growth — potenciál, výkonové hodnocení, talent pool, školení a divizní talent pipeline.
+- ✅ Recruitment parser je napojený do generátoru dat: vznikají `requisitions.ts` a `funnel-counts.ts`.
+- ✅ `MockDataProvider` nově vrací náborová fakta přes `getRequisitions()` a `getFunnelCounts()`.
+- ✅ Společný `GenericSectionPage` sjednocuje UX pro všechny nové sekce: hero, KPI cards, 12M trend, breakdown chart, tabulka, akce a drill-down odkazy.
+
+**Ověřeno cíleně:**
+- `pnpm gen:data`
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test tests/sections/section-summaries.test.ts`
+- `pnpm build` (13 statických stránek)
+
+**Další na řadě: M6 — Cross-cutting detail views**
+- Attrition analytics,
+- Recruitment funnel detail,
+- Compensation & pay gap,
+- Absence & coverage.
