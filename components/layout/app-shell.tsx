@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { CircleGauge } from 'lucide-react';
+import { ANALYTICS_TOPICS } from '@/lib/analytics/cross-cutting';
+import { OPERATIONAL_VIEWS } from '@/lib/analytics/operational-views';
 import { SECTION_CATALOG } from '@/lib/sections/catalog';
 import { cn } from '@/lib/utils';
 
@@ -14,40 +16,69 @@ export function AppShell({
   sectionLabel?: string;
   sectionTitle?: string;
 }) {
-  const nav = [
-    { href: '/', label: 'Executive', icon: CircleGauge },
-    ...SECTION_CATALOG.map((section) => ({
-      href: section.href,
-      label: section.shortTitle,
-      icon: section.icon,
-    })),
+  const navGroups = [
+    {
+      label: 'Executive',
+      items: [{ href: '/', label: 'Executive', icon: CircleGauge }],
+    },
+    {
+      label: 'Sekce',
+      items: SECTION_CATALOG.map((section) => ({
+        href: section.href,
+        label: section.shortTitle,
+        icon: section.icon,
+      })),
+    },
+    {
+      label: 'Analytika',
+      items: ANALYTICS_TOPICS.map((topic) => ({
+        href: topic.href,
+        label: topic.shortTitle,
+        icon: topic.icon,
+      })),
+    },
+    {
+      label: 'Operativa',
+      items: OPERATIONAL_VIEWS.map((view) => ({
+        href: view.href,
+        label: view.shortTitle,
+        icon: view.icon,
+      })),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-[#f6f7fb] text-zinc-950">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-zinc-200 bg-white px-4 py-5 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 overflow-y-auto border-r border-zinc-200 bg-white px-4 py-5 pb-32 lg:block">
         <Link href="/" className="block rounded-md px-2 py-1">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">AURES Holdings</p>
           <p className="mt-1 text-xl font-semibold text-zinc-950">HR Analytics</p>
         </Link>
-        <nav className="mt-8 space-y-1">
-          {nav.map((item) => {
-            const Icon = item.icon;
-            const active = item.href === activeHref;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950',
-                  active && 'bg-blue-50 text-blue-700',
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="mt-8 space-y-5">
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">{group.label}</p>
+              <div className="mt-1 space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const active = item.href === activeHref;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950',
+                        active && 'bg-blue-50 text-blue-700',
+                      )}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
         <div className="absolute bottom-5 left-4 right-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
           <p className="text-xs font-semibold text-zinc-500">Demo snapshot</p>

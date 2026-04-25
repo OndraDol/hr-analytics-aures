@@ -520,3 +520,69 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - Recruitment funnel detail,
 - Compensation & pay gap,
 - Absence & coverage.
+
+## 16) Stav implementace — M6 Cross-cutting detail views (2026-04-25)
+
+**Hotovo:**
+- ✅ `/analytika/[topic]` generuje statické stránky pro čtyři cross-cutting drill-downy.
+- ✅ Attrition deep dive — tenure cohorty, high-risk segmenty, critical leavers, eNPS a mzdový kontext.
+- ✅ Recruitment funnel breakdown — stage konverze, bottleneck, time per stage, kanály a cost per hire.
+- ✅ Compensation & pay gap — raw vs. adjusted gender pay gap, grade rozpad, tenure wage progression a outliery.
+- ✅ Absence & coverage — sickness rate, vacation balance, long-term absence cases a coverage signál.
+- ✅ `DetailDashboardPage` sjednocuje UI pro M6 a navazující M7: hero, metriky, grafy, tabulka, akce a navazující odkazy.
+
+**Ověření cíleně:**
+- `pnpm typecheck`
+- `pnpm test tests/analytics/cross-cutting.test.ts`
+
+**Další na řadě: M7 — Operational views**
+- Hired & fired,
+- Org chart,
+- Vacation balances,
+- eNPS latest,
+- ESG people data.
+
+## 17) Stav implementace — M7 Operational views (2026-04-25)
+
+**Hotovo:**
+- ✅ `/operativa/[view]` generuje statické stránky pro pět operativních pohledů.
+- ✅ Hired & fired — nástupy, odchody, net změna, důvody odchodů a řádkový výstup.
+- ✅ Org chart — headcount podle divizí, manažerské rozpětí, oddělení a vlastníci.
+- ✅ Vacation balances — odhad zůstatků dovolené podle zaměstnance a divize.
+- ✅ eNPS latest — poslední survey vlna, mix odpovědí a follow-up backlog.
+- ✅ ESG people data — demografie, women-in-management, work accidents, training datapointy a readiness tabulka.
+- ✅ Sidebar je rozšířený o skupiny Analytika a Operativa.
+- ✅ Sekční cross-linky vedou jen na implementované M6/M7 routy.
+
+**Ověření cíleně:**
+- `pnpm typecheck`
+- `pnpm test tests/operational/operational-views.test.ts`
+
+**Další na řadě: M8 — AI Copilot**
+- sidebar / sheet,
+- pre-canned otázky a odpovědi,
+- typewriter efekt,
+- mock provider připravený na live API.
+
+## 18) Plán implementace — M8 AI Copilot (2026-04-25)
+
+**Plán připraven:**
+- ✅ Detailní plán je uložený v `docs/plans/2026-04-25-m8-ai-copilot.md`.
+- ✅ M8 zůstává mock-only: žádné live API volání, protože prototyp nemá API klíč.
+- ✅ Architektura bude API-ready přes `CopilotProvider` interface.
+- ✅ Copilot bude globální doplněk v `AppShell`, dostupný přes floating button a sidebar.
+- ✅ Obsah bude v `content/copilot-queries.json` jako sada 8-12 předpřipravených dotazů a markdown odpovědí.
+
+**Navržené soubory pro M8:**
+- `lib/ai/copilot-provider.ts`
+- `components/copilot/copilot-fab.tsx`
+- `components/copilot/copilot-sidebar.tsx`
+- `components/copilot/typewriter-text.tsx`
+- `content/copilot-queries.json`
+- `tests/ai/copilot-provider.test.ts`
+
+**Ověření plánované pro M8:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test tests/ai/copilot-provider.test.ts`
+- `pnpm build`

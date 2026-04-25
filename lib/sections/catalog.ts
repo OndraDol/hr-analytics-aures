@@ -81,7 +81,7 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     accent: '#f97316',
     href: '/sekce/cost-structure',
     relatedAnalytics: [{ label: 'Compensation & pay gap', href: '/analytika/compensation-pay-gap' }],
-    relatedOperational: [{ label: 'Budget export', href: '/operativa/budget' }],
+    relatedOperational: [{ label: 'Vacation balances', href: '/operativa/vacation-balances' }],
   },
   {
     id: 'IV',
@@ -96,7 +96,7 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     accent: '#0ea5e9',
     href: '/sekce/recruitment',
     relatedAnalytics: [{ label: 'Recruitment funnel', href: '/analytika/recruitment-funnel' }],
-    relatedOperational: [{ label: 'Vacancy report', href: '/operativa/vacancies' }],
+    relatedOperational: [{ label: 'Hired & fired', href: '/operativa/hired-fired' }],
   },
   {
     id: 'V',
@@ -155,8 +155,8 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     icon: Sparkles,
     accent: '#db2777',
     href: '/sekce/talent-growth',
-    relatedAnalytics: [{ label: 'Talent matrix', href: '/analytika/talent' }],
-    relatedOperational: [{ label: 'Training export', href: '/operativa/training' }],
+    relatedAnalytics: [{ label: 'Attrition deep dive', href: '/analytika/attrition' }],
+    relatedOperational: [{ label: 'ESG people data', href: '/operativa/esg' }],
   },
 ] as const;
 
