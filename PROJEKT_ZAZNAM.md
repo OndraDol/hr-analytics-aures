@@ -8,9 +8,20 @@ Poslední aktualizace: 2026-04-25
 
 ## Aktuální stav projektu (2026-04-25)
 
-**Prezentační prototyp v1 je hotový na 100 % a M11 traceability pass je doplněný.**
+**v1 = 100 % hotová. v2 Perfection Pass schválen a master plán uložen.**
 
-Procento vychází z deterministického modelu v `lib/project/progress.ts`: dokončeno je 11/11 milníků a 100/100 procentních bodů. Stav se vztahuje na **webový prezentační prototyp nad mock daty**, ne na budoucí produkční Power BI/DWH implementaci.
+Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). Aktuálně startuje **v2 Perfection Pass** — kvalitativní upgrade z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
+
+**v2 master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](docs/plans/2026-04-25-v2-perfection-master-plan.md) — 6 milníků M12–M17:
+
+- M12 Decision Support Layer (KPI hierarchy zóny, alerts ranking, action timeline, threshold confidence)
+- M13 AURES Visual Identity (sidebar branding, typografie, brand palette, featured state)
+- M14 Charts & Motion (custom tooltips, gradient fills, threshold pulse, stagger animations)
+- M15 Drill-Down Intelligence (recruitment driver multi-dim, cross-KPI hypotheses, anomaly upgrade)
+- M16 Executive PDF Mastery + Operational Polish + ESG Audit Trail
+- M17 Stabilizace v2 (a11y, dark mode review, progress model, walkthrough)
+
+Procento dokončenosti zůstává 100 % pro v1 prototyp; v2 se bude měřit samostatně přes nový `version: 'v2'` flag v progress modelu (definováno v M17).
 
 Součástí dokončené v1 je:
 - Executive Dashboard se zdravotním skóre, alerty, změnami a scorecardy sekcí I-VIII.
@@ -686,7 +697,26 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 
 **Doporučený první krok příště:**
 1. Přečíst `docs/next-session-handoff.md`.
-2. Přečíst traceability matrix.
-3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`).
-4. Spustit `pnpm dev --hostname 127.0.0.1 --port 3000` a projít demo flow.
-5. Další práce už má být buď business feedback polish, nebo samostatná produkční Power BI/DWH fáze.
+2. Přečíst v2 master plán `docs/plans/2026-04-25-v2-perfection-master-plan.md`.
+3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`) — ověřit, že v1 baseline drží.
+4. Vytvořit detailní bite-sized plán pro **M12 Decision Support Layer** v `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes skill `superpowers:writing-plans`.
+5. Spustit M12 implementaci přes TDD workflow (write failing test → minimal impl → commit).
+
+## 23) v2 Perfection Pass — master plán schválen (2026-04-25)
+
+**Kontext:** v1 prototyp je technicky 100 %, ale audit z perspektivy HR Directorky Kateřiny Topolové odhalil tři kategorie mezer (zadání-vs-implementace, UX, vizuální design). Cíl v2 = posunout produkt z „demo-ready" na „investment-ready" stav, aby HR Directorka:
+- za 10 sekund viděla, jestli je něco špatně,
+- za 30 sekund identifikovala top 3 problémy s ownerem a deadlinem,
+- za 3 minuty pochopila, co se změnilo a kam zaměřit pozornost,
+- exportovala McKinsey-grade PDF pro board.
+
+**Master plán:** `docs/plans/2026-04-25-v2-perfection-master-plan.md` — 6 milníků M12–M17 s konkrétními soubory, scope, akceptačními kritérii a sekvencí závislostí.
+
+**Audit zdroje (Phase 1):**
+- 3 kategorie mezer popsané přímo v master plánu (sekce „Co v1 nezvládá z pohledu HR Directorky").
+- Top 10 UX gaps + Top 8 vizuálních gaps s konkrétními file:line odkazy.
+- Co je naopak silné a má zůstat (5 bodů).
+
+**Detailní plány M12–M17** vznikají postupně při zahájení každého milníku jako samostatné `docs/plans/2026-04-DD-vXX-...md` — stejně jako u M0–M11.
+
+**Stav:** Master plán schválen. M12 čeká na zahájení.

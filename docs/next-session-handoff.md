@@ -2,6 +2,21 @@
 
 Poslední aktualizace: 2026-04-25
 
+## v2 Perfection Pass — start zde
+
+V1 prototyp je 100 % hotový, nyní startuje **v2 Perfection Pass** — přechod z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
+
+**Master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](plans/2026-04-25-v2-perfection-master-plan.md) definuje 6 milníků M12–M17:
+
+- **M12** Decision Support Layer — KPI hierarchy zóny, alerts ranking 1–5, action backlog timeline, threshold confidence overlay.
+- **M13** AURES Visual Identity — sidebar branding, typografie upgrade, brand palette, KPI featured state.
+- **M14** Charts & Motion — custom Recharts tooltipy, gradient fills, sparkline hover, threshold pulse, page enter animations.
+- **M15** Drill-Down Intelligence — recruitment driver per stage/HM/channel, cross-KPI hypotheses, anomaly visibility, severity tooltip.
+- **M16** Executive PDF Mastery + Operational Polish + ESG Audit Trail — McKinsey-grade PDF, print preview, ESG Data Quality column.
+- **M17** Stabilizace v2 — smoke + a11y + dark mode review, walkthrough, PROJEKT_ZAZNAM, progress model.
+
+**Další krok:** otevřít master plán a v něm M12 sekci, založit detailní bite-sized plán `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes `superpowers:writing-plans` skill, pak start TDD exekuce.
+
 ## Aktuální stav
 
 Prezentační prototyp v1 + M11 traceability pass je hotový na **100 %**. Procento aplikace vychází z `lib/project/progress.ts`: dokončeno je 11/11 produktových milníků a 100/100 procentních bodů. M11 navíc doplňuje audit proti XLS zadání.
@@ -61,11 +76,12 @@ HTTP smoke test přes lokální server prošel pro:
 
 ## Další session: hlavní cíl
 
-Pokračovat už ne jako M11 discovery, ale jako případný post-M11 review nebo příprava předání:
-- znovu projít demo flow s HR Directorkou,
-- podle feedbacku upravit texty, priority nebo prahy,
-- případně otevřít samostatnou produkční Power BI/DWH fázi.
+Spustit **v2 Perfection Pass** podle [master plánu](plans/2026-04-25-v2-perfection-master-plan.md):
+
+1. Vytvořit detailní plán M12 (Decision Support Layer) v `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes skill `superpowers:writing-plans`.
+2. M12 a M13 mohou jít paralelně po krátkém spike — KPI Card 3-zone refactor (M12) + AURES brand tokens (M13) jsou kompatibilní.
+3. Review body: po M12, M14 a M16 vyžádat HR Director feedback.
 
 ## Nezačínat znovu
 
-Projekt už má hotovou architekturu, v1 flow i M11 dohledatelnost. Není potřeba přestavovat routing, datový model ani KPI engine, pokud nová business zpětná vazba neodhalí konkrétní rozpor.
+Projekt už má hotovou architekturu, v1 flow i M11 dohledatelnost. v2 staví **na** v1 — refaktoruje KPI Card do zón, přidává AURES branding, prohlubuje drill-down. Není potřeba přestavovat routing, datový model ani KPI engine.
