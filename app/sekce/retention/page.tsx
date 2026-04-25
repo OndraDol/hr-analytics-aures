@@ -17,7 +17,7 @@ export default async function RetentionSectionPage() {
   ]);
 
   return (
-    <AppShell>
+    <AppShell activeHref="/sekce/retention" sectionLabel="Sekce V" sectionTitle="Retention & fluktuace">
       <RetentionPage
         fluctuation={fluctuation}
         criticalFluctuation={criticalFluctuation}

@@ -2,7 +2,7 @@
 
 > Živý pracovní dokument. Zapisujeme sem postupně pochopení požadavků, rozhodnutí, otevřené otázky, strukturu datasetu a další postup. Zdrojový podklad: `HR_reporting_ver2.xlsx`.
 
-Poslední aktualizace: 2026-04-24
+Poslední aktualizace: 2026-04-25
 
 ---
 
@@ -466,3 +466,29 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - scorecards sekcí I-VIII,
 - AI Executive Summary,
 - napojení Retention jako první hotové sekce.
+
+## 14) Stav implementace — M4 Executive Dashboard (2026-04-25 07:20 UTC)
+
+**Hotovo:**
+- ✅ `/` je hlavní Executive Dashboard místo preview placeholderu.
+- ✅ HR Health Score se počítá deterministicky ze všech 20 KPI, váženě podle priority.
+- ✅ Hero KPI ukazuje stav lidí, fluktuaci a eNPS.
+- ✅ Top Alerts řadí rizika podle statusu, priority a velikosti změny.
+- ✅ What Changed panel rozlišuje zlepšení, červené problémy a amber watchlist.
+- ✅ Scorecards pokrývají všechny sekce I-VIII a vedou na sekční routy.
+- ✅ `SECTION_CATALOG` sjednocuje navigaci, metadata sekcí, primární KPI a navazující analytiku/operativu.
+- ✅ `AppShell` už není Retention-only; podporuje executive i sekční kontext.
+
+**Ověřeno cíleně:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test tests/dashboard/executive-dashboard.test.ts tests/kpi/sections.test.ts`
+
+**Další na řadě: M5 — Full section dashboards**
+- sekce I. HR statistiky,
+- sekce II. Nástupy a odchody,
+- sekce III. Náklady a struktura,
+- sekce IV. Recruitment,
+- sekce VI. Nástupnictví,
+- sekce VII. Engagement,
+- sekce VIII. Talent & Growth.
