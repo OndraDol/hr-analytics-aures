@@ -439,3 +439,30 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - stránka sekce Retention,
 - Attrition drill-down,
 - napojení na `buildKpiCardModel()` a `mockDataProvider`.
+
+## 13) Stav implementace — M3 Retention reference section (2026-04-25 06:35 UTC)
+
+**Hotovo:**
+- ✅ Root stránka už není placeholder; ukazuje stav prototypu a vede do Retention.
+- ✅ `/sekce/retention` — první skutečná dashboard stránka.
+- ✅ `AppShell` — základ navigace, sticky header, demo snapshot.
+- ✅ KPI karta s hodnotou, statusem, trendem, sparkline, narrativem, doporučenou akcí a AI insightem.
+- ✅ Retention trend graf a segment graf přes Recharts.
+- ✅ `lib/analytics/retention-summary.ts` — segmenty, odchody, klíčové odchody, risk score.
+- ✅ Recharts se renderují až po client mountu, aby build neměl warningy o nulové velikosti.
+
+**Ověřeno:**
+- `pnpm gen:data`
+- `pnpm check:data`
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test` (48 testů)
+- `pnpm build`
+
+**Další na řadě: M4 — Executive Dashboard**
+- HR Health Score,
+- Top Alerts,
+- What Changed,
+- scorecards sekcí I-VIII,
+- AI Executive Summary,
+- napojení Retention jako první hotové sekce.

@@ -1,0 +1,60 @@
+import Link from 'next/link';
+import { BarChart3, BrainCircuit, CircleGauge, UsersRound } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const NAV = [
+  { href: '/', label: 'Executive', icon: CircleGauge, active: false },
+  { href: '/sekce/retention', label: 'Retention', icon: UsersRound, active: true },
+  { href: '/sekce/retention#drivers', label: 'Drivers', icon: BarChart3, active: false },
+  { href: '/sekce/retention#ai', label: 'AI vrstva', icon: BrainCircuit, active: false },
+];
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-[#f6f7fb] text-zinc-950">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-zinc-200 bg-white px-4 py-5 lg:block">
+        <Link href="/" className="block rounded-md px-2 py-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-700">AURES Holdings</p>
+          <p className="mt-1 text-xl font-semibold text-zinc-950">HR Analytics</p>
+        </Link>
+        <nav className="mt-8 space-y-1">
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-zinc-600 hover:bg-zinc-50 hover:text-zinc-950',
+                  item.active && 'bg-blue-50 text-blue-700',
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="absolute bottom-5 left-4 right-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+          <p className="text-xs font-semibold text-zinc-500">Demo snapshot</p>
+          <p className="mt-1 text-sm text-zinc-800">Q1 2026 · mock + real skeleton</p>
+        </div>
+      </aside>
+      <div className="lg:pl-64">
+        <header className="sticky top-0 z-20 border-b border-zinc-200 bg-white/85 px-5 py-3 backdrop-blur md:px-8">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Sekce V</p>
+              <p className="text-sm font-medium text-zinc-950">Retention & fluktuace</p>
+            </div>
+            <div className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              Data připravena
+            </div>
+          </div>
+        </header>
+        {children}
+      </div>
+    </div>
+  );
+}
