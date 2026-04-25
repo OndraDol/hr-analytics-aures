@@ -11,6 +11,9 @@ export interface ExecutiveAlert {
   status: KpiStatus;
   priority: 1 | 2 | 3;
   delta: number;
+  severityScore: number;
+  thresholdDistanceCs: string;
+  thresholdConfidenceCs: string;
   href: string;
   reasonCs: string;
 }
@@ -38,8 +41,6 @@ export interface ExecutiveDashboardData {
   allEvaluations: KpiEvaluation[];
 }
 
-const STATUS_SCORE: Record<KpiStatus, number> = { green: 1, amber: 0.55, red: 0 };
-const STATUS_RANK: Record<KpiStatus, number> = { red: 3, amber: 2, green: 1 };
 const PRIORITY_WEIGHT: Record<1 | 2 | 3, number> = { 1: 3, 2: 2, 3: 1 };
 
 const sectionHrefForKpi = (code: KpiCode): string => {
@@ -64,17 +65,20 @@ const alertFromEvaluation = (evaluation: KpiEvaluation): ExecutiveAlert => ({
   status: evaluation.status,
   priority: evaluation.definition.priority,
   delta: evaluation.trend.mom ?? 0,
+  severityScore: evaluation.severityScore,
+  thresholdDistanceCs: evaluation.thresholdDistance.messageCs,
+  thresholdConfidenceCs: evaluation.thresholdMetadata.confidence,
   href: sectionHrefForKpi(evaluation.code),
   reasonCs:
     evaluation.status === 'red'
-      ? `${evaluation.definition.nameCs} je mimo toleranci a vyžaduje vlastníka akce.`
+      ? `${evaluation.definition.nameCs} je mimo toleranci (${evaluation.thresholdDistance.messageCs}) a vyžaduje vlastníka akce.`
       : `${evaluation.definition.nameCs} se posunula proti minulému období o ${Math.abs(
           evaluation.trend.mom ?? 0,
-        ).toFixed(1)}.`,
+        ).toFixed(1)}. ${evaluation.thresholdDistance.messageCs}.`,
 });
 
 const rankAlert = (alert: ExecutiveAlert): number =>
-  STATUS_RANK[alert.status] * 100 + (4 - alert.priority) * 20 + Math.abs(alert.delta);
+  alert.severityScore + (4 - alert.priority) * 6 + Math.min(Math.abs(alert.delta), 12);
 
 const healthLabel = (score: number): string => {
   if (score >= 75) return 'Dobrý stav';
@@ -102,12 +106,12 @@ export async function buildExecutiveDashboard(
     (total, evaluation) => total + PRIORITY_WEIGHT[evaluation.definition.priority],
     0,
   );
-  const weightedScore = allEvaluations.reduce(
+  const weightedRisk = allEvaluations.reduce(
     (total, evaluation) =>
-      total + STATUS_SCORE[evaluation.status] * PRIORITY_WEIGHT[evaluation.definition.priority],
+      total + evaluation.severityScore * PRIORITY_WEIGHT[evaluation.definition.priority],
     0,
   );
-  const healthScore = Math.round((weightedScore / totalWeight) * 100);
+  const healthScore = Math.max(0, Math.min(100, Math.round(100 - weightedRisk / totalWeight)));
   const alerts = allEvaluations
     .filter((evaluation) => evaluation.status !== 'green')
     .map(alertFromEvaluation)

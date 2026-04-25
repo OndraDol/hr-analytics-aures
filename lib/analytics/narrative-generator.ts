@@ -19,7 +19,7 @@ export function generateNarrative(
 ): string {
   const lead = `${evaluation.definition.nameCs} ${statusPhrase[evaluation.status]}: aktuálně ${evaluation.formattedValue}, ${trendPhrase(
     evaluation.trend.mom,
-  )}.`;
+  )}. ${evaluation.thresholdDistance.messageCs}.`;
   const topDriver = drivers[0];
   const driverSentence = topDriver
     ? `Hlavní příčina změny je ${topDriver.label} (hodnota ${topDriver.value.toFixed(1)}, delta ${topDriver.delta.toFixed(1)}).`

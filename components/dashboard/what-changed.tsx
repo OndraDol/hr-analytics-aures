@@ -31,10 +31,13 @@ function ChangeColumn({
         {title}
       </p>
       <div className="mt-4 space-y-3">
-        {(items.length ? items : [{ code: 'HR_STATS', title: 'Bez výrazné změny', value: '', reasonCs: 'V aktuálním období není významný signál.', status: 'green', priority: 3, delta: 0, href: '/' } satisfies ExecutiveAlert]).map((item) => (
+        {(items.length ? items : [{ code: 'HR_STATS', title: 'Bez výrazné změny', value: '', reasonCs: 'V aktuálním období není významný signál.', status: 'green', priority: 3, delta: 0, severityScore: 0, thresholdDistanceCs: 'bez odchylky', thresholdConfidenceCs: 'medium', href: '/' } satisfies ExecutiveAlert]).map((item) => (
           <div key={`${title}-${item.code}`} className="rounded-md bg-zinc-50 p-3">
             <p className="text-sm font-medium text-zinc-950">{item.title}</p>
             <p className="mt-1 text-sm leading-6 text-zinc-600">{item.reasonCs}</p>
+            {items.length ? (
+              <p className="mt-2 font-mono text-xs text-zinc-500">Severity {item.severityScore}/100 · {item.thresholdDistanceCs}</p>
+            ) : null}
           </div>
         ))}
       </div>

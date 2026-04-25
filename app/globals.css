@@ -41,3 +41,44 @@ body {
 .font-serif {
   font-family: var(--font-instrument-serif), Georgia, serif;
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #09090b !important;
+  }
+
+  .print-hidden {
+    display: none !important;
+  }
+
+  .briefing-print-root {
+    padding: 0 !important;
+  }
+
+  .briefing-page {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+
+  .briefing-section {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .briefing-grid,
+  .briefing-scorecards {
+    break-inside: avoid;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}

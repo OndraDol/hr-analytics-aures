@@ -1,10 +1,10 @@
 # HR Analytics Prototype — Design Specification
 
-> **Status:** Draft k revizi uživatelem
+> **Status:** Implementováno pro prezentační prototyp v1; M11 perfection pass proti XLS zadání doplnil traceability matrix
 > **Datum:** 2026-04-24
 > **Vlastník:** Ondřej Dolejš (producer), HR Director (business sponsor)
 > **Účel:** Interaktivní webový prototyp komplexního HR reportingu postavený nad mock daty. Slouží jako (a) vizuální podklad pro HR Directorku a (b) zadání pro externího dodavatele, který následně implementuje produkční řešení v Power BI.
-> **Zdrojový vstup:** `HR_reporting_ver2.xlsx`, záložky `NÁVRH_do_BI`, `Návrh_rozpad`, `NÁVRH`, `CZ`, `ESG reporty_actual`.
+> **Zdrojový vstup:** `HR_reporting_ver2.xlsx` v kořeni repozitáře, záložky `NÁVRH_do_BI`, `Návrh_rozpad`, `NÁVRH`, `CZ`, `ESG reporty_actual`, `HR Reporty_actual`, `Vojta_all`. Explicitní dohledatelnost je v `docs/traceability/hr-reporting-v2-traceability.md`.
 
 ---
 
@@ -25,7 +25,7 @@ Postavit **webový dashboard „HR Analytics"** v češtině, který:
 - Živé volání LLM API (zatím jen mock).
 - Multi-tenant, multi-company.
 - Mobilní nativní aplikace (responsive stačí).
-- Export do PDF / Excelu (může se přidat, není v scope prvního vydání).
+- Server-side export do PDF / Excelu. Browser print flow pro PDF briefing je ve v1 implementovaný přes route `/briefing`.
 
 ---
 
@@ -333,13 +333,17 @@ Standardní komponenta `<KPICard kpi={kpi} data={data} />`. Všechny KPI cardy v
 |---|---|---|---|
 | 1 | Status indikátor | rule-based | 🟢/🟡/🔴 podle prahů |
 | 2 | Hodnota + trend (MoM/YoY) | výpočet z dat | velké písmo, šipky |
-| 3 | Prahy (target / green / acc / red) | statický katalog | progress bar vs. prahy |
+| 3 | Prahy (target / green / acc / red) | katalog + threshold metodika | threshold bar, target marker, vzdálenost od hranice |
 | 4 | Sparkline 12M | výpočet z historie | mini line chart |
 | 5 | Drivers (top 3 segmenty) | driver analysis | bullet list |
 | 6 | Rule-based narrativ | šablona | 2–3 věty, deterministický |
 | 7 | AI insight | mock JSON | 2–4 věty, jiný vizuál (✨ badge, kurzíva) |
 | 8 | Doporučená akce | z KPI katalogu + kontext | ikonka 💡 + text |
 | 9 | Anomaly badge | anomaly detector | ⚡ ikonka, pokud |z-score| > 2 |
+
+### 4.4 Threshold metodika po M11
+
+Každý KPI threshold má kromě hodnoty i zdroj, jistotu, typ metodiky, vlastníka revize a vysvětlení. UI proto neukazuje jen barvu, ale také `severity score`, vzdálenost od relevantního prahu a informaci, jestli je práh z XLS, benchmarkové logiky, budgetu, historie nebo demo defaultu čekajícího na HR potvrzení.
 
 ### 4.3 Varianty cardu
 - **CompactKPICard** — pro section scorecardy na Executive Dashboardu (jen layers 1–4).
@@ -825,6 +829,8 @@ Tenké linie (1,5–2 px), mělké gradient fills, zaoblené rohy bar chartů, t
 8. **Milník 7 — Operativa**: Hired/Fired, Org Chart, Vacation, eNPS latest, ESG.
 9. **Milník 8 — AI Copilot**: sidebar, pre-canned queries, typewriter.
 10. **Milník 9 — Polish & demo setup**: animace, loading states, landing copy, Vercel preview URL, showcase script „jak projít demo s HR Directorkou".
+11. **Milník 10 — Action Backlog**: prioritizovaná fronta akcí z KPI statusů, driverů a vlastníků.
+12. **Milník 11 — XLS perfection pass**: traceability proti XLS zadání, vizuální QA, textový polish, navigační kontrola a odstranění zbylých rozporů.
 
 **Každý milník = zvláštní merge / preview deploy, review s uživatelem, pak další.**
 
@@ -832,7 +838,7 @@ Tenké linie (1,5–2 px), mělké gradient fills, zaoblené rohy bar chartů, t
 
 ## 13. Budoucí rozšíření (vně scope prvního vydání)
 
-- Export do PDF / PowerPoint (pro HR Directorku do board meetingu).
+- PowerPoint / Excel exporty pro board meeting a další offline práci.
 - Live Claude API pro Copilot + on-the-fly AI insights.
 - Integrace části reálných dat z EGJE / ATS (přes nový DataProvider).
 - Dark mode polish.

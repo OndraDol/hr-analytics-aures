@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import type { ExecutiveAlert } from '@/lib/analytics/executive-dashboard';
+import { EmptyState } from '@/components/layout/empty-state';
 import { StatusBadge } from '@/components/kpi/status-badge';
 
 export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
@@ -14,7 +15,7 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
         <AlertTriangle className="h-5 w-5 text-rose-500" />
       </div>
       <div className="mt-5 space-y-3">
-        {alerts.map((alert) => (
+        {alerts.length > 0 ? alerts.map((alert) => (
           <Link
             key={alert.code}
             href={alert.href}
@@ -24,6 +25,9 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
               <div>
                 <p className="text-sm font-semibold text-zinc-950">{alert.title}</p>
                 <p className="mt-1 text-sm leading-6 text-zinc-600">{alert.reasonCs}</p>
+                <p className="mt-2 font-mono text-xs text-zinc-500">
+                  Severity {alert.severityScore}/100 · {alert.thresholdDistanceCs}
+                </p>
               </div>
               <div className="shrink-0 text-right">
                 <StatusBadge status={alert.status} />
@@ -34,7 +38,13 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
               Otevřít sekci <ArrowRight className="h-3.5 w-3.5" />
             </p>
           </Link>
-        ))}
+        )) : (
+          <EmptyState
+            icon={AlertTriangle}
+            title="Žádné aktivní alerty"
+            description="Aktuální snapshot nemá červené ani amber priority."
+          />
+        )}
       </div>
     </section>
   );

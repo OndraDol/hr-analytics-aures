@@ -9,6 +9,13 @@ import {
   type KpiDefinition,
   type KpiStatus,
 } from '@/lib/kpi/catalog';
+import {
+  calculateSeverityScore,
+  evaluateThresholdDistance,
+  getThresholdMetadata,
+  getThresholdRationale,
+  statusFor,
+} from '@/lib/kpi/thresholds';
 
 const FALLBACK_VALUES: Record<KpiCode, number> = {
   HR_STATS: 1_735,
@@ -103,29 +110,7 @@ const averageCostPerHire = (requisitions: readonly RecruitmentRequisition[]): nu
 };
 
 export function evaluateStatus(definition: KpiDefinition, value: number): KpiStatus {
-  const { thresholds, direction } = definition;
-
-  if (direction === 'up') {
-    if (value >= thresholds.green) return 'green';
-    if (value >= thresholds.amber) return 'amber';
-    return 'red';
-  }
-
-  if (direction === 'down') {
-    if (value <= thresholds.green) return 'green';
-    if (value <= thresholds.amber) return 'amber';
-    return 'red';
-  }
-
-  const target = thresholds.target ?? thresholds.green;
-  const greenTolerance = thresholds.targetToleranceGreen ?? 0.05;
-  const amberTolerance = thresholds.targetToleranceAmber ?? 0.1;
-  const delta = Math.abs(value - target);
-  const relativeDelta = Math.abs(target) > 1 ? delta / Math.abs(target) : delta;
-
-  if (relativeDelta <= greenTolerance) return 'green';
-  if (relativeDelta <= amberTolerance) return 'amber';
-  return 'red';
+  return statusFor(definition, value);
 }
 
 export function deltaVsTarget(definition: KpiDefinition, value: number): number | null {
@@ -294,14 +279,27 @@ export async function evaluateKpi(
     const point = await calculateKpiValue(provider, code, monthPeriod, context.filter);
     sparkline.push({ period: periodLabel(monthPeriod), value: point.value });
   }
+  const status = evaluateStatus(definition, current.value);
+  const thresholdDistance = evaluateThresholdDistance(definition, current.value);
+  const thresholdMetadata = getThresholdMetadata(definition);
 
   return {
     code,
     definition,
     value: current.value,
     formattedValue: formatKpiValue(current.value, definition.unit),
-    status: evaluateStatus(definition, current.value),
+    status,
     deltaVsTarget: deltaVsTarget(definition, current.value),
+    thresholdDistance,
+    thresholdMetadata,
+    thresholdRationaleCs: getThresholdRationale(definition),
+    severityScore: calculateSeverityScore(
+      definition,
+      current.value,
+      status,
+      current.value - previous.value,
+      current.dataQuality,
+    ),
     trend: {
       previousValue: previous.value,
       mom: current.value - previous.value,

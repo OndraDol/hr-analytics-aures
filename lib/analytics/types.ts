@@ -1,5 +1,6 @@
 import type { CommonFilter, Period } from '@/lib/data/provider';
 import type { KpiCode, KpiDefinition, KpiStatus } from '@/lib/kpi/catalog';
+import type { ThresholdDistance, ThresholdMetadata } from '@/lib/kpi/thresholds';
 
 export interface KpiEvaluationContext {
   period: Period;
@@ -24,6 +25,10 @@ export interface KpiEvaluation {
   formattedValue: string;
   status: KpiStatus;
   deltaVsTarget: number | null;
+  thresholdDistance: ThresholdDistance;
+  thresholdMetadata: ThresholdMetadata;
+  thresholdRationaleCs: string;
+  severityScore: number;
   trend: KpiTrend;
   sparkline: KpiSparkPoint[];
   period: Period;

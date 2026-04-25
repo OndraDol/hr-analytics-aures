@@ -46,7 +46,7 @@
 - `pnpm gen:data`, `pnpm check:data`, `pnpm lint`, `pnpm build`, `pnpm typecheck`, `pnpm test` — všechny zelené.
 - GitHub: https://github.com/OndraDol/hr-analytics-aures (private).
 - Lokální adresář: `C:\Users\ondrej.dolejs\Desktop\Projekty\HR_Analytics`
-- Orphan soubor `HR_reporting_ver2.xlsx` v rootu (Excel jej stále blokuje) — po zavření přesunout do `data-sources/raw/` a commitnout.
+- Historická poznámka: původně byl `HR_reporting_ver2.xlsx` orphan v rootu. Od M11 zůstává v kořeni repozitáře jako primární zadávací workbook a je pokrytý traceability matrix.
 
 **Jak navázat (např. z mobilu / jiné session):**
 1. `git clone https://github.com/OndraDol/hr-analytics-aures` (nebo pull, pokud už je klonován)
@@ -103,7 +103,8 @@
 
 ### Přesouvané / reorganizované
 
-- `HR_reporting_ver2.xlsx`, `Nastupy_vystupy.xlsx`, `Staffplan.xlsx`, `recruitment_report.xlsx` → `data-sources/raw/`
+- `Nastupy_vystupy.xlsx`, `Staffplan.xlsx`, `recruitment_report.xlsx` → `data-sources/raw/`
+- `HR_reporting_ver2.xlsx` → zůstává v kořeni repozitáře jako primární zadávací workbook od M11.
 
 ---
 
@@ -113,7 +114,7 @@
 
 **Files:**
 - Create: `.gitignore`
-- Move: 4 XLSX soubory → `data-sources/raw/`
+- Move: raw exporty → `data-sources/raw/`; zadávací `HR_reporting_ver2.xlsx` zůstává v rootu od M11.
 
 - [ ] **Step 1: Inicializovat git repo**
 
@@ -127,7 +128,7 @@ git branch -M main
 
 ```bash
 mkdir -p data-sources/raw
-mv HR_reporting_ver2.xlsx Nastupy_vystupy.xlsx Staffplan.xlsx recruitment_report.xlsx data-sources/raw/
+mv Nastupy_vystupy.xlsx Staffplan.xlsx recruitment_report.xlsx data-sources/raw/
 ```
 
 - [ ] **Step 3: Vytvořit `.gitignore`**

@@ -498,10 +498,13 @@ async function buildEsg(
   view: OperationalViewDefinition,
   period: Period,
 ): Promise<DetailDashboardData> {
-  const [employees, accidents, training, labels, countries] = await Promise.all([
+  const reviewCycle = Number(period.to.slice(0, 4)) >= 2025 ? '2025' : period.to.slice(0, 4);
+  const [employees, events, accidents, training, reviews, labels, countries] = await Promise.all([
     provider.getEmployees(),
+    provider.getWorkforceEvents({ from: `${period.to.slice(0, 4)}-01-01`, to: period.to }),
     provider.getAccidents(period),
     provider.getTraining(period),
+    provider.getPerformanceReviews(reviewCycle),
     divisionLabels(provider),
     divisionCountries(provider),
   ]);
@@ -510,17 +513,41 @@ async function buildEsg(
   const managers = active.filter((employee) => employee.grade === 'B0' || employee.grade === 'B1' || employee.grade === 'B2');
   const womenManagers = managers.filter((employee) => employee.gender === 'female');
   const avgAge = mean(active, (employee) => ageAt(employee.birthDate, period.to));
+  const avgManagerAge = mean(managers, (employee) => ageAt(employee.birthDate, period.to));
+  const leavers = events.filter((event) => event.type === 'terminate');
+  const contractTypes = new Set(active.map((employee) => employee.employmentType));
+  const nationalities = new Set(active.map((employee) => employee.nationality));
+  const externalWorkers = active.filter((employee) => employee.employmentType === 'ICO' || employee.employmentType === 'DPP' || employee.employmentType === 'DPČ');
   const countryCounts = new Map<string, number>();
   for (const employee of active) add(countryCounts, countries.get(employee.divisionId) ?? employee.country, 1);
   const accidentsByDivision = new Map<string, number>();
   for (const accident of accidents) add(accidentsByDivision, accident.divisionId, 1);
+  const trainingHours = sum(training, (row) => row.hours);
+  const trainingAreas = new Set(training.map((row) => row.area));
+  const reviewCoverage = (reviews.length / Math.max(active.length, 1)) * 100;
 
   const datapoints = [
-    { label: 'Active HC', value: formatNumber(active.length), secondary: 'ready', detail: 'staffplan + workforce skeleton' },
-    { label: 'Gender split', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', detail: 'male/female podle HRIS exportu' },
-    { label: 'Women management', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', detail: 'B0-B2 heuristika grade levelu' },
-    { label: 'Training hours', value: formatNumber(sum(training, (row) => row.hours), 0), secondary: 'mock', detail: 'generated L&D fakta' },
-    { label: 'Work accidents', value: formatNumber(accidents.length), secondary: 'mock', detail: 'generated BOZP fakta' },
+    { label: 'Počet zaměstnanců podle země', value: formatNumber(active.length), secondary: 'ready', detail: 'country breakdown v grafu' },
+    { label: 'Zaměstnanci podle typu pracovního úvazku', value: formatNumber(contractTypes.size), secondary: 'ready', detail: 'PP/DPP/DPČ/STATUTAR/ICO/UCEN' },
+    { label: 'Struktura zaměstnanců podle pohlaví', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', detail: 'male/female podle HRIS skeletonu' },
+    { label: 'Struktura managementu podle pohlaví', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', detail: 'B0-B2 heuristika grade levelu' },
+    { label: 'Roční fluktuace zaměstnanců podle země', value: formatNumber(leavers.length), secondary: 'ready', detail: 'YTD leavers, country segmentace přes HRIS' },
+    { label: 'Hodnocení náborového procesu', value: '4,1', secondary: 'mock', detail: 'Employer Evaluation KPI, recruiter rating není v raw exportu plně auditní' },
+    { label: 'Roční fluktuace podle typu pracovní pozice', value: formatNumber(leavers.length), secondary: 'partial', detail: 'job type je odvozený z role family/grade heuristiky' },
+    { label: '% zaměstnanců s hodnocením výkonu', value: formatPct(reviewCoverage), secondary: 'mock', detail: 'annual appraisal fakta z mock vrstvy' },
+    { label: 'Školení podle oblasti zaměření', value: formatNumber(trainingAreas.size), secondary: 'mock', detail: 'generated L&D areas' },
+    { label: 'Počet hodin školení a účastníků', value: formatNumber(trainingHours), secondary: 'mock', detail: `${formatNumber(new Set(training.map((row) => row.employeeId)).size)} účastníků` },
+    { label: 'Počet hodin školení na zaměstnance', value: formatNumber(trainingHours / Math.max(active.length, 1), 1), secondary: 'mock', detail: 'training hours / active HC' },
+    { label: 'Státní příslušnost podle země', value: formatNumber(nationalities.size), secondary: 'ready', detail: 'nationality atribut v employee skeletonu' },
+    { label: 'Věková struktura zaměstnanců', value: formatNumber(avgAge, 1), secondary: 'ready', detail: 'průměrný věk, detailní histogram v HR statistice' },
+    { label: 'Věková struktura managementu', value: formatNumber(avgManagerAge, 1), secondary: 'needs validation', detail: 'management = B0-B2 heuristika' },
+    { label: 'Management podle pohlaví', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', detail: 'duplicitní ESG požadavek ze sheetu' },
+    { label: 'Pracovní úrazy', value: formatNumber(accidents.length), secondary: 'mock', detail: 'generated BOZP fakta podle divize' },
+    { label: 'ESRS S1-6 Pohlaví', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', detail: 'gender datapoint' },
+    { label: 'ESRS S1-6 Fluktuace', value: formatNumber(leavers.length), secondary: 'ready', detail: 'turnover datapoint z workforce events' },
+    { label: 'ESRS S1-7 Nezaměstnanci', value: formatNumber(externalWorkers.length), secondary: 'partial', detail: 'DPP/DPČ/ICO proxy, vyžaduje HR potvrzení' },
+    { label: 'ESRS S1-11 Sociální ochrana', value: 'scope', secondary: 'blocked', detail: 'není ve zdrojových datech pro prezentační prototyp' },
+    { label: 'ESRS S1-13 Vzdělávání', value: formatNumber(trainingHours), secondary: 'mock', detail: 'training datapoint z L&D generátoru' },
   ];
 
   return {

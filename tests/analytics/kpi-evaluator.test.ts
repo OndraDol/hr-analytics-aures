@@ -14,6 +14,8 @@ describe('evaluateKpi', () => {
 
     expect(evaluation.value).toBeGreaterThan(30);
     expect(evaluation.status).toBe('red');
+    expect(evaluation.severityScore).toBeGreaterThan(70);
+    expect(evaluation.thresholdDistance.messageCs).toContain('červený práh');
     expect(evaluation.sparkline).toHaveLength(12);
   });
 
@@ -22,13 +24,15 @@ describe('evaluateKpi', () => {
 
     expect(evaluation.value).toBe(30);
     expect(evaluation.status).toBe('amber');
+    expect(evaluation.thresholdRationaleCs).toContain('benchmark');
   });
 
   it('evaluates eNPS from survey responses', async () => {
     const evaluation = await evaluateKpi(provider, 'ENPS', { period });
 
     expect(evaluation.value).toBe(8.5);
-    expect(evaluation.status).toBe('amber');
+    expect(evaluation.status).toBe('red');
+    expect(evaluation.thresholdMetadata.reviewOwner).toBe('HR reporting');
   });
 });
 

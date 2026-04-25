@@ -6,6 +6,21 @@ Poslední aktualizace: 2026-04-25
 
 ---
 
+## Aktuální stav projektu (2026-04-25)
+
+**Prezentační prototyp v1 je hotový na 100 % a M11 traceability pass je doplněný.**
+
+Procento vychází z deterministického modelu v `lib/project/progress.ts`: dokončeno je 11/11 milníků a 100/100 procentních bodů. Stav se vztahuje na **webový prezentační prototyp nad mock daty**, ne na budoucí produkční Power BI/DWH implementaci.
+
+Součástí dokončené v1 je:
+- Executive Dashboard se zdravotním skóre, alerty, změnami a scorecardy sekcí I-VIII.
+- Sekční dashboardy, Retention detail, analytické drill-downy a operativní pohledy.
+- Demo Copilot, Action Backlog, PDF briefing přes print flow a demo walkthrough pro HR Directorku.
+- Primární workbook `HR_reporting_ver2.xlsx` v kořeni repozitáře a traceability matrix `docs/traceability/hr-reporting-v2-traceability.md`.
+- Stabilizační ověření: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` a HTTP smoke hlavních rout.
+
+---
+
 ## 0) Upřesněný cíl projektu (2026-04-24)
 
 **Cílem NENÍ postavit datový warehouse ani produkční reporting.** Cílem je:
@@ -352,7 +367,7 @@ Uživatel do adresáře nahrál 3 exporty. **Staly se kostrou datového modelu**
 4. Pokračuj plánem M2 — KPI katalog + analytická vrstva.
 
 **Otevřené drobnosti:**
-- `HR_reporting_ver2.xlsx` je stále otevřený v Excelu na workstationu — nelze přesunout do `data-sources/raw/`. Až uzavřeš, spusť `mv HR_reporting_ver2.xlsx data-sources/raw/ && git add data-sources/raw/HR_reporting_ver2.xlsx && git commit -m "chore: move HR reporting návrh into data-sources/raw" && git push`.
+- Historická poznámka o chybějícím workbooku je uzavřená. `HR_reporting_ver2.xlsx` je od M11 dostupný v kořeni repozitáře a je primární zdroj pravdy pro traceability.
 
 ## 9) LLM revize — implementace bez API (2026-04-24)
 
@@ -558,20 +573,22 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - `pnpm typecheck`
 - `pnpm test tests/operational/operational-views.test.ts`
 
-**Další na řadě: M8 — AI Copilot**
-- sidebar / sheet,
-- pre-canned otázky a odpovědi,
-- typewriter efekt,
-- mock provider připravený na live API.
+**M8 — AI Copilot implementován**
+- ✅ Globální floating button ve všech stránkách přes `AppShell`.
+- ✅ Sidebar / sheet s chat-like rozhraním.
+- ✅ 10 pre-canned dotazů a markdown odpovědí v `content/copilot-queries.json`.
+- ✅ Kontextové řazení dotazů podle aktuální route.
+- ✅ Typewriter efekt pro odpověď.
+- ✅ Mock `CopilotProvider` připravený na budoucí live provider.
 
 ## 18) Plán implementace — M8 AI Copilot (2026-04-25)
 
-**Plán připraven:**
+**Implementováno:**
 - ✅ Detailní plán je uložený v `docs/plans/2026-04-25-m8-ai-copilot.md`.
 - ✅ M8 zůstává mock-only: žádné live API volání, protože prototyp nemá API klíč.
-- ✅ Architektura bude API-ready přes `CopilotProvider` interface.
-- ✅ Copilot bude globální doplněk v `AppShell`, dostupný přes floating button a sidebar.
-- ✅ Obsah bude v `content/copilot-queries.json` jako sada 8-12 předpřipravených dotazů a markdown odpovědí.
+- ✅ Architektura je API-ready přes `CopilotProvider` interface.
+- ✅ Copilot je globální doplněk v `AppShell`, dostupný přes floating button a sidebar.
+- ✅ Obsah je v `content/copilot-queries.json` jako sada 10 předpřipravených dotazů a markdown odpovědí.
 
 **Navržené soubory pro M8:**
 - `lib/ai/copilot-provider.ts`
@@ -581,8 +598,95 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - `content/copilot-queries.json`
 - `tests/ai/copilot-provider.test.ts`
 
-**Ověření plánované pro M8:**
+**Ověření cíleně:**
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm test tests/ai/copilot-provider.test.ts`
-- `pnpm build`
+
+## 19) Stav implementace — M9 Polish + PDF briefing (2026-04-25)
+
+**Hotovo:**
+- ✅ `/briefing` generuje executive briefing nad stejným datovým modelem jako hlavní dashboard.
+- ✅ Export do PDF je řešený přes browser print flow; print CSS skrývá sidebar, header a Copilot UI.
+- ✅ `AppShell` ukazuje dokončení prezentačního prototypu: **100 %**.
+- ✅ Procentuální model je deterministický v `lib/project/progress.ts`; před M9 + PDF exportem byl projekt vedený jako **82 %**.
+- ✅ Přidány sdílené loading a empty states pro polish hlavních rout.
+- ✅ Demo průchod pro HR Directorku je popsaný v `docs/demo-walkthrough-hr-director.md`.
+- ✅ Plán a stav M9 jsou uložené v `docs/plans/2026-04-25-m9-polish-and-demo.md`.
+
+**Ověření cíleně:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test tests/project/progress.test.ts tests/briefing/executive-briefing.test.ts tests/smoke.test.ts`
+- `pnpm test` (66 testů)
+- `pnpm build` (23 statických stránek včetně `/briefing`)
+
+## 20) Stav implementace — Action Backlog (2026-04-25)
+
+**Hotovo:**
+- ✅ `/akce` přidává centrální akční backlog pro HR vedení.
+- ✅ Backlog se staví deterministicky ze všech KPI: status, priorita, vlastník, doporučená akce, top driver a termín.
+- ✅ Navigace v `AppShell` obsahuje novou položku `Akční backlog`.
+- ✅ Demo walkthrough vede po Executive Dashboardu přes nový backlog a teprve potom do detailní analytiky.
+- ✅ `tests/actions/action-backlog.test.ts` ověřuje, že backlog obsahuje jen non-green akce, má vlastníky, odkazy a stabilní řazení.
+
+**Ověření cíleně:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test tests/actions/action-backlog.test.ts`
+
+## 21) Stabilizace před předáním v1 (2026-04-25)
+
+**Hotovo:**
+- ✅ `tests/smoke.test.ts` už není placeholder; ověřuje hlavní demo view-modely a routovatelnost odkazů z Executive Dashboardu a Action Backlogu.
+- ✅ Demo walkthrough je srovnaný s aktuálním flow: Executive Dashboard → Action Backlog → detailní analytika → Copilot → PDF briefing.
+- ✅ Produkční build generuje 24 statických stránek včetně `/akce` a `/briefing`.
+
+**Ověření:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test` (68 testů)
+- `pnpm build` (24 statických stránek)
+- HTTP smoke přes `next start`: `/`, `/akce`, `/briefing`, `/sekce/retention`, `/sekce/hr-statistics`, `/analytika/attrition`, `/operativa/hired-fired`, `/operativa/esg`
+
+**Poznámka k lokálnímu serveru:**
+- Výchozí `pnpm dev` je kompatibilní s tímto Termux prostředím; Turbopack zůstává volitelně dostupný přes `pnpm dev:turbo`.
+
+## 22) M11 XLS perfection pass (2026-04-25)
+
+**Aktuální procento dokončení:**
+- Webový prezentační prototyp v1: **100 % hotovo**.
+- Výpočet: `lib/project/progress.ts` eviduje 11/11 dokončených milníků a 100/100 procentních bodů.
+- Pozor: 100 % se vztahuje na v1 prototyp nad mock daty, ne na budoucí produkční Power BI/DWH implementaci.
+
+**Doplněno v M11:**
+- `HR_reporting_ver2.xlsx` je přítomný v kořeni repozitáře a je primární zdroj pravdy pro zadání.
+- `docs/traceability/hr-reporting-v2-traceability.md` mapuje workbook na implementaci: 20 KPI, operativní reporty, ESG/ESRS datapointy a stav pokrytí.
+- KPI katalog je srovnaný s klíčovými prahy z `NÁVRH_do_BI` pro TTF, TTF critical, CPH, fluktuaci, kritickou fluktuaci, succession a eNPS.
+- Threshold vrstva je rozšířená o metodiku prahu, zdroj, jistotu, vlastníka revize, vzdálenost od hranice, vizualizační pásma a severity score.
+- KPI karty zobrazují threshold bar s target markerem a executive/action vrstvy řadí rizika podle severity score.
+- ESG operativní pohled explicitně ukazuje readiness pro všech 21 položek z `ESG reporty_actual`.
+- Přidaný je test `tests/traceability/xls-traceability.test.ts`, který ověřuje workbook sheety a pokrytí KPI kódů v traceability dokumentu.
+
+**Ověření po M11 + threshold metodice:**
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test` — 18 souborů / 72 testů
+- `pnpm build` — 24 statických stránek
+
+**Handoff dokumenty:**
+- `docs/next-session-handoff.md` — první dokument k otevření v další session.
+- `docs/plans/2026-04-25-m11-xls-perfection-pass.md` — stav a akceptační kritéria M11.
+- `docs/traceability/hr-reporting-v2-traceability.md` — explicitní XLS traceability matrix.
+
+**Důležité zjištění ke zdrojům:**
+- Primární `HR_reporting_ver2.xlsx` je dostupný v kořeni repozitáře.
+- Dostupné jsou raw exporty v `data-sources/raw/`: `Nastupy_vystupy.xlsx`, `Staffplan.xlsx`, `recruitment_report.xlsx`.
+- Pokud se bude workbook v budoucnu měnit, je potřeba aktualizovat traceability matrix i související KPI threshold testy.
+
+**Doporučený první krok příště:**
+1. Přečíst `docs/next-session-handoff.md`.
+2. Přečíst traceability matrix.
+3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`).
+4. Spustit `pnpm dev --hostname 127.0.0.1 --port 3000` a projít demo flow.
+5. Další práce už má být buď business feedback polish, nebo samostatná produkční Power BI/DWH fáze.

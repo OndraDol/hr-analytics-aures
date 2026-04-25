@@ -1,6 +1,6 @@
 # Implementační plán — Milník 8 (AI Copilot)
 
-> **Stav k 2026-04-25:** Plán připravený po dokončení M6 a M7. Cíl je přidat demo Copilota jako mock AI vrstvu bez live API klíče, ale s architekturou připravenou na pozdější přepnutí na reálný model.
+> **Stav k 2026-04-25:** M8 je implementovaný. Aplikace má globální demo Copilot dostupný přes floating button ve všech stránkách, mock provider, 10 předpřipravených dotazů, typewriter efekt a testy provideru.
 
 ## Cíl
 
@@ -13,7 +13,7 @@ Doplnit globální AI Copilot zážitek napříč aplikací:
 5. `CopilotProvider` interface pro mock a budoucí live implementaci.
 6. Kontextové dotazy podle aktuální stránky: Executive, sekce, analytika, operativa.
 
-## Navržené soubory
+## Hotové soubory
 
 | Soubor | Účel |
 |---|---|
@@ -66,13 +66,13 @@ Minimální sada pro demo:
 
 ## Implementační kroky
 
-1. Připravit JSON obsah a provider.
-2. Přidat testy provideru.
-3. Postavit client component sidebar a typewriter.
-4. Napojit FAB do `AppShell`.
-5. Přidat kontext z `activeHref`.
-6. Ověřit na desktopu i mobilním layoutu.
-7. Zapsat stav do `PROJEKT_ZAZNAM.md`.
+1. ✅ Připravit JSON obsah a provider.
+2. ✅ Přidat testy provideru.
+3. ✅ Postavit client component sidebar a typewriter.
+4. ✅ Napojit FAB do `AppShell`.
+5. ✅ Přidat kontext z `activeHref`.
+6. ✅ Ověřit přes lint, typecheck a cílený test.
+7. ✅ Zapsat stav do `PROJEKT_ZAZNAM.md`.
 
 ## Ověření
 

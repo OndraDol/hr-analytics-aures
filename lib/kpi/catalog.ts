@@ -29,6 +29,21 @@ export type KpiDirection = 'up' | 'down' | 'target';
 export type KpiFrequency = 'monthly' | 'quarterly' | 'half-yearly' | 'yearly';
 export type KpiTrendType = 'MoM' | 'QoQ' | 'YoY';
 export type KpiUnit = 'pct' | 'days' | 'CZK' | 'count' | 'score' | 'ratio' | 'months' | 'mix';
+export type KpiThresholdType =
+  | 'absolute'
+  | 'budgetTolerance'
+  | 'targetBand'
+  | 'benchmark'
+  | 'dataDrivenPercentile'
+  | 'seasonal';
+export type KpiThresholdSource =
+  | 'xls'
+  | 'externalBenchmark'
+  | 'historicalData'
+  | 'storyDefault'
+  | 'budget'
+  | 'hrToConfirm';
+export type KpiThresholdConfidence = 'high' | 'medium' | 'low' | 'needs-validation';
 export type DataSource =
   | 'HRIS'
   | 'Payroll'
@@ -45,6 +60,13 @@ export interface KpiThresholds {
   target?: number;
   targetToleranceGreen?: number;
   targetToleranceAmber?: number;
+  type?: KpiThresholdType;
+  source?: KpiThresholdSource;
+  confidence?: KpiThresholdConfidence;
+  benchmarkNoteCs?: string;
+  validFrom?: string;
+  reviewOwner?: string;
+  reviewCadence?: string;
 }
 
 export interface KpiDefinition {
@@ -127,8 +149,8 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'MoM',
     unit: 'days',
-    thresholds: { green: 8, amber: 14, red: 20, target: 0 },
-    actionIfOffTrackCs: 'Zadat manažerům plán čerpání u týmů s nejvyšším zůstatkem.',
+    thresholds: { green: 0, amber: 0, red: 5, target: 0 },
+    actionIfOffTrackCs: 'Monitorovat a vynutit plán čerpání dovolené u týmů s nejvyšším zůstatkem.',
     crossCutting: ['absence-coverage'],
     valueProvider: 'derived',
   },
@@ -272,7 +294,7 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'MoM',
     unit: 'days',
-    thresholds: { green: 27, amber: 35, red: 45, target: 27 },
+    thresholds: { green: 27, amber: 30, red: 32, target: 27 },
     actionIfOffTrackCs: 'Najít fázi náboru s nejdelším čekáním a upravit SLA náboru.',
     crossCutting: ['recruitment-funnel'],
     valueProvider: 'getRequisitions',
@@ -293,7 +315,7 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'MoM',
     unit: 'days',
-    thresholds: { green: 32, amber: 42, red: 55, target: 32 },
+    thresholds: { green: 30, amber: 33, red: 40, target: 30 },
     actionIfOffTrackCs: 'Zapojit hiring manažery a zrychlit schvalování u klíčových rolí.',
     crossCutting: ['recruitment-funnel'],
     valueProvider: 'getRequisitions',
@@ -334,7 +356,7 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'YoY',
     unit: 'CZK',
-    thresholds: { green: 45_000, amber: 60_000, red: 80_000, target: 45_000 },
+    thresholds: { green: 16_000, amber: 17_000, red: 18_000, target: 16_000 },
     actionIfOffTrackCs: 'Porovnat náklady a kvalitu náboru podle zdrojů kandidátů.',
     crossCutting: ['recruitment-funnel'],
     valueProvider: 'getRequisitions',
@@ -355,8 +377,8 @@ export const KPI_CATALOG = [
     direction: 'up',
     trendType: 'QoQ',
     unit: 'pct',
-    thresholds: { green: 72, amber: 60, red: 50, target: 75 },
-    actionIfOffTrackCs: 'Prověřit zdroje kandidátů s nízkou kvalitou a upravit screening.',
+    thresholds: { green: 32, amber: 30, red: 25, target: 32 },
+    actionIfOffTrackCs: 'Prověřit náborový proces, proškolit hiring manažery a upravit screening.',
     crossCutting: ['attrition', 'recruitment-funnel'],
     valueProvider: 'getPerformanceReviews',
   },
@@ -376,8 +398,8 @@ export const KPI_CATALOG = [
     direction: 'up',
     trendType: 'MoM',
     unit: 'score',
-    thresholds: { green: 4.2, amber: 3.8, red: 3.3, target: 4.3 },
-    actionIfOffTrackCs: 'Zaměřit komunikaci a candidate experience na nejslabší zdroje.',
+    thresholds: { green: 4, amber: 3, red: 2, target: 4.5 },
+    actionIfOffTrackCs: 'Proškolit hiring manažery v candidate experience a sjednotit náborový proces.',
     valueProvider: 'derived',
   },
   {
@@ -396,8 +418,8 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'YoY',
     unit: 'pct',
-    thresholds: { green: 22, amber: 28, red: 35, target: 20 },
-    actionIfOffTrackCs: 'Spustit retenční analýzu podle divize, tenure a manažera.',
+    thresholds: { green: 25, amber: 30, red: 32, target: 25 },
+    actionIfOffTrackCs: 'Zlepšit náborový proces a spustit retenční analýzu podle divize, tenure a manažera.',
     crossCutting: ['attrition'],
     valueProvider: 'getWorkforceEvents',
   },
@@ -417,8 +439,8 @@ export const KPI_CATALOG = [
     direction: 'down',
     trendType: 'YoY',
     unit: 'pct',
-    thresholds: { green: 5, amber: 10, red: 15, target: 0 },
-    actionIfOffTrackCs: 'Provést 1:1 review s nadřízenými u rizikových segmentů a ověřit nástupce.',
+    thresholds: { green: 0, amber: 5, red: 10, target: 0 },
+    actionIfOffTrackCs: 'Spustit retenční plán pro klíčové role, provést 1:1 review a ověřit nástupce.',
     crossCutting: ['attrition'],
     valueProvider: 'getWorkforceEvents',
   },
@@ -438,7 +460,7 @@ export const KPI_CATALOG = [
     direction: 'up',
     trendType: 'QoQ',
     unit: 'pct',
-    thresholds: { green: 85, amber: 70, red: 55, target: 90 },
+    thresholds: { green: 80, amber: 60, red: 60, target: 80 },
     actionIfOffTrackCs: 'Doplnit nástupce pro kritické role bez pokrytí a navázat rozvojový plán.',
     valueProvider: 'getSuccessionPlans',
   },
@@ -458,7 +480,7 @@ export const KPI_CATALOG = [
     direction: 'up',
     trendType: 'YoY',
     unit: 'score',
-    thresholds: { green: 20, amber: 5, red: -10, target: 25 },
+    thresholds: { green: 15, amber: 10, red: 5, target: 15 },
     actionIfOffTrackCs: 'Zaměřit follow-up na segmenty s nejnižším skóre a propojit je s fluktuací.',
     crossCutting: ['attrition'],
     valueProvider: 'getEnpsResponses',

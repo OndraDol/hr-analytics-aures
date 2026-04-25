@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, TableRowsSplit } from 'lucide-react';
 import { KpiCard } from '@/components/kpi/kpi-card';
 import { SectionBreakdownChart, SectionTrendChart } from '@/components/charts/section-charts';
+import { EmptyState } from '@/components/layout/empty-state';
 import type { SectionDashboardData, SectionMetric } from '@/lib/analytics/section-summaries';
 import { cn } from '@/lib/utils';
 
@@ -99,16 +100,24 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
           />
         </Panel>
         <Panel title={data.table.title} subtitle={data.table.subtitle}>
-          <div className="overflow-hidden rounded-md border border-zinc-200">
-            {data.table.rows.map((row) => (
-              <div key={`${row.label}-${row.value}-${row.secondary}`} className="grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_0.55fr_0.55fr_1.5fr]">
-                <p className="text-sm font-medium text-zinc-950">{row.label}</p>
-                <p className="font-mono text-sm text-zinc-800">{row.value}</p>
-                <p className="font-mono text-sm text-zinc-600">{row.secondary}</p>
-                <p className="text-sm text-zinc-500">{row.detail}</p>
-              </div>
-            ))}
-          </div>
+          {data.table.rows.length > 0 ? (
+            <div className="overflow-hidden rounded-md border border-zinc-200">
+              {data.table.rows.map((row) => (
+                <div key={`${row.label}-${row.value}-${row.secondary}`} className="grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_0.55fr_0.55fr_1.5fr]">
+                  <p className="text-sm font-medium text-zinc-950">{row.label}</p>
+                  <p className="font-mono text-sm text-zinc-800">{row.value}</p>
+                  <p className="font-mono text-sm text-zinc-600">{row.secondary}</p>
+                  <p className="text-sm text-zinc-500">{row.detail}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={TableRowsSplit}
+              title="Bez řádkových dat"
+              description="Pro aktuální období není k dispozici žádný detail."
+            />
+          )}
         </Panel>
       </section>
 

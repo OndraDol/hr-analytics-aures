@@ -17,6 +17,8 @@ describe('buildExecutiveDashboard', () => {
       'ENPS',
     ]);
     expect(dashboard.topAlerts.length).toBeGreaterThan(0);
+    expect(dashboard.topAlerts[0]!.severityScore).toBeGreaterThan(0);
+    expect(dashboard.topAlerts[0]!.thresholdDistanceCs.length).toBeGreaterThan(0);
     expect(dashboard.sectionScorecards).toHaveLength(SECTION_CATALOG.length);
     expect(dashboard.aiSummaryCs.length).toBeGreaterThan(30);
   });
