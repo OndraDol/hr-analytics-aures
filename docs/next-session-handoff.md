@@ -15,7 +15,9 @@ V1 prototyp je 100 % hotový, nyní startuje **v2 Perfection Pass** — přechod
 - **M16** Executive PDF Mastery + Operational Polish + ESG Audit Trail — McKinsey-grade PDF, print preview, ESG Data Quality column.
 - **M17** Stabilizace v2 — smoke + a11y + dark mode review, walkthrough, PROJEKT_ZAZNAM, progress model.
 
-**Další krok:** otevřít master plán a v něm M12 sekci, založit detailní bite-sized plán `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes `superpowers:writing-plans` skill, pak start TDD exekuce.
+**Další krok:** otevřít master plán a v něm M12 sekci, založit detailní bite-sized plán `docs/plans/2026-04-DD-v12-decision-support-layer.md` (TDD: failing test → minimal impl → commit, viz konvence M0–M11 plánů), pak start exekuce.
+
+**Implementace:** v2 milníky reálně provádí **Codex** (OpenAI Codex/CLI). Master plán a navazující detailní plány jsou Codex-friendly (samostatné, bez závislosti na specifických nástrojích). Claude Code je primárně pro plánování a review.
 
 ## Aktuální stav
 
@@ -78,7 +80,7 @@ HTTP smoke test přes lokální server prošel pro:
 
 Spustit **v2 Perfection Pass** podle [master plánu](plans/2026-04-25-v2-perfection-master-plan.md):
 
-1. Vytvořit detailní plán M12 (Decision Support Layer) v `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes skill `superpowers:writing-plans`.
+1. Vytvořit detailní plán M12 (Decision Support Layer) v `docs/plans/2026-04-DD-v12-decision-support-layer.md` podle konvence M0–M11 (TDD bite-sized tasky: failing test → minimal impl → run → commit, s explicitními file paths a code bloky, aby Codex mohl exekuovat task-by-task).
 2. M12 a M13 mohou jít paralelně po krátkém spike — KPI Card 3-zone refactor (M12) + AURES brand tokens (M13) jsou kompatibilní.
 3. Review body: po M12, M14 a M16 vyžádat HR Director feedback.
 

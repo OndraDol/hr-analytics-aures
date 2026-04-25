@@ -699,8 +699,8 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 1. Přečíst `docs/next-session-handoff.md`.
 2. Přečíst v2 master plán `docs/plans/2026-04-25-v2-perfection-master-plan.md`.
 3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`) — ověřit, že v1 baseline drží.
-4. Vytvořit detailní bite-sized plán pro **M12 Decision Support Layer** v `docs/plans/2026-04-DD-v12-decision-support-layer.md` přes skill `superpowers:writing-plans`.
-5. Spustit M12 implementaci přes TDD workflow (write failing test → minimal impl → commit).
+4. Vytvořit detailní bite-sized plán pro **M12 Decision Support Layer** v `docs/plans/2026-04-DD-v12-decision-support-layer.md` podle konvence M0–M11 (TDD: failing test → minimal impl → run → commit, s explicitními file paths a code bloky).
+5. Spustit M12 implementaci. Reálnou exekuci v2 provádí **Codex**; plány jsou psané samostatně, ať je Codex umí task-by-task vykonat bez závislosti na konkrétním agentu.
 
 ## 23) v2 Perfection Pass — master plán schválen (2026-04-25)
 

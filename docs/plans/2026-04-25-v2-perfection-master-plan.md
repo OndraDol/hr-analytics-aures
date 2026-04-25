@@ -451,10 +451,20 @@ Manuální HTTP smoke routes:
 
 ## Návazné kroky (po schválení tohoto master plánu)
 
-1. **M12 detailní plán** — `docs/plans/2026-04-DD-v12-decision-support-layer.md` rozepíše bite-sized tasky (write failing test → minimal impl → commit) přes `superpowers:writing-plans`.
+1. **M12 detailní plán** — `docs/plans/2026-04-DD-v12-decision-support-layer.md` rozepíše bite-sized TDD tasky (failing test → minimal impl → run → commit) s explicitními file paths a code bloky. Konvence z M0–M11.
 2. **M13–M17 detailní plány** vznikají postupně při zahájení každého milníku.
 3. **Review body** — po M12, M14 a M16 si vyžádat HR Director feedback (review po dvou milnících).
 4. **PROJEKT_ZAZNAM aktualizace** — průběžně doplňovat sekci „Aktuální stav v2 Perfection Pass" po každém dokončeném milníku.
+
+### Implementační režim
+
+Reálnou implementaci v2 provádí **Codex** (OpenAI Codex/CLI). Master plán i detailní plány jsou psané jako self-contained blueprint — bez odkazu na nástroje konkrétního agenta. Každý task má:
+- explicitní file path,
+- code block (failing test → implementace),
+- shell příkaz s očekávaným výstupem,
+- commit message draft.
+
+Claude Code (případně další agent) zůstává primárně pro plánování a review.
 
 ---
 
