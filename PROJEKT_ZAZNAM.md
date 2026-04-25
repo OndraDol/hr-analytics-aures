@@ -416,3 +416,26 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 2. Projít otevřené otázky (sekce 3), dohodnout, které zodpoví uživatel a které je třeba eskalovat na HR Director / IT.
 3. Schválit pilotní rozsah a přístup.
 4. Vytvořit samostatný **spec** pro pilot a **plán implementace**.
+
+## 12) Stav implementace — M2 KPI core (2026-04-25 06:15 UTC)
+
+**Hotovo:**
+- ✅ `lib/kpi/catalog.ts` — katalog všech 20 KPI se sekcí, prioritou, zdrojem, definicí, vzorcem, prahy, trendem a doporučenou akcí.
+- ✅ `lib/analytics/kpi-evaluator.ts` — výpočet hodnoty, statusu, trendu, delta vs. target a 12M sparkline.
+- ✅ `lib/analytics/driver-analyzer.ts` — top divizní přispěvatelé změny.
+- ✅ `lib/analytics/anomaly-detector.ts` — z-score anomaly flag.
+- ✅ `lib/analytics/narrative-generator.ts` — český rule-based narrativ.
+- ✅ `lib/analytics/action-recommender.ts` — doporučená akce z KPI katalogu, doplněná o top driver.
+- ✅ `lib/analytics/kpi-engine.ts` — `buildKpiCardModel()` jako jeden entrypoint pro UI KPI kartu.
+- ✅ `lib/ai/insight-provider.ts` + `content/ai-insights/kpi-insights.json` — mock AI insight provider.
+
+**Ověřeno cíleně:**
+- `pnpm test tests/kpi/catalog.test.ts tests/analytics/kpi-evaluator.test.ts tests/ai/insight-provider.test.ts`
+- `pnpm typecheck`
+
+**Další na řadě: M3 — referenční sekce V. Retention**
+- layout shell + navigace,
+- KPI card komponenty,
+- stránka sekce Retention,
+- Attrition drill-down,
+- napojení na `buildKpiCardModel()` a `mockDataProvider`.

@@ -1,0 +1,56 @@
+[
+  {
+    "code": "FLUCT",
+    "scenario": "red",
+    "tone": "risk",
+    "textCs": "Odchody jsou nad tolerancí a mají provozní dopad. Nejrychlejší další krok je spojit retenční analýzu s konkrétními manažery a tenure cohortami, neřešit pouze celofiremní průměr."
+  },
+  {
+    "code": "FLUCT_CRIT",
+    "scenario": "red",
+    "tone": "risk",
+    "textCs": "U klíčových pozic je důležitější absolutní počet odchodů než samotné procento. Pokud se driver koncentruje v jedné divizi, doporučuji okamžitě ověřit nástupnictví a stabilizační plán."
+  },
+  {
+    "code": "ENPS",
+    "scenario": "amber",
+    "tone": "watch",
+    "textCs": "eNPS je ve sledovaném pásmu. Samotná hodnota ještě nemusí být problém, ale v kombinaci s rostoucí fluktuací ukazuje segmenty, kde se vyplatí udělat manažerský follow-up."
+  },
+  {
+    "code": "TTF_CRIT",
+    "scenario": "red",
+    "tone": "risk",
+    "textCs": "Doba obsazení klíčových pozic je riziková hlavně tam, kde zároveň chybí successor. Pro demo je vhodné ukázat propojení recruitmentu, retention a succession v jednom příběhu."
+  },
+  {
+    "code": "WAGE_KPI",
+    "scenario": "amber",
+    "tone": "watch",
+    "textCs": "Mzdové náklady samy o sobě nejsou problém, dokud víme, které role a divize růst táhnou. Důležitý je rozpad na base, variable a non-personal složky."
+  },
+  {
+    "code": "*",
+    "scenario": "anomaly",
+    "tone": "hypothesis",
+    "textCs": "Metrika se odchýlila od vlastní historie. Doporučuji nejdřív ověřit, zda jde o skutečný byznys signál, nebo efekt změny ve vstupních datech."
+  },
+  {
+    "code": "*",
+    "scenario": "red",
+    "tone": "risk",
+    "textCs": "Metrika je mimo toleranci. Priorita je najít největší přispěvatele změny a převést výstup do konkrétní akce pro vlastníka metriky."
+  },
+  {
+    "code": "*",
+    "scenario": "amber",
+    "tone": "watch",
+    "textCs": "Metrika není kritická, ale trend si zaslouží sledování. Doporučuji porovnat aktuální driver s minulým obdobím a potvrdit, zda se problém šíří."
+  },
+  {
+    "code": "*",
+    "scenario": "green",
+    "tone": "positive",
+    "textCs": "Metrika je v dobrém stavu. Pro dashboard má smysl ukázat, které segmenty výsledek drží v zeleném pásmu, aby bylo jasné, co opakovat jinde."
+  }
+]
