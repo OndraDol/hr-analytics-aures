@@ -94,7 +94,7 @@ export function KpiCardInsightZone({ model }: { model: KpiCardModel }) {
           {model.drivers.slice(0, 3).map((driver) => (
             <span
               key={driver.id}
-              className="shrink-0 rounded-full border border-blue-100 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800"
+              className="shrink-0 rounded-full border border-aures-blue-100 bg-aures-blue-50 px-2.5 py-1 text-xs font-medium text-aures-blue-800"
             >
               {driver.label} · {driver.delta >= 0 ? '+' : ''}
               {driver.delta.toFixed(1)}
@@ -110,9 +110,9 @@ export function KpiCardInsightZone({ model }: { model: KpiCardModel }) {
 export function KpiCardDecisionZone({ model }: { model: KpiCardModel }) {
   return (
     <div data-zone="decision" className="mt-5 grid gap-3 border-t border-zinc-100 pt-5">
-      <div className="rounded-md border border-zinc-200 border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50/60 to-white p-3">
+      <div className="rounded-md border border-zinc-200 border-l-4 border-l-aures-orange-500 bg-gradient-to-r from-aures-orange-50/60 to-white p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">Doporučená akce</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-aures-orange-700">Doporučená akce</p>
           <p className="text-xs font-medium text-zinc-500">{model.evaluation.definition.owner}</p>
         </div>
         <p className="mt-1 text-sm leading-6 text-zinc-800">{model.action.bodyCs}</p>

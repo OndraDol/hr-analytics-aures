@@ -19,7 +19,7 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
     <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
       <div className="grid gap-7 xl:grid-cols-[0.95fr_1.05fr] xl:items-center">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aures-blue-700">
             HR Analytics - Q1 2026
           </p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl font-semibold tracking-normal text-zinc-950 md:text-7xl">
@@ -43,9 +43,9 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
               </div>
             </div>
           </div>
-          <div className="rounded-lg border border-blue-100 bg-blue-50 p-5">
+          <div className="rounded-lg border border-aures-blue-100 bg-aures-blue-50 p-5">
             <div className="flex items-center gap-3">
-              <div className="rounded-md bg-blue-700 p-2 text-white">
+              <div className="rounded-md bg-aures-blue-700 p-2 text-white">
                 <Activity className="h-5 w-5" />
               </div>
               <div>

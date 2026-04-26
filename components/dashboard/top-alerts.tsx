@@ -19,7 +19,7 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
           <Link
             key={alert.code}
             href={alert.href}
-            className={`block rounded-md border bg-zinc-50 p-3 hover:border-blue-200 hover:bg-blue-50/40 ${
+            className={`block rounded-md border bg-zinc-50 p-3 hover:border-aures-blue-200 hover:bg-aures-blue-50/40 ${
               alert.rank === 1
                 ? 'border-2 border-rose-300 shadow-lg shadow-rose-200/40'
                 : 'border-zinc-200'
@@ -46,7 +46,7 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
                 <p className="mt-2 font-mono text-sm font-semibold text-zinc-950">{alert.value}</p>
               </div>
             </div>
-            <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-blue-700">
+            <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-aures-blue-700">
               Otevřít sekci <ArrowRight className="h-3.5 w-3.5" />
             </p>
           </Link>

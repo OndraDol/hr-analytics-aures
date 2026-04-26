@@ -41,7 +41,7 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
         <section className="briefing-section mt-5 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aures-blue-700">
                 AURES Holdings · HR Analytics
               </p>
               <h2 className="mt-4 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
@@ -51,9 +51,9 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
                 Souhrn stavu organizace, prioritních rizik a navazujících rozhodnutí pro prezentační demo.
               </p>
             </div>
-            <div className="grid min-w-[220px] gap-3 rounded-lg border border-blue-100 bg-blue-50 p-4">
+            <div className="grid min-w-[220px] gap-3 rounded-lg border border-aures-blue-100 bg-aures-blue-50 p-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-md bg-blue-700 p-2 text-white">
+                <div className="rounded-md bg-aures-blue-700 p-2 text-white">
                   <Activity className="h-5 w-5" />
                 </div>
                 <div>
@@ -123,24 +123,7 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
                     {items.length > 0 ? (
                       items.map((item) => <BriefingChange key={`${group.key}-${item.code}`} item={item} />)
                     ) : (
-                      <BriefingChange
-                        item={{
-                          code: 'HR_STATS',
-                          rank: 0,
-                          title: 'Bez výrazné změny',
-                          value: '',
-                          status: 'green',
-                          priority: 3,
-                          delta: 0,
-                          severityScore: 0,
-                          thresholdDistanceCs: 'bez odchylky',
-                          thresholdConfidenceCs: 'medium',
-                          owner: 'HR reporting',
-                          ageDays: 0,
-                          href: '/',
-                          reasonCs: 'V aktuálním období není významný nový signál.',
-                        }}
-                      />
+                      <BriefingEmptyChange />
                     )}
                   </div>
                 </div>
@@ -202,7 +185,7 @@ function BriefingMetric({
   tone?: 'blue' | 'emerald' | 'amber' | 'rose';
 }) {
   const classes = {
-    blue: 'text-blue-700 bg-blue-50',
+    blue: 'text-aures-blue-700 bg-aures-blue-50',
     emerald: 'text-emerald-700 bg-emerald-50',
     amber: 'text-amber-700 bg-amber-50',
     rose: 'text-rose-700 bg-rose-50',
@@ -247,6 +230,17 @@ function BriefingChange({ item }: { item: ExecutiveAlert }) {
     <div>
       <p className="text-sm font-medium text-zinc-950">{item.title}</p>
       <p className="mt-1 text-sm leading-6 text-zinc-600">{item.reasonCs}</p>
+    </div>
+  );
+}
+
+function BriefingEmptyChange() {
+  return (
+    <div>
+      <p className="text-sm font-medium text-zinc-950">Bez výrazné změny</p>
+      <p className="mt-1 text-sm leading-6 text-zinc-600">
+        V aktuálním období není významný signál pro tuto kategorii.
+      </p>
     </div>
   );
 }

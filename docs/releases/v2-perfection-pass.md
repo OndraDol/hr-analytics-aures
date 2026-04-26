@@ -1,6 +1,6 @@
 # v2 Perfection Pass Release Notes
 
-Datum: 2026-04-25
+Datum: 2026-04-26
 
 ## Summary
 
@@ -14,6 +14,8 @@ v2 posouvá HR Analytics AURES z hotového prezentačního prototypu do decision
 - M15 Drill-Down Intelligence: recruitment stage/channel/role drivers, cross-KPI hypotheses, anomaly flags.
 - M16 PDF + ESG Polish: briefing cover page, print preview mode, ranked briefing alerts, ESG Data Quality chips.
 - M17 Stabilization: v1/v2 progress model, route smoke guard, walkthrough update, release notes, dark-mode policy.
+- M18 UX Polish QA: mobile navigation, neutral briefing empty states, AURES token consistency, source-level regression guards.
+- M19 Presentation QA: Playwright config, desktop/mobile/briefing preview browser guards, horizontal overflow checks, Termux-safe `qa:visual` wrapper.
 
 ## Compatibility
 
@@ -26,6 +28,12 @@ No breaking data-source changes. Existing routes remain stable:
 - `/operativa/*`
 
 The `KpiCardModel`, `KpiEvaluation`, `ExecutiveDashboardData`, and `DetailTableRow` types were extended with optional/extra metadata. Existing consumers should continue to work if they ignore the new fields.
+
+## QA Notes
+
+- Standard validation: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`.
+- Browser presentation QA: `pnpm qa:visual`.
+- Termux/Android cannot run Playwright browser binaries; in that environment `pnpm qa:visual` exits with a documented skip. Run the full screenshot pass on Linux/macOS/Windows or CI.
 
 ## Power BI Vendor Notes
 

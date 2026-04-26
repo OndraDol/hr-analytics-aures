@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { CircleGauge, FileDown, FileText, ListChecks } from 'lucide-react';
+import { ChevronDown, CircleGauge, FileDown, FileText, ListChecks, Menu } from 'lucide-react';
 import { CopilotFab } from '@/components/copilot/copilot-fab';
 import { AuresMonogram } from '@/components/layout/aures-monogram';
 import { ANALYTICS_TOPICS } from '@/lib/analytics/cross-cutting';
@@ -62,8 +62,8 @@ export function AppShell({
         <Link href="/" className="flex items-center gap-3 rounded-md px-2 py-1">
           <AuresMonogram />
           <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-aures-blue-200">AURES Holdings</p>
-          <p className="mt-1 text-xl font-semibold text-white">HR Analytics</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-aures-blue-200">AURES Holdings</p>
+            <p className="mt-1 text-xl font-semibold text-white">HR Analytics</p>
           </div>
         </Link>
         <nav className="mt-8 space-y-5">
@@ -134,6 +134,41 @@ export function AppShell({
               </div>
             </div>
           </div>
+          <details className="group mt-3 lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-aures-blue-100 bg-aures-blue-50 px-3 py-2 text-sm font-semibold text-aures-blue-950 marker:hidden">
+              <span className="flex items-center gap-2">
+                <Menu className="h-4 w-4" />
+                Navigace
+              </span>
+              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            </summary>
+            <nav className="mt-3 grid gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
+              {navGroups.map((group) => (
+                <div key={group.label}>
+                  <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{group.label}</p>
+                  <div className="mt-2 grid gap-1 sm:grid-cols-2">
+                    {group.items.map((item) => {
+                      const Icon = item.icon;
+                      const active = item.href === activeHref;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={cn(
+                            'flex min-h-10 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-aures-blue-50 hover:text-aures-blue-800',
+                            active && 'bg-aures-orange-50 text-aures-orange-700 ring-1 ring-aures-orange-200',
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="min-w-0 truncate">{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </nav>
+          </details>
         </header>
         {children}
       </div>

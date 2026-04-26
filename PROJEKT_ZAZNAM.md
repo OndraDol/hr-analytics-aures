@@ -2,15 +2,15 @@
 
 > Živý pracovní dokument. Zapisujeme sem postupně pochopení požadavků, rozhodnutí, otevřené otázky, strukturu datasetu a další postup. Zdrojový podklad: `HR_reporting_ver2.xlsx`.
 
-Poslední aktualizace: 2026-04-25
+Poslední aktualizace: 2026-04-26
 
 ---
 
-## Aktuální stav projektu (2026-04-25)
+## Aktuální stav projektu (2026-04-26)
 
-**v1 = 100 % hotová. v2 Perfection Pass je implementovaný a stabilizovaný.**
+**v1 = 100 % hotová. v2 Perfection Pass je implementovaný a stabilizovaný. M18/M19 doplňují prezentační QA.**
 
-Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). Aktuálně startuje **v2 Perfection Pass** — kvalitativní upgrade z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
+Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). **v2 Perfection Pass** (M12–M17) je také dokončený a posouvá prototyp z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
 
 **v2 master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](docs/plans/2026-04-25-v2-perfection-master-plan.md) — 6 milníků M12–M17:
 
@@ -30,13 +30,15 @@ Aktuální v2 stav v kódu:
 - M15 Drill-Down Intelligence hotovo v demo rozsahu: recruitment stage/channel/role drivery, cross-KPI hypotézy, anomaly flag.
 - M16 Executive PDF + ESG hotovo v demo rozsahu: cover page, print preview, ranked briefing alerts, ESG Data Quality pro 21 datapointů.
 - M17 Stabilizace hotovo: v1/v2 progress model, route smoke guard, walkthrough update, release notes a dark-mode policy.
+- M18 UX polish QA hotovo: mobilní navigace, briefing empty states bez fake fallbacku, AURES token konzistence.
+- M19 Presentation QA hotovo: Playwright konfigurace, desktop/mobile/briefing preview e2e guardy, `pnpm qa:visual` wrapper s Termux skipem.
 
 Součástí dokončené v1 je:
 - Executive Dashboard se zdravotním skóre, alerty, změnami a scorecardy sekcí I-VIII.
 - Sekční dashboardy, Retention detail, analytické drill-downy a operativní pohledy.
 - Demo Copilot, Action Backlog, PDF briefing přes print flow a demo walkthrough pro HR Directorku.
 - Primární workbook `HR_reporting_ver2.xlsx` v kořeni repozitáře a traceability matrix `docs/traceability/hr-reporting-v2-traceability.md`.
-- Stabilizační ověření: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` a HTTP smoke hlavních rout.
+- Stabilizační ověření: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm qa:visual` a HTTP smoke hlavních rout.
 
 ---
 
@@ -706,9 +708,9 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 **Doporučený první krok příště:**
 1. Přečíst `docs/next-session-handoff.md`.
 2. Přečíst v2 master plán `docs/plans/2026-04-25-v2-perfection-master-plan.md`.
-3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`) — ověřit, že v1 baseline drží.
-4. Vytvořit detailní bite-sized plán pro **M12 Decision Support Layer** v `docs/plans/2026-04-DD-v12-decision-support-layer.md` podle konvence M0–M11 (TDD: failing test → minimal impl → run → commit, s explicitními file paths a code bloky).
-5. Spustit M12 implementaci. Reálnou exekuci v2 provádí **Codex**; plány jsou psané samostatně, ať je Codex umí task-by-task vykonat bez závislosti na konkrétním agentu.
+3. Spustit ověření (`pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm qa:visual`) — ověřit, že v2/M19 baseline drží.
+4. Pokud se pokračuje v prezentaci, projít demo flow na desktop/mobile a řešit už jen konkrétní vizuální nálezy.
+5. Pokud se pokračuje směrem k produkci, otevřít samostatný Real Data Readiness plán pro mapování raw XLS exportů, validace a Power BI vendor kontrakty.
 
 ## 23) v2 Perfection Pass — master plán schválen (2026-04-25)
 
@@ -725,6 +727,21 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 - Top 10 UX gaps + Top 8 vizuálních gaps s konkrétními file:line odkazy.
 - Co je naopak silné a má zůstat (5 bodů).
 
-**Detailní plány M12–M17** vznikají postupně při zahájení každého milníku jako samostatné `docs/plans/2026-04-DD-vXX-...md` — stejně jako u M0–M11.
+**M12–M17** jsou implementované ve v2 release; master plán zůstává jako auditní blueprint scope a akceptačních kritérií.
 
-**Stav:** Master plán schválen. M12 čeká na zahájení.
+**Stav:** v2 hotová. M18/M19 prezentační QA hotové; navazuje buď ruční demo review nad screenshot nálezy, nebo Real Data Readiness pro dodavatele.
+
+## 24) M18/M19 Presentation QA dokončeno (2026-04-26)
+
+**M18 UX polish QA:**
+- Mobilní navigace v `AppShell` pro viewporty bez desktop sidebaru.
+- Briefing empty state bez fake `HR_STATS` fallbacku.
+- Sjednocení klíčových dashboard/KPI/briefing prvků na AURES brand tokeny.
+- Regresní guardy v `tests/ux-polish.test.ts`.
+
+**M19 Presentation QA:**
+- Playwright tooling: `playwright.config.ts`, `tests/e2e/presentation-qa.spec.ts`, `pnpm qa:visual`.
+- Desktop/mobile/briefing preview guardy pro hlavní demo routy a horizontální overflow.
+- `scripts/qa-visual.ts` korektně skipuje Playwright browser run v Termux/Android prostředí; plný screenshot běh je určený pro Linux/macOS/Windows nebo CI.
+
+**Poslední ověření:** `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` prošly; `pnpm qa:visual` v Termuxu skončil řízeným skipem kvůli nepodporovaným Playwright browser binaries.

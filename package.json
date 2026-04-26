@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
+    "qa:visual": "tsx scripts/qa-visual.ts",
     "gen:data": "tsx scripts/gen-data.ts",
     "check:data": "tsx scripts/check-data-consistency.ts"
   },
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

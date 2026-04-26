@@ -2,10 +2,10 @@
 
 > Master blueprint pro pokračování projektu HR Analytics AURES po dokončení v1 (M0–M11). Řeší přechod z „demo-ready" na „investment-ready" stav z pohledu HR Directorky Kateřiny Topolové.
 >
-> **Tento dokument je master overview.** Detailní bite-sized plány M12–M17 vzniknou postupně při zahájení každého milníku jako samostatné `docs/plans/2026-04-DD-vXX-...md` (stejně jako M0–M11). Tento master plán definuje vizi, scope, soubory a akceptační kritéria.
+> **Tento dokument je master overview.** M12–M17 jsou implementované ve v2 release; dokument zůstává jako auditní blueprint rozsahu a akceptačních kritérií.
 
 Vytvořeno: 2026-04-25
-Stav: schváleno, čeká na zahájení M12.
+Stav: dokončeno ve v2 release, navazuje M18 UX polish QA.
 
 ---
 

@@ -1,10 +1,10 @@
 # Next Session Handoff — HR Analytics AURES
 
-Poslední aktualizace: 2026-04-25
+Poslední aktualizace: 2026-04-26
 
-## v2 Perfection Pass — start zde
+## Aktuální stav — v2 hotová, M18/M19 QA doplněné
 
-V1 prototyp je 100 % hotový, nyní startuje **v2 Perfection Pass** — přechod z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
+V1 prototyp i **v2 Perfection Pass** jsou hotové. M18 UX polish QA a M19 Presentation QA doplnily mobilní navigaci, briefing empty states, AURES token konzistenci a Playwright browser guardy. Projekt je ve stavu decision-ready executive cockpitu pro HR Directorku Kateřinu Topolovou.
 
 **Master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](plans/2026-04-25-v2-perfection-master-plan.md) definuje 6 milníků M12–M17:
 
@@ -15,13 +15,13 @@ V1 prototyp je 100 % hotový, nyní startuje **v2 Perfection Pass** — přechod
 - **M16** Executive PDF Mastery + Operational Polish + ESG Audit Trail — McKinsey-grade PDF, print preview, ESG Data Quality column.
 - **M17** Stabilizace v2 — smoke + a11y + dark mode review, walkthrough, PROJEKT_ZAZNAM, progress model.
 
-**Další krok:** otevřít master plán a v něm M12 sekci, založit detailní bite-sized plán `docs/plans/2026-04-DD-v12-decision-support-layer.md` (TDD: failing test → minimal impl → commit, viz konvence M0–M11 plánů), pak start exekuce.
+**Další krok:** spustit plný `pnpm qa:visual` na Linux/macOS/Windows nebo CI, projít případné screenshot nálezy a teprve potom řešit Real Data Readiness / Power BI vendor handoff.
 
 **Implementace:** v2 milníky reálně provádí **Codex** (OpenAI Codex/CLI). Master plán a navazující detailní plány jsou Codex-friendly (samostatné, bez závislosti na specifických nástrojích). Claude Code je primárně pro plánování a review.
 
 ## Aktuální stav
 
-Prezentační prototyp v1 + M11 traceability pass je hotový na **100 %**. Procento aplikace vychází z `lib/project/progress.ts`: dokončeno je 11/11 produktových milníků a 100/100 procentních bodů. M11 navíc doplňuje audit proti XLS zadání.
+Prezentační prototyp v1 + M11 traceability pass je hotový na **100 %**. v2 Perfection Pass je také hotový na **100 %** (`lib/project/progress.ts`: M12–M17 dokončeno).
 
 Těchto 100 % znamená dokončený webový prototyp nad hybridní real/mock datovou vrstvou a dohledatelnost proti `HR_reporting_ver2.xlsx`. Neznamená to hotovou produkční Power BI/DWH implementaci.
 
@@ -62,9 +62,10 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm qa:visual
 ```
 
-Výsledek po threshold metodice: lint a typecheck bez chyb, test suite 18 souborů / 72 testů, build 24 statických stránek.
+Výsledek po M19: lint a typecheck bez chyb, test suite 23 souborů / 83 testů, build 24 statických stránek. `pnpm qa:visual` v Termuxu korektně skipuje, protože Playwright browser binaries nejsou na Androidu podporované.
 
 HTTP smoke test přes lokální server prošel pro:
 - `/`
@@ -78,11 +79,13 @@ HTTP smoke test přes lokální server prošel pro:
 
 ## Další session: hlavní cíl
 
-Spustit **v2 Perfection Pass** podle [master plánu](plans/2026-04-25-v2-perfection-master-plan.md):
+Pokračovat v **M19 Presentation QA / demo review**:
 
-1. Vytvořit detailní plán M12 (Decision Support Layer) v `docs/plans/2026-04-DD-v12-decision-support-layer.md` podle konvence M0–M11 (TDD bite-sized tasky: failing test → minimal impl → run → commit, s explicitními file paths a code bloky, aby Codex mohl exekuovat task-by-task).
-2. M12 a M13 mohou jít paralelně po krátkém spike — KPI Card 3-zone refactor (M12) + AURES brand tokens (M13) jsou kompatibilní.
-3. Review body: po M12, M14 a M16 vyžádat HR Director feedback.
+1. Ověřit desktop/tablet/mobile demo flow přes `/`, `/akce`, `/briefing`, `/sekce/retention`, `/analytika/recruitment-funnel`, `/operativa/esg`.
+2. Držet změny úzké: jen prezentační UX, mobilní dostupnost, print/briefing a vizuální konzistence.
+3. Validovat přes `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` a podle dostupnosti browseru `pnpm qa:visual`.
+
+Poznámka: Termux/Android nepodporuje Playwright browser binaries, takže `pnpm qa:visual` zde pouze zahlásí skip. Plný screenshot QA běh spusť na Linux/macOS/Windows nebo v CI.
 
 ## Nezačínat znovu
 
