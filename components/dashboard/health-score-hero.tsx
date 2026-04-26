@@ -6,7 +6,14 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
   const redCount = data.allEvaluations.filter((evaluation) => evaluation.status === 'red').length;
   const amberCount = data.allEvaluations.filter((evaluation) => evaluation.status === 'amber').length;
   const greenCount = data.allEvaluations.filter((evaluation) => evaluation.status === 'green').length;
-  const background = `conic-gradient(#1d4ed8 ${data.healthScore * 3.6}deg, #e4e4e7 0deg)`;
+  const tone = data.healthScore < 55 ? 'urgent' : data.healthScore < 75 ? 'attention' : 'good';
+  const scoreClass = {
+    urgent: 'text-7xl text-rose-600',
+    attention: 'text-6xl text-amber-600',
+    good: 'text-5xl text-emerald-600',
+  }[tone];
+  const ringColor = tone === 'urgent' ? 'var(--aures-orange-500)' : 'var(--aures-blue-700)';
+  const background = `conic-gradient(${ringColor} ${data.healthScore * 3.6}deg, #e4e4e7 0deg)`;
 
   return (
     <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
@@ -15,7 +22,7 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
             HR Analytics - Q1 2026
           </p>
-          <h1 className="mt-4 max-w-3xl text-5xl font-semibold tracking-normal text-zinc-950 md:text-6xl">
+          <h1 className="mt-4 max-w-3xl font-serif text-5xl font-semibold tracking-normal text-zinc-950 md:text-7xl">
             Executive přehled zdraví organizace
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600">
@@ -31,7 +38,7 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
           <div className="mx-auto grid h-52 w-52 place-items-center rounded-full p-4" style={{ background }}>
             <div className="grid h-full w-full place-items-center rounded-full bg-white">
               <div className="text-center">
-                <p className="font-mono text-5xl font-semibold text-zinc-950">{data.healthScore}</p>
+                <p className={cn('font-serif font-semibold tabular-nums', scoreClass)}>{data.healthScore}</p>
                 <p className="mt-1 text-sm font-medium text-zinc-500">ze 100</p>
               </div>
             </div>

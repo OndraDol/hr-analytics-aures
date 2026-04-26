@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { DetailDashboardPage } from '@/components/detail/detail-dashboard-page';
 import { AppShell } from '@/components/layout/app-shell';
+import { MotionStack } from '@/components/layout/motion-stack';
 import {
   ANALYTICS_TOPICS,
   buildCrossCuttingDashboard,
@@ -30,7 +31,9 @@ export default async function AnalyticsTopicPage({ params }: { params: Promise<{
 
   return (
     <AppShell activeHref={topic.href} sectionLabel="Analytika" sectionTitle={topic.title}>
-      <DetailDashboardPage data={data} />
+      <MotionStack>
+        <DetailDashboardPage data={data} />
+      </MotionStack>
     </AppShell>
   );
 }

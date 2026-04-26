@@ -1,77 +1,23 @@
-import { AlertTriangle, ArrowUpRight, CheckCircle2, Sparkles } from 'lucide-react';
 import type { KpiCardModel } from '@/lib/analytics/kpi-engine';
 import { cn } from '@/lib/utils';
-import { Sparkline } from './sparkline';
-import { StatusBadge } from './status-badge';
-import { ThresholdBar } from './threshold-bar';
-
-const STATUS_ICON = {
-  green: CheckCircle2,
-  amber: AlertTriangle,
-  red: AlertTriangle,
-};
+import { KpiCardDecisionZone, KpiCardHeadlineZone, KpiCardInsightZone } from './kpi-card-zones';
 
 export function KpiCard({ model, featured = false }: { model: KpiCardModel; featured?: boolean }) {
-  const Icon = STATUS_ICON[model.evaluation.status];
-  const trend = model.evaluation.trend.mom ?? 0;
-  const trendIsGood =
-    model.evaluation.definition.direction === 'down'
-      ? trend < 0
-      : model.evaluation.definition.direction === 'up'
-        ? trend > 0
-        : Math.abs(model.evaluation.deltaVsTarget ?? 0) < Math.abs((model.evaluation.deltaVsTarget ?? 0) - trend);
-
   return (
     <article
       className={cn(
-        'rounded-lg border border-zinc-200 bg-white p-5 shadow-sm',
-        featured && 'border-blue-200 bg-gradient-to-b from-white to-blue-50/40',
+        'relative rounded-lg border border-zinc-200 bg-white p-5 shadow-sm',
+        featured && 'border-blue-300 bg-gradient-to-b from-white to-blue-50/40 shadow-lg shadow-blue-100/40',
       )}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Icon className={cn('h-4 w-4', model.evaluation.status === 'red' ? 'text-rose-500' : model.evaluation.status === 'amber' ? 'text-amber-500' : 'text-emerald-500')} />
-            <h2 className="text-sm font-semibold text-zinc-950">{model.evaluation.definition.nameCs}</h2>
-          </div>
-          <p className="mt-1 text-xs text-zinc-500">
-            {model.evaluation.definition.frequency} · {model.evaluation.dataQuality} · severity {model.evaluation.severityScore}/100
-          </p>
-        </div>
-        <StatusBadge status={model.evaluation.status} />
-      </div>
-
-      <div className="mt-5 flex items-end justify-between gap-4">
-        <div>
-          <p className="font-mono text-4xl font-semibold tracking-normal text-zinc-950">{model.evaluation.formattedValue}</p>
-          <p className={cn('mt-1 flex items-center gap-1 text-sm', Math.abs(trend) < 0.01 ? 'text-zinc-500' : trendIsGood ? 'text-emerald-600' : 'text-rose-600')}>
-            <ArrowUpRight className={cn('h-4 w-4', trend < 0 && 'rotate-90')} />
-            {Math.abs(trend).toFixed(1)} proti minulému období
-          </p>
-        </div>
-        <div className="w-36 shrink-0">
-          <Sparkline points={model.evaluation.sparkline} />
-        </div>
-      </div>
-
-      <p className="mt-5 text-sm leading-6 text-zinc-700">{model.narrativeCs}</p>
-      <ThresholdBar evaluation={model.evaluation} />
-
-      <div className="mt-5 grid gap-3">
-        <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Doporučená akce</p>
-          <p className="mt-1 text-sm leading-6 text-zinc-800">{model.action.bodyCs}</p>
-        </div>
-        {model.aiInsight ? (
-          <div className="rounded-md border border-violet-200 bg-violet-50 p-3">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
-              <Sparkles className="h-3.5 w-3.5" />
-              AI insight
-            </p>
-            <p className="mt-1 font-serif text-sm italic leading-6 text-violet-950">{model.aiInsight.textCs}</p>
-          </div>
-        ) : null}
-      </div>
+      {featured ? (
+        <span className="absolute -top-2 left-5 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+          Hlavní fokus
+        </span>
+      ) : null}
+      <KpiCardHeadlineZone model={model} />
+      <KpiCardInsightZone model={model} />
+      <KpiCardDecisionZone model={model} />
     </article>
   );
 }

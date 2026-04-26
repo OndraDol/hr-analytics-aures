@@ -1,7 +1,7 @@
 import type { DataProvider, Period } from '@/lib/data/provider';
-import type { Employee } from '@/lib/types';
+import type { Employee, RecruitmentRequisition } from '@/lib/types';
 import { shiftPeriodMonths } from './date';
-import type { KpiDriver, KpiEvaluation } from './types';
+import type { KpiDriver, KpiDriverGroup, KpiEvaluation } from './types';
 
 const employeeMap = async (provider: DataProvider): Promise<Map<string, Employee>> => {
   const employees = await provider.getEmployees();
@@ -36,6 +36,30 @@ const buildDrivers = (
     })
     .sort((a, b) => Math.abs(b.delta || b.value) - Math.abs(a.delta || a.value))
     .slice(0, 5);
+};
+
+const daysBetween = (from: string | null, to: string | null): number | null => {
+  if (!from || !to) return null;
+  return Math.max(0, Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000));
+};
+
+const averageBy = (
+  rows: readonly RecruitmentRequisition[],
+  keyFor: (row: RecruitmentRequisition) => string,
+  valueFor: (row: RecruitmentRequisition) => number | null,
+): Map<string, number> => {
+  const sums = new Map<string, number>();
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const value = valueFor(row);
+    if (value == null || !Number.isFinite(value)) continue;
+    const key = keyFor(row);
+    add(sums, key, value);
+    add(counts, key, 1);
+  }
+  const out = new Map<string, number>();
+  for (const [key, sum] of sums) out.set(key, sum / (counts.get(key) ?? 1));
+  return out;
 };
 
 const workforceByDivision = async (
@@ -132,4 +156,81 @@ export async function analyzeDrivers(
   const current = await metricByDivision(provider, evaluation.period, evaluation);
   const previous = await metricByDivision(provider, shiftPeriodMonths(evaluation.period, -1), evaluation);
   return buildDrivers(current, previous, labels);
+}
+
+export async function analyzeRecruitmentDriverGroups(
+  provider: DataProvider,
+  evaluation: KpiEvaluation,
+): Promise<KpiDriverGroup[]> {
+  if (!['TTF', 'TTF_CRIT', 'CPH', 'QUALITY_HIRE'].includes(evaluation.code)) return [];
+
+  const [positions, currentRows, previousRows] = await Promise.all([
+    provider.getPositions(),
+    provider.getRequisitions(evaluation.period),
+    provider.getRequisitions(shiftPeriodMonths(evaluation.period, -1)),
+  ]);
+  const positionById = new Map(positions.map((position) => [position.id, position]));
+  const durationFor = (row: RecruitmentRequisition) =>
+    evaluation.code === 'CPH'
+      ? row.cost
+      : daysBetween(row.approvedDate, row.hireDate ?? row.acceptedDate ?? row.offerDate);
+  const roleLabel = (row: RecruitmentRequisition) =>
+    positionById.get(row.positionId)?.roleFamily ?? positionById.get(row.positionId)?.title ?? row.positionId;
+  const stageRows = currentRows.flatMap((row) => [
+    { stage: 'Approval -> publish', value: daysBetween(row.approvedDate, row.publishedDate) },
+    { stage: 'Publish -> interview', value: daysBetween(row.publishedDate, row.firstInterviewDate) },
+    { stage: 'Interview -> offer', value: daysBetween(row.firstInterviewDate, row.offerDate) },
+    { stage: 'Offer -> accepted', value: daysBetween(row.offerDate, row.acceptedDate) },
+    { stage: 'Accepted -> hire', value: daysBetween(row.acceptedDate, row.hireDate) },
+  ]);
+  const previousStageRows = previousRows.flatMap((row) => [
+    { stage: 'Approval -> publish', value: daysBetween(row.approvedDate, row.publishedDate) },
+    { stage: 'Publish -> interview', value: daysBetween(row.publishedDate, row.firstInterviewDate) },
+    { stage: 'Interview -> offer', value: daysBetween(row.firstInterviewDate, row.offerDate) },
+    { stage: 'Offer -> accepted', value: daysBetween(row.offerDate, row.acceptedDate) },
+    { stage: 'Accepted -> hire', value: daysBetween(row.acceptedDate, row.hireDate) },
+  ]);
+  const stageCurrent = averageGeneric(stageRows, (row) => row.stage, (row) => row.value);
+  const stagePrevious = averageGeneric(previousStageRows, (row) => row.stage, (row) => row.value);
+  const stageLabels = new Map(Array.from(stageCurrent.keys()).map((key) => [key, key]));
+  const channelLabels = new Map<string, string>();
+  const roleLabels = new Map<string, string>();
+  const channelCurrent = averageBy(currentRows, (row) => {
+    channelLabels.set(row.channel, row.channel);
+    return row.channel;
+  }, durationFor);
+  const channelPrevious = averageBy(previousRows, (row) => row.channel, durationFor);
+  const roleCurrent = averageBy(currentRows, (row) => {
+    const label = roleLabel(row);
+    roleLabels.set(label, label);
+    return label;
+  }, durationFor);
+  const rolePrevious = averageBy(previousRows, (row) => roleLabel(row), durationFor);
+
+  const groups: KpiDriverGroup[] = [
+    { dimension: 'stage', labelCs: 'Fáze funnelu', top: buildDrivers(stageCurrent, stagePrevious, stageLabels).slice(0, 3) },
+    { dimension: 'channel', labelCs: 'Kanál', top: buildDrivers(channelCurrent, channelPrevious, channelLabels).slice(0, 3) },
+    { dimension: 'role', labelCs: 'Role', top: buildDrivers(roleCurrent, rolePrevious, roleLabels).slice(0, 3) },
+  ];
+
+  return groups.filter((group) => group.top.length > 0);
+}
+
+function averageGeneric<T>(
+  rows: readonly T[],
+  keyFor: (row: T) => string,
+  valueFor: (row: T) => number | null,
+): Map<string, number> {
+  const sums = new Map<string, number>();
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const value = valueFor(row);
+    if (value == null || !Number.isFinite(value)) continue;
+    const key = keyFor(row);
+    add(sums, key, value);
+    add(counts, key, 1);
+  }
+  const out = new Map<string, number>();
+  for (const [key, sum] of sums) out.set(key, sum / (counts.get(key) ?? 1));
+  return out;
 }

@@ -5,13 +5,15 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Area,
   Line,
-  LineChart,
+  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
+import { GradientDefs, KpiLegend, KpiTooltip } from '@/components/charts/chart-primitives';
 import type { KpiSparkPoint } from '@/lib/analytics/types';
 import type { SectionBreakdownRow } from '@/lib/analytics/section-summaries';
 
@@ -41,11 +43,13 @@ export function SectionTrendChart({ series }: { series: readonly SectionTrendSer
   return (
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#e4e4e7" strokeDasharray="4 4" vertical={false} />
-          <XAxis dataKey="period" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
-          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} width={44} />
-          <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7' }} />
+        <ComposedChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+          <GradientDefs idPrefix="section-trend" />
+          <CartesianGrid stroke="var(--aures-graphite-200)" strokeDasharray="4 4" vertical={false} />
+          <XAxis dataKey="period" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} width={44} />
+          <Tooltip content={<KpiTooltip />} />
+          {series[0] ? <Area type="monotone" dataKey={series[0].key} fill="url(#section-trend-blue-area)" stroke="none" /> : null}
           {series.map((item) => (
             <Line
               key={item.key}
@@ -57,8 +61,9 @@ export function SectionTrendChart({ series }: { series: readonly SectionTrendSer
               dot={false}
             />
           ))}
-        </LineChart>
+        </ComposedChart>
       </ResponsiveContainer>
+      <KpiLegend />
     </div>
   );
 }
@@ -85,14 +90,16 @@ export function SectionBreakdownChart({
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#e4e4e7" strokeDasharray="4 4" vertical={false} />
-          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: '#71717a' }} interval={0} angle={-18} textAnchor="end" height={70} />
-          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} width={44} />
-          <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7' }} />
-          <Bar dataKey={valueLabel} fill="#1d4ed8" radius={[5, 5, 0, 0]} />
-          {secondaryLabel ? <Bar dataKey={secondaryLabel} fill="#f97316" radius={[5, 5, 0, 0]} /> : null}
+          <GradientDefs idPrefix="section-breakdown" />
+          <CartesianGrid stroke="var(--aures-graphite-200)" strokeDasharray="4 4" vertical={false} />
+          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: 'var(--aures-graphite-500)' }} interval={0} angle={-18} textAnchor="end" height={70} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} width={44} />
+          <Tooltip content={<KpiTooltip />} />
+          <Bar dataKey={valueLabel} fill="url(#section-breakdown-blue-bar)" radius={[5, 5, 0, 0]} />
+          {secondaryLabel ? <Bar dataKey={secondaryLabel} fill="url(#section-breakdown-orange-bar)" radius={[5, 5, 0, 0]} /> : null}
         </BarChart>
       </ResponsiveContainer>
+      <KpiLegend />
     </div>
   );
 }

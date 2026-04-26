@@ -5,13 +5,15 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Area,
   Line,
-  LineChart,
+  ComposedChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts';
+import { GradientDefs, KpiLegend, KpiTooltip } from '@/components/charts/chart-primitives';
 import type { KpiSparkPoint } from '@/lib/analytics/types';
 import type { RetentionSegment } from '@/lib/analytics/retention-summary';
 
@@ -35,15 +37,18 @@ export function RetentionTrendChart({
   return (
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#e4e4e7" strokeDasharray="4 4" vertical={false} />
-          <XAxis dataKey="period" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
-          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} width={36} />
-          <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7' }} />
-          <Line type="monotone" dataKey="fluktuace" stroke="#1d4ed8" strokeWidth={2.4} dot={false} />
-          <Line type="monotone" dataKey="kriticke" stroke="#f97316" strokeWidth={2.4} dot={false} />
-        </LineChart>
+        <ComposedChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
+          <GradientDefs idPrefix="retention" />
+          <CartesianGrid stroke="var(--aures-graphite-200)" strokeDasharray="4 4" vertical={false} />
+          <XAxis dataKey="period" tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} width={36} />
+          <Tooltip content={<KpiTooltip />} />
+          <Area type="monotone" dataKey="fluktuace" fill="url(#retention-blue-area)" stroke="none" />
+          <Line type="monotone" dataKey="fluktuace" stroke="var(--aures-blue-700)" strokeWidth={2.4} dot={false} />
+          <Line type="monotone" dataKey="kriticke" stroke="var(--aures-orange-500)" strokeWidth={2.4} dot={false} />
+        </ComposedChart>
       </ResponsiveContainer>
+      <KpiLegend />
     </div>
   );
 }
@@ -62,14 +67,16 @@ export function RetentionSegmentChart({ segments }: { segments: readonly Retenti
     <div className="h-72">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#e4e4e7" strokeDasharray="4 4" vertical={false} />
-          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: '#71717a' }} interval={0} angle={-18} textAnchor="end" height={70} />
-          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: '#71717a' }} width={36} />
-          <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e4e4e7' }} />
-          <Bar dataKey="odchody" fill="#1d4ed8" radius={[5, 5, 0, 0]} />
-          <Bar dataKey="kriticke" fill="#f97316" radius={[5, 5, 0, 0]} />
+          <GradientDefs idPrefix="retention-segment" />
+          <CartesianGrid stroke="var(--aures-graphite-200)" strokeDasharray="4 4" vertical={false} />
+          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: 'var(--aures-graphite-500)' }} interval={0} angle={-18} textAnchor="end" height={70} />
+          <YAxis tickLine={false} axisLine={false} tick={{ fontSize: 12, fill: 'var(--aures-graphite-500)' }} width={36} />
+          <Tooltip content={<KpiTooltip />} />
+          <Bar dataKey="odchody" fill="url(#retention-segment-blue-bar)" radius={[5, 5, 0, 0]} />
+          <Bar dataKey="kriticke" fill="url(#retention-segment-orange-bar)" radius={[5, 5, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
+      <KpiLegend />
     </div>
   );
 }

@@ -43,6 +43,19 @@ export interface ThresholdScale {
   targetLabel: string | null;
 }
 
+export interface SeverityBreakdown {
+  statusBase: number;
+  priorityBoost: number;
+  qualityPenalty: number;
+  trendBoost: number;
+  distanceBoost: number;
+}
+
+export interface SeverityScoreResult {
+  score: number;
+  breakdown: SeverityBreakdown;
+}
+
 const SOURCE_LABELS: Record<KpiThresholdSource, string> = {
   xls: 'XLS zadání',
   externalBenchmark: 'externí benchmark',
@@ -204,14 +217,31 @@ export function calculateSeverityScore(
   status: KpiStatus,
   trendDelta: number | null,
   dataQuality: 'real' | 'hybrid' | 'mock',
-): number {
+): SeverityScoreResult {
   const statusBase: Record<KpiStatus, number> = { green: 0, amber: 42, red: 75 };
   const priorityBoost = (4 - definition.priority) * 6;
   const qualityPenalty = dataQuality === 'mock' ? -8 : dataQuality === 'hybrid' ? -3 : 0;
   const trendBoost = trendDelta == null ? 0 : Math.min(Math.abs(trendDelta), 12);
   const distance = evaluateThresholdDistance(definition, value);
   const distanceBoost = Math.min(Math.abs(distance.distance), 18);
-  return Math.round(clamp(statusBase[status] + priorityBoost + qualityPenalty + trendBoost + distanceBoost));
+  const breakdown = {
+    statusBase: statusBase[status],
+    priorityBoost,
+    qualityPenalty,
+    trendBoost,
+    distanceBoost,
+  };
+  const rawScore =
+    breakdown.statusBase +
+    breakdown.priorityBoost +
+    breakdown.qualityPenalty +
+    breakdown.trendBoost +
+    breakdown.distanceBoost;
+
+  return {
+    score: Math.round(clamp(rawScore)),
+    breakdown,
+  };
 }
 
 export function statusFor(definition: KpiDefinition, value: number): KpiStatus {

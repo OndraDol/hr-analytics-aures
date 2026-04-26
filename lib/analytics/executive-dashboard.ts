@@ -1,11 +1,13 @@
 import type { DataProvider, Period } from '@/lib/data/provider';
 import { evaluateKpi } from '@/lib/analytics/kpi-evaluator';
-import type { KpiEvaluation } from '@/lib/analytics/types';
+import { detectHypotheses } from '@/lib/analytics/cross-kpi-correlator';
+import type { CrossKpiHypothesis, KpiEvaluation } from '@/lib/analytics/types';
 import { KPI_CATALOG, type KpiCode, type KpiStatus } from '@/lib/kpi/catalog';
 import { SECTION_CATALOG, type SectionDefinition } from '@/lib/sections/catalog';
 
 export interface ExecutiveAlert {
   code: KpiCode;
+  rank: number;
   title: string;
   value: string;
   status: KpiStatus;
@@ -14,6 +16,8 @@ export interface ExecutiveAlert {
   severityScore: number;
   thresholdDistanceCs: string;
   thresholdConfidenceCs: string;
+  owner: string;
+  ageDays: number;
   href: string;
   reasonCs: string;
 }
@@ -36,6 +40,7 @@ export interface ExecutiveDashboardData {
   heroKpis: KpiEvaluation[];
   topAlerts: ExecutiveAlert[];
   changes: ExecutiveChangeGroup;
+  hypotheses: CrossKpiHypothesis[];
   sectionScorecards: SectionScorecard[];
   aiSummaryCs: string;
   allEvaluations: KpiEvaluation[];
@@ -60,6 +65,7 @@ const isImproving = (evaluation: KpiEvaluation): boolean => {
 
 const alertFromEvaluation = (evaluation: KpiEvaluation): ExecutiveAlert => ({
   code: evaluation.code,
+  rank: 0,
   title: evaluation.definition.nameCs,
   value: evaluation.formattedValue,
   status: evaluation.status,
@@ -68,6 +74,8 @@ const alertFromEvaluation = (evaluation: KpiEvaluation): ExecutiveAlert => ({
   severityScore: evaluation.severityScore,
   thresholdDistanceCs: evaluation.thresholdDistance.messageCs,
   thresholdConfidenceCs: evaluation.thresholdMetadata.confidence,
+  owner: evaluation.definition.owner,
+  ageDays: ageDaysFor(evaluation),
   href: sectionHrefForKpi(evaluation.code),
   reasonCs:
     evaluation.status === 'red'
@@ -79,6 +87,16 @@ const alertFromEvaluation = (evaluation: KpiEvaluation): ExecutiveAlert => ({
 
 const rankAlert = (alert: ExecutiveAlert): number =>
   alert.severityScore + (4 - alert.priority) * 6 + Math.min(Math.abs(alert.delta), 12);
+
+const ageDaysFor = (evaluation: KpiEvaluation): number => {
+  const trend = Math.abs(evaluation.trend.mom ?? 0);
+  if (evaluation.status === 'red') return Math.max(4, Math.round(18 - Math.min(trend, 12)));
+  if (evaluation.status === 'amber') return Math.max(7, Math.round(28 - Math.min(trend, 10)));
+  return 0;
+};
+
+const withRanks = (alerts: ExecutiveAlert[]): ExecutiveAlert[] =>
+  alerts.map((alert, index) => ({ ...alert, rank: index + 1 }));
 
 const healthLabel = (score: number): string => {
   if (score >= 75) return 'Dobrý stav';
@@ -129,8 +147,9 @@ export async function buildExecutiveDashboard(
     healthScore,
     healthLabel: healthLabel(healthScore),
     heroKpis: heroCodes.map((code) => allEvaluations.find((evaluation) => evaluation.code === code)!),
-    topAlerts: alerts.slice(0, 5),
+    topAlerts: withRanks(alerts.slice(0, 5)),
     changes: { improvements, problems, watch },
+    hypotheses: detectHypotheses(allEvaluations),
     sectionScorecards: SECTION_CATALOG.map((section) => ({
       section,
       evaluation: allEvaluations.find((evaluation) => evaluation.code === section.primaryKpi)!,

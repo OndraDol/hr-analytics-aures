@@ -282,6 +282,13 @@ export async function evaluateKpi(
   const status = evaluateStatus(definition, current.value);
   const thresholdDistance = evaluateThresholdDistance(definition, current.value);
   const thresholdMetadata = getThresholdMetadata(definition);
+  const severity = calculateSeverityScore(
+    definition,
+    current.value,
+    status,
+    current.value - previous.value,
+    current.dataQuality,
+  );
 
   return {
     code,
@@ -293,13 +300,8 @@ export async function evaluateKpi(
     thresholdDistance,
     thresholdMetadata,
     thresholdRationaleCs: getThresholdRationale(definition),
-    severityScore: calculateSeverityScore(
-      definition,
-      current.value,
-      status,
-      current.value - previous.value,
-      current.dataQuality,
-    ),
+    severityScore: severity.score,
+    severityBreakdown: severity.breakdown,
     trend: {
       previousValue: previous.value,
       mom: current.value - previous.value,

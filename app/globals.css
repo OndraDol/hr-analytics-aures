@@ -11,6 +11,40 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-danger: #f43f5e;
+  --aures-blue-50: #eff6ff;
+  --aures-blue-100: #dbeafe;
+  --aures-blue-200: #bfdbfe;
+  --aures-blue-300: #93c5fd;
+  --aures-blue-400: #60a5fa;
+  --aures-blue-500: #3b82f6;
+  --aures-blue-600: #2563eb;
+  --aures-blue-700: #1d4ed8;
+  --aures-blue-800: #1e40af;
+  --aures-blue-900: #1e3a8a;
+  --aures-blue-950: #172554;
+  --aures-orange-50: #fff7ed;
+  --aures-orange-100: #ffedd5;
+  --aures-orange-200: #fed7aa;
+  --aures-orange-300: #fdba74;
+  --aures-orange-400: #fb923c;
+  --aures-orange-500: #f97316;
+  --aures-orange-600: #ea580c;
+  --aures-orange-700: #c2410c;
+  --aures-orange-800: #9a3412;
+  --aures-orange-900: #7c2d12;
+  --aures-graphite-50: #f8fafc;
+  --aures-graphite-100: #f1f5f9;
+  --aures-graphite-200: #e2e8f0;
+  --aures-graphite-300: #cbd5e1;
+  --aures-graphite-400: #94a3b8;
+  --aures-graphite-500: #64748b;
+  --aures-graphite-600: #475569;
+  --aures-graphite-700: #334155;
+  --aures-graphite-800: #1e293b;
+  --aures-graphite-900: #0f172a;
+  --brand-primary: var(--aures-blue-700);
+  --brand-accent: var(--aures-orange-500);
+  --brand-graphite: var(--aures-graphite-900);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,6 +61,38 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-instrument-serif);
+  --font-display: var(--font-instrument-serif);
+  --color-aures-blue-50: var(--aures-blue-50);
+  --color-aures-blue-100: var(--aures-blue-100);
+  --color-aures-blue-200: var(--aures-blue-200);
+  --color-aures-blue-300: var(--aures-blue-300);
+  --color-aures-blue-400: var(--aures-blue-400);
+  --color-aures-blue-500: var(--aures-blue-500);
+  --color-aures-blue-600: var(--aures-blue-600);
+  --color-aures-blue-700: var(--aures-blue-700);
+  --color-aures-blue-800: var(--aures-blue-800);
+  --color-aures-blue-900: var(--aures-blue-900);
+  --color-aures-blue-950: var(--aures-blue-950);
+  --color-aures-orange-50: var(--aures-orange-50);
+  --color-aures-orange-100: var(--aures-orange-100);
+  --color-aures-orange-200: var(--aures-orange-200);
+  --color-aures-orange-300: var(--aures-orange-300);
+  --color-aures-orange-400: var(--aures-orange-400);
+  --color-aures-orange-500: var(--aures-orange-500);
+  --color-aures-orange-600: var(--aures-orange-600);
+  --color-aures-orange-700: var(--aures-orange-700);
+  --color-aures-orange-800: var(--aures-orange-800);
+  --color-aures-orange-900: var(--aures-orange-900);
+  --color-aures-graphite-50: var(--aures-graphite-50);
+  --color-aures-graphite-100: var(--aures-graphite-100);
+  --color-aures-graphite-200: var(--aures-graphite-200);
+  --color-aures-graphite-300: var(--aures-graphite-300);
+  --color-aures-graphite-400: var(--aures-graphite-400);
+  --color-aures-graphite-500: var(--aures-graphite-500);
+  --color-aures-graphite-600: var(--aures-graphite-600);
+  --color-aures-graphite-700: var(--aures-graphite-700);
+  --color-aures-graphite-800: var(--aures-graphite-800);
+  --color-aures-graphite-900: var(--aures-graphite-900);
 }
 
 html,
@@ -45,7 +111,7 @@ body {
 @media print {
   @page {
     size: A4;
-    margin: 12mm;
+    margin: 18mm 14mm;
   }
 
   html,
@@ -72,6 +138,11 @@ body {
     box-shadow: none !important;
   }
 
+  .briefing-cover {
+    min-height: 250mm;
+    break-after: page;
+  }
+
   .briefing-grid,
   .briefing-scorecards {
     break-inside: avoid;
@@ -81,4 +152,18 @@ body {
     color: inherit !important;
     text-decoration: none !important;
   }
+}
+
+.briefing-preview-mode body {
+  background: #d4d4d8 !important;
+}
+
+.briefing-preview-mode .briefing-page {
+  width: 210mm;
+  max-width: 210mm;
+  min-height: 297mm;
+  margin: 24px auto;
+  padding: 14mm;
+  background: white;
+  box-shadow: 0 18px 54px rgb(15 23 42 / 0.28);
 }

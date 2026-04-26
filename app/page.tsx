@@ -1,4 +1,5 @@
 import { AppShell } from '@/components/layout/app-shell';
+import { MotionStack } from '@/components/layout/motion-stack';
 import { ExecutiveSummary } from '@/components/dashboard/executive-summary';
 import { HealthScoreHero } from '@/components/dashboard/health-score-hero';
 import { SectionScorecards } from '@/components/dashboard/section-scorecards';
@@ -15,17 +16,19 @@ export default async function Home() {
   return (
     <AppShell activeHref="/" sectionLabel="Executive" sectionTitle="HR Analytics - Q1 2026">
       <main className="px-5 py-6 md:px-8">
-        <HealthScoreHero data={dashboard} />
-        <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <TopAlerts alerts={dashboard.topAlerts} />
-          <div className="space-y-6">
-            <WhatChanged changes={dashboard.changes} />
-            <ExecutiveSummary summary={dashboard.aiSummaryCs} />
+        <MotionStack>
+          <HealthScoreHero data={dashboard} />
+          <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+            <TopAlerts alerts={dashboard.topAlerts} />
+            <div className="space-y-6">
+              <WhatChanged changes={dashboard.changes} hypotheses={dashboard.hypotheses} />
+              <ExecutiveSummary summary={dashboard.aiSummaryCs} />
+            </div>
           </div>
-        </div>
-        <div className="mt-6">
-          <SectionScorecards scorecards={dashboard.sectionScorecards} />
-        </div>
+          <div className="mt-6">
+            <SectionScorecards scorecards={dashboard.sectionScorecards} />
+          </div>
+        </MotionStack>
       </main>
     </AppShell>
   );

@@ -13,6 +13,12 @@ export interface ExecutiveBriefingData {
   projectProgress: ProjectProgress;
   statusCounts: ExecutiveBriefingStatusCounts;
   generatedLabelCs: string;
+  coverData: {
+    titleCs: string;
+    subtitleCs: string;
+    generatedLabelCs: string;
+  };
+  pages: { id: string; titleCs: string }[];
 }
 
 export async function buildExecutiveBriefing(
@@ -33,5 +39,17 @@ export async function buildExecutiveBriefing(
     projectProgress: getProjectProgress(),
     statusCounts,
     generatedLabelCs: 'Q1 2026 snapshot · mock data',
+    coverData: {
+      titleCs: 'Executive briefing Q1 2026',
+      subtitleCs: 'Board-ready HR Analytics podklad pro rozhodnutí a prioritizaci.',
+      generatedLabelCs: 'Q1 2026 snapshot · mock data',
+    },
+    pages: [
+      { id: 'cover', titleCs: 'Cover' },
+      { id: 'health', titleCs: 'Health score' },
+      { id: 'alerts', titleCs: 'Top alerts' },
+      { id: 'changes', titleCs: 'Monthly changes' },
+      { id: 'sections', titleCs: 'Sections I-VIII' },
+    ],
   };
 }

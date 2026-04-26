@@ -1,4 +1,5 @@
 import { AppShell } from '@/components/layout/app-shell';
+import { MotionStack } from '@/components/layout/motion-stack';
 import { RetentionPage } from '@/components/retention/retention-page';
 import { mockAIInsightProvider } from '@/lib/ai/insight-provider';
 import { buildKpiCardModel } from '@/lib/analytics/kpi-engine';
@@ -18,13 +19,15 @@ export default async function RetentionSectionPage() {
 
   return (
     <AppShell activeHref="/sekce/retention" sectionLabel="Sekce V" sectionTitle="Retention & fluktuace">
-      <RetentionPage
-        fluctuation={fluctuation}
-        criticalFluctuation={criticalFluctuation}
-        enps={enps}
-        succession={succession}
-        summary={summary}
-      />
+      <MotionStack>
+        <RetentionPage
+          fluctuation={fluctuation}
+          criticalFluctuation={criticalFluctuation}
+          enps={enps}
+          succession={succession}
+          summary={summary}
+        />
+      </MotionStack>
     </AppShell>
   );
 }

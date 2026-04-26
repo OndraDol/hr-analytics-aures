@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { SectionBreakdownChart } from '@/components/charts/section-charts';
+import { DataQualityChip } from '@/components/detail/data-quality-chip';
 import type { DetailDashboardData, DetailMetric } from '@/lib/analytics/detail-types';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +16,7 @@ const TONE_CLASS: Record<DetailMetric['tone'], string> = {
 
 export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
   const Icon = data.icon;
+  const hasDataQuality = data.table.rows.some((row) => row.dataQuality);
 
   return (
     <main className="px-5 py-6 md:px-8">
@@ -79,10 +81,19 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
           <div className="overflow-hidden rounded-md border border-zinc-200">
             {data.table.rows.length > 0 ? (
               data.table.rows.map((row) => (
-                <div key={`${row.label}-${row.value}-${row.secondary}-${row.detail}`} className="grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0 md:grid-cols-[1.15fr_0.55fr_0.75fr_1.55fr]">
+                <div
+                  key={`${row.label}-${row.value}-${row.secondary}-${row.detail}`}
+                  className={cn(
+                    'grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0',
+                    hasDataQuality
+                      ? 'md:grid-cols-[1.05fr_0.45fr_0.65fr_0.7fr_1.3fr]'
+                      : 'md:grid-cols-[1.15fr_0.55fr_0.75fr_1.55fr]',
+                  )}
+                >
                   <p className="text-sm font-medium text-zinc-950">{row.label}</p>
                   <p className="font-mono text-sm text-zinc-800">{row.value}</p>
                   <p className="font-mono text-sm text-zinc-600">{row.secondary}</p>
+                  {hasDataQuality ? <DataQualityChip value={row.dataQuality} /> : null}
                   <p className="text-sm text-zinc-500">{row.detail}</p>
                 </div>
               ))

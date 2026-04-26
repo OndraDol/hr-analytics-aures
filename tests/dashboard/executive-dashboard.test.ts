@@ -19,6 +19,10 @@ describe('buildExecutiveDashboard', () => {
     expect(dashboard.topAlerts.length).toBeGreaterThan(0);
     expect(dashboard.topAlerts[0]!.severityScore).toBeGreaterThan(0);
     expect(dashboard.topAlerts[0]!.thresholdDistanceCs.length).toBeGreaterThan(0);
+    expect(dashboard.topAlerts.every((alert) => alert.rank >= 1 && alert.rank <= 5)).toBe(true);
+    expect(dashboard.topAlerts[0]!.rank).toBe(1);
+    expect(dashboard.topAlerts[0]!.owner.length).toBeGreaterThan(0);
+    expect(dashboard.topAlerts[0]!.ageDays).toBeGreaterThan(0);
     expect(dashboard.sectionScorecards).toHaveLength(SECTION_CATALOG.length);
     expect(dashboard.aiSummaryCs.length).toBeGreaterThan(30);
   });

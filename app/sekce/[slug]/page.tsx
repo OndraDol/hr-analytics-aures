@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { AppShell } from '@/components/layout/app-shell';
+import { MotionStack } from '@/components/layout/motion-stack';
 import { GenericSectionPage } from '@/components/sections/section-page';
 import { mockAIInsightProvider } from '@/lib/ai/insight-provider';
 import { buildSectionDashboard } from '@/lib/analytics/section-summaries';
@@ -30,7 +31,9 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
 
   return (
     <AppShell activeHref={section.href} sectionLabel={section.eyebrow} sectionTitle={section.title}>
-      <GenericSectionPage data={data} />
+      <MotionStack>
+        <GenericSectionPage data={data} />
+      </MotionStack>
     </AppShell>
   );
 }

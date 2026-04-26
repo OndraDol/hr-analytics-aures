@@ -1,11 +1,20 @@
 import type { ExecutiveChangeGroup, ExecutiveAlert } from '@/lib/analytics/executive-dashboard';
+import type { CrossKpiHypothesis } from '@/lib/analytics/types';
+import { HypothesesPanel } from './hypotheses-panel';
 
-export function WhatChanged({ changes }: { changes: ExecutiveChangeGroup }) {
+export function WhatChanged({
+  changes,
+  hypotheses = [],
+}: {
+  changes: ExecutiveChangeGroup;
+  hypotheses?: readonly CrossKpiHypothesis[];
+}) {
   return (
     <section className="grid gap-4 lg:grid-cols-3">
       <ChangeColumn title="Zlepšení" tone="green" items={changes.improvements} />
       <ChangeColumn title="Nové problémy" tone="red" items={changes.problems} />
       <ChangeColumn title="Ke sledování" tone="amber" items={changes.watch} />
+      <HypothesesPanel hypotheses={hypotheses} />
     </section>
   );
 }
@@ -31,15 +40,18 @@ function ChangeColumn({
         {title}
       </p>
       <div className="mt-4 space-y-3">
-        {(items.length ? items : [{ code: 'HR_STATS', title: 'Bez výrazné změny', value: '', reasonCs: 'V aktuálním období není významný signál.', status: 'green', priority: 3, delta: 0, severityScore: 0, thresholdDistanceCs: 'bez odchylky', thresholdConfidenceCs: 'medium', href: '/' } satisfies ExecutiveAlert]).map((item) => (
+        {items.length > 0 ? items.map((item) => (
           <div key={`${title}-${item.code}`} className="rounded-md bg-zinc-50 p-3">
             <p className="text-sm font-medium text-zinc-950">{item.title}</p>
             <p className="mt-1 text-sm leading-6 text-zinc-600">{item.reasonCs}</p>
-            {items.length ? (
-              <p className="mt-2 font-mono text-xs text-zinc-500">Severity {item.severityScore}/100 · {item.thresholdDistanceCs}</p>
-            ) : null}
+            <p className="mt-2 font-mono text-xs text-zinc-500">Severity {item.severityScore}/100 · {item.thresholdDistanceCs}</p>
           </div>
-        ))}
+        )) : (
+          <div className="rounded-md bg-zinc-50 p-3">
+            <p className="text-sm font-medium text-zinc-950">Bez výrazné změny</p>
+            <p className="mt-1 text-sm leading-6 text-zinc-600">V aktuálním období není významný signál pro tuto kategorii.</p>
+          </div>
+        )}
       </div>
     </div>
   );

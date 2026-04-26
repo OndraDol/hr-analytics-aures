@@ -8,7 +8,7 @@ Poslední aktualizace: 2026-04-25
 
 ## Aktuální stav projektu (2026-04-25)
 
-**v1 = 100 % hotová. v2 Perfection Pass schválen a master plán uložen.**
+**v1 = 100 % hotová. v2 Perfection Pass je implementovaný a stabilizovaný.**
 
 Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). Aktuálně startuje **v2 Perfection Pass** — kvalitativní upgrade z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
 
@@ -22,6 +22,14 @@ Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/proje
 - M17 Stabilizace v2 (a11y, dark mode review, progress model, walkthrough)
 
 Procento dokončenosti zůstává 100 % pro v1 prototyp; v2 se bude měřit samostatně přes nový `version: 'v2'` flag v progress modelu (definováno v M17).
+
+Aktuální v2 stav v kódu:
+- M12 Decision Support Layer hotovo: KPI zóny, severity breakdown, ranked alerts, timeline backlog, threshold confidence overlay.
+- M13 Visual Identity hotovo: AURES tokeny, branded sidebar, orange action CTA, dynamičtější Health Score.
+- M14 Charts & Motion hotovo: custom tooltipy, gradienty, sparkline hover, threshold pulse, page enter motion.
+- M15 Drill-Down Intelligence hotovo v demo rozsahu: recruitment stage/channel/role drivery, cross-KPI hypotézy, anomaly flag.
+- M16 Executive PDF + ESG hotovo v demo rozsahu: cover page, print preview, ranked briefing alerts, ESG Data Quality pro 21 datapointů.
+- M17 Stabilizace hotovo: v1/v2 progress model, route smoke guard, walkthrough update, release notes a dark-mode policy.
 
 Součástí dokončené v1 je:
 - Executive Dashboard se zdravotním skóre, alerty, změnami a scorecardy sekcí I-VIII.

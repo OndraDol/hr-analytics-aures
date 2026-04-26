@@ -1,4 +1,6 @@
 import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { BriefingCover } from '@/components/briefing/briefing-cover';
+import { PreviewToggle } from '@/components/briefing/preview-toggle';
 import { PrintButton } from '@/components/briefing/print-button';
 import { StatusBadge } from '@/components/kpi/status-badge';
 import type { ExecutiveAlert } from '@/lib/analytics/executive-dashboard';
@@ -28,10 +30,15 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
             <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Executive briefing</p>
             <h1 className="text-2xl font-semibold tracking-normal text-zinc-950">PDF podklad pro HR Directorku</h1>
           </div>
-          <PrintButton />
+          <div className="flex flex-wrap gap-2">
+            <PreviewToggle />
+            <PrintButton />
+          </div>
         </div>
 
-        <section className="briefing-section rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+        <BriefingCover data={data} />
+
+        <section className="briefing-section mt-5 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
@@ -119,6 +126,7 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
                       <BriefingChange
                         item={{
                           code: 'HR_STATS',
+                          rank: 0,
                           title: 'Bez výrazné změny',
                           value: '',
                           status: 'green',
@@ -127,6 +135,8 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
                           severityScore: 0,
                           thresholdDistanceCs: 'bez odchylky',
                           thresholdConfidenceCs: 'medium',
+                          owner: 'HR reporting',
+                          ageDays: 0,
                           href: '/',
                           reasonCs: 'V aktuálním období není významný nový signál.',
                         }}
@@ -213,9 +223,15 @@ function BriefingAlert({ alert }: { alert: ExecutiveAlert }) {
   return (
     <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
       <div className="flex items-start justify-between gap-4">
-        <div>
+        <div className="flex min-w-0 gap-3">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-rose-600 font-mono text-sm font-semibold text-white">
+            {alert.rank}
+          </div>
+          <div className="min-w-0">
           <p className="text-sm font-semibold text-zinc-950">{alert.title}</p>
           <p className="mt-1 text-sm leading-6 text-zinc-600">{alert.reasonCs}</p>
+          <p className="mt-1 text-xs font-medium text-zinc-500">Owner: {alert.owner} · stáří {alert.ageDays} dnů</p>
+          </div>
         </div>
         <div className="shrink-0 text-right">
           <StatusBadge status={alert.status} />

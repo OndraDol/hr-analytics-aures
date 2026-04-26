@@ -4,6 +4,7 @@ import { EmptyState } from '@/components/layout/empty-state';
 import { StatusBadge } from '@/components/kpi/status-badge';
 import type { ActionBacklogData, ActionBacklogEffort, ActionBacklogItem } from '@/lib/actions/action-backlog';
 import { cn } from '@/lib/utils';
+import { TimelineLegend, TimelineRail } from './timeline-rail';
 
 const effortLabel: Record<ActionBacklogEffort, string> = {
   low: 'Nízká',
@@ -55,6 +56,7 @@ export function ActionBacklogPage({ data }: { data: ActionBacklogData }) {
 
       <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.42fr]">
         <div className="space-y-4">
+          {data.items.length > 0 ? <TimelineLegend /> : null}
           {data.items.length > 0 ? (
             data.items.map((item, index) => <ActionItemCard key={item.id} item={item} rank={index + 1} />)
           ) : (
@@ -90,7 +92,9 @@ export function ActionBacklogPage({ data }: { data: ActionBacklogData }) {
 
 function ActionItemCard({ item, rank }: { item: ActionBacklogItem; rank: number }) {
   return (
-    <article className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <article className="flex gap-4 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+      <TimelineRail due={item.due} label={item.dueLabelCs} />
+      <div className="min-w-0 flex-1">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 gap-4">
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-zinc-100 font-mono text-sm font-semibold text-zinc-700">
@@ -126,6 +130,7 @@ function ActionItemCard({ item, rank }: { item: ActionBacklogItem; rank: number 
         <Fact label="Termín" value={item.dueLabelCs} icon={Clock3} />
         <Fact label="Severity" value={`${item.impactScore}/100`} />
         <Fact label="Driver" value={item.driverCs} />
+      </div>
       </div>
     </article>
   );

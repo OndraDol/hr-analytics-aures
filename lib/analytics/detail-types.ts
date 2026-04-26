@@ -28,6 +28,7 @@ export interface DetailTableRow {
   value: string;
   secondary: string;
   detail: string;
+  dataQuality?: 'ready' | 'partial' | 'mock' | 'needs-validation' | 'blocked';
 }
 
 export interface DetailTable {

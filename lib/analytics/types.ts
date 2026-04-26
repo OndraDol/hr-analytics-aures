@@ -1,6 +1,6 @@
 import type { CommonFilter, Period } from '@/lib/data/provider';
 import type { KpiCode, KpiDefinition, KpiStatus } from '@/lib/kpi/catalog';
-import type { ThresholdDistance, ThresholdMetadata } from '@/lib/kpi/thresholds';
+import type { SeverityBreakdown, ThresholdDistance, ThresholdMetadata } from '@/lib/kpi/thresholds';
 
 export interface KpiEvaluationContext {
   period: Period;
@@ -29,6 +29,7 @@ export interface KpiEvaluation {
   thresholdMetadata: ThresholdMetadata;
   thresholdRationaleCs: string;
   severityScore: number;
+  severityBreakdown: SeverityBreakdown;
   trend: KpiTrend;
   sparkline: KpiSparkPoint[];
   period: Period;
@@ -43,11 +44,27 @@ export interface KpiDriver {
   share: number;
 }
 
+export type KpiDriverDimension = 'division' | 'stage' | 'channel' | 'role' | 'grade' | 'tenure-cohort';
+
+export interface KpiDriverGroup {
+  dimension: KpiDriverDimension;
+  labelCs: string;
+  top: KpiDriver[];
+}
+
 export interface KpiAnomaly {
   isAnomaly: boolean;
   zScore: number;
   direction: 'up' | 'down' | 'flat';
+  severity: 'subtle' | 'notable' | 'sharp';
   messageCs: string;
+}
+
+export interface CrossKpiHypothesis {
+  kpis: [string, string];
+  strength: 'strong' | 'plausible';
+  messageCs: string;
+  confidenceCs: string;
 }
 
 export interface KpiActionRecommendation {

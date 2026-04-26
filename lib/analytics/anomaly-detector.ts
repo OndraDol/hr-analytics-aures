@@ -18,14 +18,17 @@ export function detectAnomaly(evaluation: KpiEvaluation): KpiAnomaly {
   const deviation = stdDev(baseline, average);
   const zScore = deviation > 0 ? (current - average) / deviation : 0;
   const direction: KpiAnomaly['direction'] = zScore > 0.25 ? 'up' : zScore < -0.25 ? 'down' : 'flat';
-  const isAnomaly = Math.abs(zScore) >= 2;
+  const absZ = Math.abs(zScore);
+  const isAnomaly = absZ >= 1.5;
+  const severity: KpiAnomaly['severity'] = absZ >= 2.4 ? 'sharp' : absZ >= 1.8 ? 'notable' : 'subtle';
 
   return {
     isAnomaly,
     zScore,
     direction,
+    severity,
     messageCs: isAnomaly
-      ? `Výrazná odchylka proti vlastní historii (z-score ${zScore.toFixed(1)}).`
+      ? `${severity === 'sharp' ? 'Výrazná' : severity === 'notable' ? 'Viditelná' : 'Jemná'} odchylka proti vlastní historii (z-score ${zScore.toFixed(1)}).`
       : 'Bez výrazné odchylky proti vlastní historii.',
   };
 }
