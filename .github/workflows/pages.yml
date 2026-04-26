@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Generate data modules
+        run: pnpm gen:data
+
       - name: Run checks
         run: |
           pnpm lint
