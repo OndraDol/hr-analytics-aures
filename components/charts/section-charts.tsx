@@ -41,7 +41,7 @@ export function SectionTrendChart({ series }: { series: readonly SectionTrendSer
   if (!mounted) return <ChartSkeleton />;
 
   return (
-    <div className="h-72">
+    <div className="h-72 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
           <GradientDefs idPrefix="section-trend" />
@@ -87,7 +87,7 @@ export function SectionBreakdownChart({
   if (!mounted) return <ChartSkeleton />;
 
   return (
-    <div className="h-72">
+    <div className="h-72 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
           <GradientDefs idPrefix="section-breakdown" />

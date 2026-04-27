@@ -1,5 +1,9 @@
 import type { KpiUnit } from '@/lib/kpi/catalog';
 
+export function formatEmployeeName(employee: { firstName: string; lastName: string }): string {
+  return `${employee.firstName} ${employee.lastName}`.trim();
+}
+
 const formatter = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 1 });
 const integerFormatter = new Intl.NumberFormat('cs-CZ', { maximumFractionDigits: 0 });
 

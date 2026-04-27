@@ -95,7 +95,7 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
           <div className="briefing-section rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-semibold text-zinc-950">Manažerské shrnutí</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-700">{dashboard.aiSummaryCs}</p>
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
               {dashboard.heroKpis.map((evaluation) => (
                 <div key={evaluation.code} className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
                   <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
@@ -111,7 +111,7 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
 
         <section className="briefing-section mt-5 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-zinc-950">Co se změnilo tento měsíc</h2>
-          <div className="mt-4 grid gap-3 lg:grid-cols-3">
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {changeGroups.map((group) => {
               const items = dashboard.changes[group.key];
               return (

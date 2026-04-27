@@ -35,7 +35,7 @@ export function RetentionTrendChart({
   if (!mounted) return <ChartSkeleton />;
 
   return (
-    <div className="h-72">
+    <div className="h-72 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
           <GradientDefs idPrefix="retention" />
@@ -64,7 +64,7 @@ export function RetentionSegmentChart({ segments }: { segments: readonly Retenti
   if (!mounted) return <ChartSkeleton />;
 
   return (
-    <div className="h-72">
+    <div className="h-72 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 16, bottom: 0, left: 0 }}>
           <GradientDefs idPrefix="retention-segment" />

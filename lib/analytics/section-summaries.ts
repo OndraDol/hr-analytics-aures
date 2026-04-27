@@ -1,4 +1,5 @@
 import type { AIInsightProvider } from '@/lib/ai/insight-provider';
+import { formatEmployeeName } from '@/lib/analytics/format';
 import { buildKpiCardModel, type KpiCardModel } from '@/lib/analytics/kpi-engine';
 import { buildRetentionSummary } from '@/lib/analytics/retention-summary';
 import type { DataProvider, Period } from '@/lib/data/provider';
@@ -45,6 +46,20 @@ export interface SectionTable {
   rows: SectionTableRow[];
 }
 
+export interface SectionPeopleRow {
+  name: string;
+  role: string;
+  division: string;
+  detail: string;
+  tone?: 'rose' | 'amber' | 'blue' | 'emerald' | 'zinc';
+}
+
+export interface SectionPeopleHighlight {
+  title: string;
+  subtitle: string;
+  rows: SectionPeopleRow[];
+}
+
 export interface SectionDashboardData {
   section: SectionDefinition;
   period: Period;
@@ -55,6 +70,7 @@ export interface SectionDashboardData {
   table: SectionTable;
   executiveSignalCs: string;
   actions: string[];
+  peopleHighlight?: SectionPeopleHighlight;
 }
 
 const sum = <T>(rows: readonly T[], pick: (row: T) => number): number =>
@@ -252,11 +268,13 @@ async function buildWorkforceMovement({
   period: Period;
   kpis: KpiCardModel[];
 }): Promise<SectionDashboardData> {
-  const [employees, events, labels] = await Promise.all([
+  const [employees, events, labels, positions] = await Promise.all([
     provider.getEmployees(),
     provider.getWorkforceEvents(period),
     divisionLabels(provider),
+    provider.getPositions(),
   ]);
+  const positionById = new Map(positions.map((position) => [position.id, position]));
   const employeesById = employeeMap(employees);
   const hires = events.filter((event) => event.type === 'hire');
   const leavers = events.filter((event) => event.type === 'terminate');
@@ -327,6 +345,30 @@ async function buildWorkforceMovement({
       'Oddělit plánovaný růst od neplánovaných odchodů.',
       'Napojit pohyb lidí na detail odchodů a průchod náborem.',
     ],
+    peopleHighlight: (() => {
+      const rows: SectionPeopleRow[] = events
+        .filter((event) => event.type === 'terminate')
+        .map((event) => ({ event, employee: employeesById.get(event.employeeId) }))
+        .filter((row): row is { event: typeof events[number]; employee: Employee } => Boolean(row.employee))
+        .sort((a, b) => b.event.date.localeCompare(a.event.date))
+        .slice(0, 6)
+        .map(({ event, employee }) => {
+          const position = positionById.get(employee.positionId);
+          return {
+            name: formatEmployeeName(employee),
+            role: position?.title ?? employee.grade,
+            division: labels.get(employee.divisionId) ?? employee.divisionId,
+            detail: `odchod ${event.date}`,
+            tone: employee.criticalPositionFlag ? 'rose' : 'amber',
+          };
+        });
+      if (rows.length === 0) return undefined;
+      return {
+        title: 'Poslední odchody v Q1',
+        subtitle: 'Konkrétní lidé, kteří firmu opustili v aktuálním kvartálu.',
+        rows,
+      };
+    })(),
   };
 }
 
@@ -540,9 +582,35 @@ async function buildRetention({
   period: Period;
   kpis: KpiCardModel[];
 }): Promise<SectionDashboardData> {
-  const summary = await buildRetentionSummary(provider, period);
+  const [summary, events, employees, positions, divisionLookup] = await Promise.all([
+    buildRetentionSummary(provider, period),
+    provider.getWorkforceEvents(period),
+    provider.getEmployees(),
+    provider.getPositions(),
+    divisionLabels(provider),
+  ]);
   const criticalShare =
     summary.totalLeavers > 0 ? (summary.totalCriticalLeavers / summary.totalLeavers) * 100 : 0;
+  const employeeById = employeeMap(employees);
+  const positionById = new Map(positions.map((position) => [position.id, position]));
+  const criticalLeavers = events
+    .filter((event) => event.type === 'terminate')
+    .map((event) => ({ event, employee: employeeById.get(event.employeeId) }))
+    .filter((row): row is { event: typeof events[number]; employee: Employee } =>
+      Boolean(row.employee && row.employee.criticalPositionFlag),
+    )
+    .sort((a, b) => b.event.date.localeCompare(a.event.date))
+    .slice(0, 6);
+  const peopleRows: SectionPeopleRow[] = criticalLeavers.map(({ event, employee }) => {
+    const position = positionById.get(employee.positionId);
+    return {
+      name: formatEmployeeName(employee),
+      role: position?.title ?? 'klíčová role',
+      division: divisionLookup.get(employee.divisionId) ?? employee.divisionId,
+      detail: `odchod ${event.date}`,
+      tone: 'rose',
+    };
+  });
 
   return {
     section,
@@ -592,6 +660,13 @@ async function buildRetention({
       'U klíčových odchodů zkontrolovat nástupnictví a stabilizační plán.',
       'Oddělit plánované odchody od odchodů, které vytvářejí provozní riziko.',
     ],
+    peopleHighlight: peopleRows.length > 0
+      ? {
+          title: 'Klíčoví lidé, kteří odešli v Q1',
+          subtitle: 'Z těchto rolí je potřeba potvrdit nástupce nebo stabilizovat tým.',
+          rows: peopleRows,
+        }
+      : undefined,
   };
 }
 
@@ -606,12 +681,14 @@ async function buildSuccession({
   period: Period;
   kpis: KpiCardModel[];
 }): Promise<SectionDashboardData> {
-  const [plans, positions, labels] = await Promise.all([
+  const [plans, positions, labels, employees] = await Promise.all([
     provider.getSuccessionPlans(),
     provider.getPositions(),
     divisionLabels(provider),
+    provider.getEmployees(),
   ]);
   const positionById = new Map(positions.map((position) => [position.id, position]));
+  const employeeById = employeeMap(employees);
   const readyNow = plans.filter((plan) => plan.readiness === 'ready_now').length;
   const readyLater = plans.filter((plan) => plan.readiness === 'ready_1_2y').length;
   const gaps = plans.filter((plan) => plan.readiness === 'gap').length;
@@ -681,6 +758,30 @@ async function buildSuccession({
       'Lidi připravené do 2 let propojit s konkrétními rozvojovými aktivitami.',
       'Spojit mezery v nástupnictví s retenčním rizikem klíčových pozic.',
     ],
+    peopleHighlight: (() => {
+      const gapRows: SectionPeopleRow[] = plans
+        .filter((plan) => plan.readiness === 'gap')
+        .slice(0, 6)
+        .map((plan) => {
+          const position = positionById.get(plan.criticalPositionId);
+          const incumbent = plan.incumbentEmployeeId
+            ? employeeById.get(plan.incumbentEmployeeId)
+            : undefined;
+          return {
+            name: incumbent ? formatEmployeeName(incumbent) : 'bez incumbenta',
+            role: position?.title ?? plan.criticalPositionId,
+            division: position ? labels.get(position.divisionId) ?? position.divisionId : 'bez divize',
+            detail: 'bez nástupce',
+            tone: 'rose',
+          };
+        });
+      if (gapRows.length === 0) return undefined;
+      return {
+        title: 'Klíčové role bez nástupce',
+        subtitle: 'Současný držitel role + divize. Pokud jeden z těchto lidí odejde, není kdo by ho nahradil.',
+        rows: gapRows,
+      };
+    })(),
   };
 }
 

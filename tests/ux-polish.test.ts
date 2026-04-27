@@ -29,9 +29,10 @@ describe('M18 UX polish guards', () => {
     const source = readProjectFile('components/sections/section-page.tsx');
 
     expect(source).toContain('Trend hlavního KPI');
-    expect(source).toContain('Co udělat');
+    expect(source).toContain('Návrh dalšího kroku');
     expect(source).toContain('Souvislosti');
     expect(source).toContain('variant="simple"');
+    expect(source).toContain('PeoplePanel');
     expect(source).not.toContain('Co je důležité');
     expect(source).not.toContain('Executive signal');
     expect(source).not.toContain('Drill-down');

@@ -108,15 +108,18 @@ export function KpiCardDecisionZone({
   model: KpiCardModel;
   variant?: 'full' | 'simple';
 }) {
+  if (variant !== 'full') return null;
+
   return (
     <div data-zone="decision" className="mt-5 grid gap-3 border-t border-zinc-100 pt-5">
-      <div className="rounded-md border border-zinc-200 border-l-4 border-l-aures-orange-500 bg-gradient-to-r from-aures-orange-50/60 to-white p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-semibold uppercase tracking-wide text-aures-orange-700">Doporučená akce</p>
-        </div>
-        <p className="mt-1 text-sm leading-6 text-zinc-800">{model.action.bodyCs}</p>
-      </div>
-      {variant === 'full' && model.aiInsight ? (
+      <details className="group rounded-md border border-zinc-200 bg-zinc-50/60 p-3 open:bg-white">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-600 marker:hidden">
+          Návrh kroku
+          <span className="text-zinc-400 transition-transform group-open:rotate-180">⌄</span>
+        </summary>
+        <p className="mt-2 text-sm leading-6 text-zinc-700">{model.action.bodyCs}</p>
+      </details>
+      {model.aiInsight ? (
         <div className="rounded-md border border-violet-200 bg-violet-50 p-3">
           <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
             <Sparkles className="h-3.5 w-3.5" />

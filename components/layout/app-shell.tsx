@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { ChevronDown, CircleGauge, FileDown, FileText, ListChecks, Menu } from 'lucide-react';
 import { CopilotFab } from '@/components/copilot/copilot-fab';
 import { AuresMonogram } from '@/components/layout/aures-monogram';
+import { LogoutButton } from '@/components/auth/logout-button';
 import { ANALYTICS_TOPICS } from '@/lib/analytics/cross-cutting';
 import { OPERATIONAL_VIEWS } from '@/lib/analytics/operational-views';
-import { getProjectProgress } from '@/lib/project/progress';
 import { SECTION_CATALOG } from '@/lib/sections/catalog';
 import { cn } from '@/lib/utils';
 
@@ -19,8 +19,6 @@ export function AppShell({
   sectionLabel?: string;
   sectionTitle?: string;
 }) {
-  const v1Progress = getProjectProgress();
-  const v2Progress = getProjectProgress(undefined, 'v2');
   const navGroups = [
     {
       label: 'Vedení',
@@ -55,6 +53,8 @@ export function AppShell({
       })),
     },
   ];
+
+  const allPills = navGroups.flatMap((group) => group.items);
 
   return (
     <div className="min-h-screen bg-[#f6f7fb] text-zinc-950">
@@ -95,27 +95,15 @@ export function AppShell({
           ))}
         </nav>
         <div className="shrink-0 border-t border-aures-blue-800/80 p-4">
-          <div className="rounded-lg border border-aures-blue-800 bg-aures-blue-900/40 p-3">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold text-aures-blue-200">Stav aplikace</p>
-                <p className="mt-1 text-xs text-zinc-300">Q1 2026 · ukázková data</p>
-              </div>
-              <p className="font-mono text-sm font-semibold text-white">{v2Progress.percent} %</p>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-medium text-zinc-300">
-              <ProgressPill label="v1" percent={v1Progress.percent} colorClass="bg-emerald-500" />
-              <ProgressPill label="v2" percent={v2Progress.percent} colorClass="bg-aures-orange-500" />
-            </div>
-          </div>
+          <LogoutButton />
         </div>
       </aside>
       <div className="lg:pl-64">
         <header className="print-hidden sticky top-0 z-20 border-b-2 border-aures-blue-100 bg-white/90 px-5 py-3 backdrop-blur md:px-8">
           <div className="flex items-center justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{sectionLabel}</p>
-              <p className="text-sm font-medium text-zinc-950">{sectionTitle}</p>
+              <p className="truncate text-sm font-medium text-zinc-950">{sectionTitle}</p>
             </div>
             <div className="flex items-center gap-2">
               <Link
@@ -125,73 +113,76 @@ export function AppShell({
                 <FileDown className="h-3.5 w-3.5" />
                 Export PDF
               </Link>
-              <div className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-600">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                stav {v2Progress.percent} %
-              </div>
             </div>
           </div>
-          <details className="group mt-3 lg:hidden">
-            <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-aures-blue-100 bg-aures-blue-50 px-3 py-2 text-sm font-semibold text-aures-blue-950 marker:hidden">
-              <span className="flex items-center gap-2">
-                <Menu className="h-4 w-4" />
-                Navigace
-              </span>
-              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
-            </summary>
-            <nav className="mt-3 grid gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
-              {navGroups.map((group) => (
-                <div key={group.label}>
-                  <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{group.label}</p>
-                  <div className="mt-2 grid gap-1 sm:grid-cols-2">
-                    {group.items.map((item) => {
-                      const Icon = item.icon;
-                      const active = item.href === activeHref;
-                      return (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={cn(
-                            'flex min-h-10 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-aures-blue-50 hover:text-aures-blue-800',
-                            active && 'bg-aures-orange-50 text-aures-orange-700 ring-1 ring-aures-orange-200',
-                          )}
-                        >
-                          <Icon className="h-4 w-4 shrink-0" />
-                          <span className="min-w-0 truncate">{item.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </nav>
-          </details>
         </header>
-        {children}
+        <nav
+          aria-label="Sekce"
+          className="print-hidden sticky top-[60px] z-10 -mx-px border-b border-zinc-200 bg-white/90 backdrop-blur lg:hidden"
+        >
+          <div className="flex gap-2 overflow-x-auto px-5 py-2">
+            {allPills.map((item) => {
+              const Icon = item.icon;
+              const active = item.href === activeHref;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition',
+                    active
+                      ? 'border-aures-orange-300 bg-aures-orange-50 text-aures-orange-800'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:border-aures-blue-200 hover:bg-aures-blue-50 hover:text-aures-blue-800',
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+        <details className="group mx-5 mt-3 lg:hidden" aria-label="Navigace">
+          <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-aures-blue-100 bg-aures-blue-50 px-3 py-2 text-sm font-semibold text-aures-blue-950 marker:hidden">
+            <span className="flex items-center gap-2">
+              <Menu className="h-4 w-4" />
+              Navigace všech oblastí
+            </span>
+            <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+          </summary>
+          <nav className="mt-3 grid gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-sm">
+            {navGroups.map((group) => (
+              <div key={group.label}>
+                <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{group.label}</p>
+                <div className="mt-2 grid gap-1 sm:grid-cols-2">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = item.href === activeHref;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          'flex min-h-10 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-aures-blue-50 hover:text-aures-blue-800',
+                          active && 'bg-aures-orange-50 text-aures-orange-700 ring-1 ring-aures-orange-200',
+                        )}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="min-w-0 truncate">{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+            <div className="border-t border-zinc-200 pt-3">
+              <LogoutButton variant="light" />
+            </div>
+          </nav>
+        </details>
+        <div className="mx-auto max-w-screen-2xl">{children}</div>
       </div>
       <CopilotFab context={{ activeHref, sectionLabel, sectionTitle }} />
-    </div>
-  );
-}
-
-function ProgressPill({
-  label,
-  percent,
-  colorClass,
-}: {
-  label: string;
-  percent: number;
-  colorClass: string;
-}) {
-  return (
-    <div>
-      <div className="flex items-center justify-between gap-2">
-        <span>{label}</span>
-        <span>{percent} %</span>
-      </div>
-      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-aures-blue-950">
-        <div className={cn('h-full rounded-full', colorClass)} style={{ width: `${percent}%` }} />
-      </div>
     </div>
   );
 }

@@ -22,31 +22,24 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
     <main className="px-5 py-6 md:px-8">
       <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-5">
-          <div className="max-w-3xl">
+          <div className="min-w-0 max-w-3xl">
             <div className="flex items-center gap-3">
               <div className="rounded-md p-2 text-white" style={{ backgroundColor: data.accent }}>
                 <Icon className="h-5 w-5" />
               </div>
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.eyebrow}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.eyebrow}</p>
                 <p className="text-sm text-zinc-500">Q1 2026 · HR Overview</p>
               </div>
             </div>
-            <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
+            <h1 className="mt-5 text-3xl font-semibold tracking-normal text-zinc-950 md:text-4xl xl:text-5xl">
               {data.title}
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">{data.description}</p>
-          </div>
-          <div className="max-w-md rounded-lg border border-violet-200 bg-violet-50 p-4">
-            <p className="flex items-center gap-2 text-sm font-semibold text-violet-950">
-              <Sparkles className="h-4 w-4" />
-              Analytický signál
-            </p>
-            <p className="mt-2 text-sm leading-6 text-violet-900">{data.insightCs}</p>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-700">{data.insightCs}</p>
           </div>
         </div>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-3">
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
           {keyMetrics.map((metric) => (
             <div key={metric.label} className="rounded-md border border-zinc-200 bg-zinc-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{metric.label}</p>
@@ -59,7 +52,7 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+      <section className="mt-6 grid gap-6 2xl:grid-cols-[1.05fr_0.95fr]">
         <Panel title={data.primaryBreakdown.title} subtitle={data.primaryBreakdown.subtitle}>
           <SectionBreakdownChart
             rows={data.primaryBreakdown.rows}
@@ -76,7 +69,7 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
         </Panel>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+      <section className="mt-6">
         <Panel title={data.table.title} subtitle={data.table.subtitle}>
           <div className="overflow-hidden rounded-md border border-zinc-200">
             {visibleRows.length > 0 ? (
@@ -95,36 +88,50 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
             )}
           </div>
         </Panel>
-        <Panel title="Akční výstup" subtitle="Co má z pohledu následovat">
-          <div className="space-y-3">
-            {data.actions.slice(0, 2).map((action) => (
-              <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                <p className="text-sm leading-6 text-zinc-700">{action}</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
       </section>
 
-      <section className="mt-6 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-        <div className="mb-5">
-          <h2 className="text-lg font-semibold text-zinc-950">Navazující pohledy</h2>
-          <p className="mt-1 text-sm text-zinc-500">Cesty zpět do sekcí a souvisejících detailů</p>
-        </div>
-        <div className="grid gap-3 md:grid-cols-3">
-          {data.relatedLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="flex items-center justify-between gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-800 hover:border-blue-200 hover:bg-blue-50"
-            >
-              {link.label}
-              <ArrowUpRight className="h-4 w-4 text-blue-700" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      {data.relatedLinks.length > 0 ? (
+        <section className="mt-6 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-zinc-950">Navazující pohledy</h2>
+            <p className="mt-1 text-sm text-zinc-500">Cesty zpět do sekcí a souvisejících detailů</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {data.relatedLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-800 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800"
+              >
+                {link.label}
+                <ArrowUpRight className="h-3 w-3" />
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {data.actions.length > 0 ? (
+        <section className="mt-6">
+          <details className="group rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-zinc-700 marker:hidden">
+              <span className="flex items-center gap-2">
+                <Sparkles className="h-3.5 w-3.5 text-aures-orange-500" />
+                Návrh dalšího kroku
+              </span>
+              <span className="text-zinc-400 transition-transform group-open:rotate-180">⌄</span>
+            </summary>
+            <div className="mt-4 space-y-3">
+              {data.actions.slice(0, 3).map((action) => (
+                <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                  <p className="text-sm leading-6 text-zinc-700">{action}</p>
+                </div>
+              ))}
+            </div>
+          </details>
+        </section>
+      ) : null}
     </main>
   );
 }
@@ -139,12 +146,12 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-zinc-950">{title}</h2>
         <p className="mt-1 text-sm text-zinc-500">{subtitle}</p>
       </div>
-      {children}
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }

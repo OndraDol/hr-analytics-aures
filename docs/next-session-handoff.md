@@ -1,10 +1,14 @@
 # Next Session Handoff — HR Analytics AURES
 
-Poslední aktualizace: 2026-04-27
+Poslední aktualizace: 2026-04-27 (UX Cleanup Pass v3)
 
-## Aktuální stav — v2 hotová, HR Overview UX pass nasazen
+## Aktuální stav — v2 hotová, HR Overview + UX Cleanup nasazeno
 
-V1 prototyp + **v2 Perfection Pass** + **HR Overview UX Pass (2026-04-27)** jsou hotové. Stránky jsou méně fragmentované, AI komentáře sjednocené (jeden text na stránku), všechny sparkliny mají osy a endpoint hodnoty, mock data dávají realistický Q1 2026 příběh (1 red headline + 2 amber, health score 60). Detail v `docs/releases/v2-hr-overview-pass.md`.
+V1 prototyp + **v2 Perfection Pass** + **HR Overview UX Pass** + **UX Cleanup Pass v3 (2026-04-27)** jsou hotové.
+
+Po UX Cleanup Passu v3 je dashboard méně preskriptivní (žádné plošné "Doporučená akce", místo toho `<details>` "Návrh dalšího kroku"), reporty obsahují konkrétní jména zaměstnanců (Retention / Workforce-Movement / Succession peopleHighlight), Recharts grafy mají overflow guard (`min-w-0`), main content je vycentrován do `max-w-screen-2xl`, mobile má vždy viditelnou pills lištu sekcí, demo je za heslem `AURESHR12345`. Detail v `docs/releases/v2-ux-cleanup-pass.md`.
+
+URL GitHub Pages: `https://ondradol.github.io/hr-analytics-aures/`
 
 **Master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](plans/2026-04-25-v2-perfection-master-plan.md) definuje 6 milníků M12–M17:
 

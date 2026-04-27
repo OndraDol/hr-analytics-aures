@@ -3,6 +3,7 @@ import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { KpiCard } from '@/components/kpi/kpi-card';
 import { SectionBreakdownChart, SectionTrendChart, type SectionTrendSeries } from '@/components/charts/section-charts';
 import { StatusBadge } from '@/components/kpi/status-badge';
+import { PeoplePanel } from '@/components/sections/people-panel';
 import type { SectionDashboardData } from '@/lib/analytics/section-summaries';
 
 const trendColor = '#1d4ed8';
@@ -12,6 +13,7 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
   const primaryKpi = data.kpis[0];
   const supportingKpis = data.kpis.slice(1, 4);
   const relatedLinks = [...data.section.relatedAnalytics, ...data.section.relatedOperational];
+  const peopleHighlight = data.peopleHighlight;
 
   const trendSeries: SectionTrendSeries[] = primaryKpi
     ? [
@@ -28,17 +30,17 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
     <main className="px-5 py-6 md:px-8">
       <section className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-6">
-          <div className="max-w-3xl">
+          <div className="min-w-0 max-w-3xl">
             <div className="flex items-center gap-3">
               <div className="rounded-md p-2 text-white" style={{ backgroundColor: data.section.accent }}>
                 <Icon className="h-5 w-5" />
               </div>
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.section.eyebrow}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.section.eyebrow}</p>
                 <p className="text-sm text-zinc-500">HR Overview · Q1 2026</p>
               </div>
             </div>
-            <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
+            <h1 className="mt-5 text-3xl font-semibold tracking-normal text-zinc-950 md:text-4xl xl:text-5xl">
               {data.section.title}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-700">{data.executiveSignalCs}</p>
@@ -67,9 +69,9 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
       ) : null}
 
       {primaryKpi || supportingKpis.length > 0 ? (
-        <section className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mt-6 grid gap-6 md:grid-cols-2 2xl:grid-cols-4">
           {primaryKpi ? (
-            <div className="md:col-span-2 xl:col-span-1">
+            <div className="md:col-span-2 2xl:col-span-1">
               <KpiCard model={primaryKpi} featured variant="simple" />
             </div>
           ) : null}
@@ -89,17 +91,13 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
         </Panel>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.8fr]">
-        <Panel title="Co udělat" subtitle="Nejbližší praktický krok pro HR">
-          <div className="space-y-3">
-            {data.actions.slice(0, 3).map((action) => (
-              <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                <p className="text-sm leading-6 text-zinc-700">{action}</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
+      {peopleHighlight ? (
+        <section className="mt-6">
+          <PeoplePanel data={peopleHighlight} />
+        </section>
+      ) : null}
+
+      <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
         {relatedLinks.length > 0 ? (
           <Panel title="Souvislosti" subtitle="Hlubší pohledy v Analytice a Operativě">
             <div className="flex flex-wrap gap-2">
@@ -116,6 +114,20 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
             </div>
           </Panel>
         ) : null}
+        <details className="group rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-zinc-700 marker:hidden">
+            <span>Návrh dalšího kroku</span>
+            <span className="text-zinc-400 transition-transform group-open:rotate-180">⌄</span>
+          </summary>
+          <div className="mt-4 space-y-3">
+            {data.actions.slice(0, 3).map((action) => (
+              <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                <p className="text-sm leading-6 text-zinc-700">{action}</p>
+              </div>
+            ))}
+          </div>
+        </details>
       </section>
     </main>
   );
@@ -131,12 +143,12 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-zinc-950">{title}</h2>
         <p className="mt-1 text-sm text-zinc-500">{subtitle}</p>
       </div>
-      {children}
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
