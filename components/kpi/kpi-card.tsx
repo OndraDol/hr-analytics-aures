@@ -2,7 +2,15 @@ import type { KpiCardModel } from '@/lib/analytics/kpi-engine';
 import { cn } from '@/lib/utils';
 import { KpiCardDecisionZone, KpiCardHeadlineZone, KpiCardInsightZone } from './kpi-card-zones';
 
-export function KpiCard({ model, featured = false }: { model: KpiCardModel; featured?: boolean }) {
+export function KpiCard({
+  model,
+  featured = false,
+  variant = 'simple',
+}: {
+  model: KpiCardModel;
+  featured?: boolean;
+  variant?: 'full' | 'simple';
+}) {
   return (
     <article
       className={cn(
@@ -17,8 +25,8 @@ export function KpiCard({ model, featured = false }: { model: KpiCardModel; feat
         </span>
       ) : null}
       <KpiCardHeadlineZone model={model} />
-      <KpiCardInsightZone model={model} />
-      <KpiCardDecisionZone model={model} />
+      <KpiCardInsightZone model={model} variant={variant} />
+      <KpiCardDecisionZone model={model} variant={variant} />
     </article>
   );
 }

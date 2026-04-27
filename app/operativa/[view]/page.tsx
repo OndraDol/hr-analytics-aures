@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ view: str
   const { view: slug } = await params;
   const view = getOperationalViewBySlug(slug);
   if (!view) return {};
-  return { title: `${view.title} | AURES HR Analytics` };
+  return { title: `${view.title} | AURES Přehled lidí` };
 }
 
 export default async function OperationalViewPage({ params }: { params: Promise<{ view: string }> }) {

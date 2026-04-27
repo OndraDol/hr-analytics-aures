@@ -1,6 +1,13 @@
 import type { DataProvider, Period } from '@/lib/data/provider';
 import { evaluateKpi } from '@/lib/analytics/kpi-evaluator';
 import { detectHypotheses } from '@/lib/analytics/cross-kpi-correlator';
+import { analyzeDrivers } from '@/lib/analytics/driver-analyzer';
+import {
+  comparisonSentence,
+  driverSentence,
+  formatPeriodHuman,
+  statusHuman,
+} from '@/lib/analytics/human-readable';
 import type { CrossKpiHypothesis, KpiEvaluation } from '@/lib/analytics/types';
 import { KPI_CATALOG, type KpiCode, type KpiStatus } from '@/lib/kpi/catalog';
 import { SECTION_CATALOG, type SectionDefinition } from '@/lib/sections/catalog';
@@ -20,6 +27,8 @@ export interface ExecutiveAlert {
   ageDays: number;
   href: string;
   reasonCs: string;
+  driverCs: string;
+  comparisonCs: string;
 }
 
 export interface ExecutiveChangeGroup {
@@ -63,27 +72,37 @@ const isImproving = (evaluation: KpiEvaluation): boolean => {
   return Math.abs(evaluation.deltaVsTarget ?? 0) < Math.abs((evaluation.deltaVsTarget ?? 0) - delta);
 };
 
-const alertFromEvaluation = (evaluation: KpiEvaluation): ExecutiveAlert => ({
-  code: evaluation.code,
-  rank: 0,
-  title: evaluation.definition.nameCs,
-  value: evaluation.formattedValue,
-  status: evaluation.status,
-  priority: evaluation.definition.priority,
-  delta: evaluation.trend.mom ?? 0,
-  severityScore: evaluation.severityScore,
-  thresholdDistanceCs: evaluation.thresholdDistance.messageCs,
-  thresholdConfidenceCs: evaluation.thresholdMetadata.confidence,
-  owner: evaluation.definition.owner,
-  ageDays: ageDaysFor(evaluation),
-  href: sectionHrefForKpi(evaluation.code),
-  reasonCs:
+const alertFromEvaluation = async (
+  provider: DataProvider,
+  evaluation: KpiEvaluation,
+): Promise<ExecutiveAlert> => {
+  const drivers = await analyzeDrivers(provider, evaluation);
+  const comparisonCs = comparisonSentence(evaluation);
+  const driverCs = driverSentence(evaluation.definition, drivers);
+  const reasonCs =
     evaluation.status === 'red'
-      ? `${evaluation.definition.nameCs} je mimo toleranci (${evaluation.thresholdDistance.messageCs}) a vyžaduje vlastníka akce.`
-      : `${evaluation.definition.nameCs} se posunula proti minulému období o ${Math.abs(
-          evaluation.trend.mom ?? 0,
-        ).toFixed(1)}. ${evaluation.thresholdDistance.messageCs}.`,
-});
+      ? `${evaluation.definition.nameCs} je ${statusHuman(evaluation.status)} a potřebuje rozhodnutí vlastníka. ${comparisonCs} ${driverCs}`
+      : `${evaluation.definition.nameCs} je ${statusHuman(evaluation.status)}. ${comparisonCs} ${driverCs}`;
+
+  return {
+    code: evaluation.code,
+    rank: 0,
+    title: evaluation.definition.nameCs,
+    value: evaluation.formattedValue,
+    status: evaluation.status,
+    priority: evaluation.definition.priority,
+    delta: evaluation.trend.mom ?? 0,
+    severityScore: evaluation.severityScore,
+    thresholdDistanceCs: evaluation.thresholdDistance.messageCs,
+    thresholdConfidenceCs: evaluation.thresholdMetadata.confidence,
+    owner: evaluation.definition.owner,
+    ageDays: ageDaysFor(evaluation),
+    href: sectionHrefForKpi(evaluation.code),
+    reasonCs,
+    driverCs,
+    comparisonCs,
+  };
+};
 
 const rankAlert = (alert: ExecutiveAlert): number =>
   alert.severityScore + (4 - alert.priority) * 6 + Math.min(Math.abs(alert.delta), 12);
@@ -104,13 +123,13 @@ const healthLabel = (score: number): string => {
   return 'Kritické';
 };
 
-const aiSummary = (score: number, alerts: ExecutiveAlert[]): string => {
+const aiSummary = (score: number, alerts: ExecutiveAlert[], period: Period): string => {
   const lead = healthLabel(score).toLowerCase();
   const top = alerts[0];
   if (!top) {
-    return 'HR metriky jsou stabilní a bez výrazného varování. Dashboard doporučuje držet současný rytmus měsíční kontroly a sledovat změny v klíčových segmentech.';
+    return 'Organizace je v aktuálním měsíci bez výrazného varování. HR může držet běžný měsíční rytmus kontroly a sledovat, jestli se nemění stav lidí v klíčových divizích.';
   }
-  return `Celkový HR health score ukazuje ${lead}. Největší pozornost teď vyžaduje ${top.title}, kde dashboard doporučuje rozpad podle divizí a rychlé potvrzení vlastníka akce.`;
+  return `Celkový HR health score ukazuje ${lead}. Největší téma za ${formatPeriodHuman(period)} je ${top.title}: ${top.comparisonCs} ${top.driverCs} Doporučení pro HR: otevřít detail, potvrdit vlastníka a převést signál do jedné konkrétní akce.`;
 };
 
 export async function buildExecutiveDashboard(
@@ -130,14 +149,19 @@ export async function buildExecutiveDashboard(
     0,
   );
   const healthScore = Math.max(0, Math.min(100, Math.round(100 - weightedRisk / totalWeight)));
-  const alerts = allEvaluations
-    .filter((evaluation) => evaluation.status !== 'green')
-    .map(alertFromEvaluation)
-    .sort((a, b) => rankAlert(b) - rankAlert(a));
+  const alerts = (
+    await Promise.all(
+      allEvaluations
+        .filter((evaluation) => evaluation.status !== 'green')
+        .map((evaluation) => alertFromEvaluation(provider, evaluation)),
+    )
+  ).sort((a, b) => rankAlert(b) - rankAlert(a));
   const improvements = allEvaluations
     .filter((evaluation) => isImproving(evaluation))
-    .map(alertFromEvaluation)
     .slice(0, 3);
+  const improvementAlerts = await Promise.all(
+    improvements.map((evaluation) => alertFromEvaluation(provider, evaluation)),
+  );
   const problems = alerts.filter((alert) => alert.status === 'red').slice(0, 3);
   const watch = alerts.filter((alert) => alert.status === 'amber').slice(0, 3);
   const heroCodes: KpiCode[] = ['HR_STATS', 'FLUCT', 'ENPS'];
@@ -148,13 +172,13 @@ export async function buildExecutiveDashboard(
     healthLabel: healthLabel(healthScore),
     heroKpis: heroCodes.map((code) => allEvaluations.find((evaluation) => evaluation.code === code)!),
     topAlerts: withRanks(alerts.slice(0, 5)),
-    changes: { improvements, problems, watch },
+    changes: { improvements: improvementAlerts, problems, watch },
     hypotheses: detectHypotheses(allEvaluations),
     sectionScorecards: SECTION_CATALOG.map((section) => ({
       section,
       evaluation: allEvaluations.find((evaluation) => evaluation.code === section.primaryKpi)!,
     })),
-    aiSummaryCs: aiSummary(healthScore, alerts),
+    aiSummaryCs: aiSummary(healthScore, alerts, period),
     allEvaluations,
   };
 }

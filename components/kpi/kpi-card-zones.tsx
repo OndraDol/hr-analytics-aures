@@ -1,11 +1,9 @@
 import { AlertTriangle, ArrowUpRight, CheckCircle2, Sparkles } from 'lucide-react';
 import type { KpiCardModel } from '@/lib/analytics/kpi-engine';
+import { formatKpiValue } from '@/lib/analytics/format';
 import { cn } from '@/lib/utils';
 import { Sparkline } from './sparkline';
 import { StatusBadge } from './status-badge';
-import { ThresholdBar } from './threshold-bar';
-import { KpiSeverityBadge } from './kpi-severity-badge';
-import { AnomalyFlag } from './anomaly-flag';
 import { DriverChipRow } from './driver-chip-row';
 
 const STATUS_ICON = {
@@ -24,6 +22,8 @@ export function KpiCardHeadlineZone({ model }: { model: KpiCardModel }) {
   const Icon = STATUS_ICON[model.evaluation.status];
   const trend = model.evaluation.trend.mom ?? 0;
   const goodTrend = trendIsGood(model, trend);
+  const trendDirection = Math.abs(trend) < 0.01 ? 'beze změny' : trend > 0 ? 'vyšší' : 'nižší';
+  const trendAmount = formatKpiValue(Math.abs(trend), model.evaluation.definition.unit);
 
   return (
     <div data-zone="headline">
@@ -42,19 +42,6 @@ export function KpiCardHeadlineZone({ model }: { model: KpiCardModel }) {
             />
             <h2 className="text-sm font-semibold text-zinc-950">{model.evaluation.definition.nameCs}</h2>
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <KpiSeverityBadge
-              score={model.evaluation.severityScore}
-              breakdown={model.severityBreakdown}
-            />
-            <AnomalyFlag anomaly={model.anomaly} />
-            <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
-              {model.evaluation.definition.frequency}
-            </span>
-            <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
-              {model.evaluation.dataQuality}
-            </span>
-          </div>
         </div>
         <StatusBadge status={model.evaluation.status} />
       </div>
@@ -71,7 +58,9 @@ export function KpiCardHeadlineZone({ model }: { model: KpiCardModel }) {
             )}
           >
             <ArrowUpRight className={cn('h-4 w-4', trend < 0 && 'rotate-90')} />
-            {Math.abs(trend).toFixed(1)} proti minulému období
+            {Math.abs(trend) < 0.01
+              ? 'beze změny proti předchozímu měsíci'
+              : `${trendDirection} o ${trendAmount} proti předchozímu měsíci`}
           </p>
         </div>
         <div className="w-36 shrink-0">
@@ -82,14 +71,20 @@ export function KpiCardHeadlineZone({ model }: { model: KpiCardModel }) {
   );
 }
 
-export function KpiCardInsightZone({ model }: { model: KpiCardModel }) {
+export function KpiCardInsightZone({
+  model,
+  variant = 'full',
+}: {
+  model: KpiCardModel;
+  variant?: 'full' | 'simple';
+}) {
   return (
     <div data-zone="insight" className="mt-5 border-t border-zinc-100 pt-5">
-      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Insight</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Komentář</p>
       <p className="mt-2 text-sm leading-6 text-zinc-700">{model.narrativeCs}</p>
-      {model.driverGroups.length > 0 ? (
+      {variant === 'full' && model.driverGroups.length > 0 ? (
         <DriverChipRow groups={model.driverGroups} />
-      ) : model.drivers.length > 0 ? (
+      ) : variant === 'full' && model.drivers.length > 0 ? (
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
           {model.drivers.slice(0, 3).map((driver) => (
             <span
@@ -102,26 +97,30 @@ export function KpiCardInsightZone({ model }: { model: KpiCardModel }) {
           ))}
         </div>
       ) : null}
-      <ThresholdBar evaluation={model.evaluation} />
     </div>
   );
 }
 
-export function KpiCardDecisionZone({ model }: { model: KpiCardModel }) {
+export function KpiCardDecisionZone({
+  model,
+  variant = 'full',
+}: {
+  model: KpiCardModel;
+  variant?: 'full' | 'simple';
+}) {
   return (
     <div data-zone="decision" className="mt-5 grid gap-3 border-t border-zinc-100 pt-5">
       <div className="rounded-md border border-zinc-200 border-l-4 border-l-aures-orange-500 bg-gradient-to-r from-aures-orange-50/60 to-white p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-aures-orange-700">Doporučená akce</p>
-          <p className="text-xs font-medium text-zinc-500">{model.evaluation.definition.owner}</p>
         </div>
         <p className="mt-1 text-sm leading-6 text-zinc-800">{model.action.bodyCs}</p>
       </div>
-      {model.aiInsight ? (
+      {variant === 'full' && model.aiInsight ? (
         <div className="rounded-md border border-violet-200 bg-violet-50 p-3">
           <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
             <Sparkles className="h-3.5 w-3.5" />
-            AI insight
+            AI vhled
           </p>
           <p className="mt-1 font-serif text-sm italic leading-6 text-violet-950">{model.aiInsight.textCs}</p>
         </div>

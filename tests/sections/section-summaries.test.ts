@@ -6,13 +6,13 @@ import { SECTION_CATALOG } from '@/lib/sections/catalog';
 const PERIOD = { from: '2026-01-01', to: '2026-03-31' };
 
 describe('section dashboards', () => {
-  it('builds complete dashboard data for every non-retention section', async () => {
-    const sections = SECTION_CATALOG.filter((section) => section.slug !== 'retention');
+  it('builds complete dashboard data for every section', async () => {
+    const sections = SECTION_CATALOG;
     const dashboards = await Promise.all(
       sections.map((section) => buildSectionDashboard(mockDataProvider, section, PERIOD)),
     );
 
-    expect(dashboards).toHaveLength(7);
+    expect(dashboards).toHaveLength(8);
     for (const dashboard of dashboards) {
       expect(dashboard.kpis.map((model) => model.evaluation.code)).toContain(dashboard.section.primaryKpi);
       expect(dashboard.metrics.length).toBeGreaterThanOrEqual(4);

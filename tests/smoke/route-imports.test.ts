@@ -8,7 +8,6 @@ const pageFiles = [
   'app/akce/page.tsx',
   'app/briefing/page.tsx',
   'app/sekce/[slug]/page.tsx',
-  'app/sekce/retention/page.tsx',
   'app/analytika/[topic]/page.tsx',
   'app/operativa/[view]/page.tsx',
 ];

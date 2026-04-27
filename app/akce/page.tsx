@@ -7,14 +7,14 @@ import { mockDataProvider } from '@/lib/data/mock-provider';
 const PERIOD = { from: '2026-01-01', to: '2026-03-31' };
 
 export const metadata: Metadata = {
-  title: 'Akční backlog | AURES HR Analytics',
+  title: 'Akční úkoly | AURES Přehled lidí',
 };
 
 export default async function ActionsPage() {
   const backlog = await buildActionBacklog(mockDataProvider, PERIOD);
 
   return (
-    <AppShell activeHref="/akce" sectionLabel="Akce" sectionTitle="Akční backlog">
+    <AppShell activeHref="/akce" sectionLabel="Akce" sectionTitle="Akční úkoly">
       <ActionBacklogPage data={backlog} />
     </AppShell>
   );

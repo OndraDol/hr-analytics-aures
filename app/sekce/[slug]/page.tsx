@@ -10,7 +10,7 @@ import { getSectionBySlug, SECTION_CATALOG } from '@/lib/sections/catalog';
 const PERIOD = { from: '2026-01-01', to: '2026-03-31' };
 
 export function generateStaticParams() {
-  return SECTION_CATALOG.filter((section) => section.slug !== 'retention').map((section) => ({
+  return SECTION_CATALOG.map((section) => ({
     slug: section.slug,
   }));
 }
@@ -18,14 +18,14 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const section = getSectionBySlug(slug);
-  if (!section || section.slug === 'retention') return {};
-  return { title: `${section.title} | AURES HR Analytics` };
+  if (!section) return {};
+  return { title: `${section.title} | AURES Přehled lidí` };
 }
 
 export default async function SectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const section = getSectionBySlug(slug);
-  if (!section || section.slug === 'retention') notFound();
+  if (!section) notFound();
 
   const data = await buildSectionDashboard(mockDataProvider, section, PERIOD, mockAIInsightProvider);
 

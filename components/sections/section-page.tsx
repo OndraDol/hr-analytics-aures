@@ -1,8 +1,7 @@
 import Link from 'next/link';
-import { ArrowUpRight, CheckCircle2, TableRowsSplit } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { KpiCard } from '@/components/kpi/kpi-card';
-import { SectionBreakdownChart, SectionTrendChart } from '@/components/charts/section-charts';
-import { EmptyState } from '@/components/layout/empty-state';
+import { SectionBreakdownChart } from '@/components/charts/section-charts';
 import type { SectionDashboardData, SectionMetric } from '@/lib/analytics/section-summaries';
 import { cn } from '@/lib/utils';
 
@@ -15,16 +14,12 @@ const TONE_CLASS: Record<SectionMetric['tone'], string> = {
   zinc: 'text-zinc-700 bg-zinc-100',
 };
 
-const TREND_COLORS = ['#1d4ed8', '#f97316', '#10b981', '#7c3aed', '#db2777', '#0ea5e9'];
-
 export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
   const Icon = data.section.icon;
-  const trendSeries = data.kpis.slice(0, 3).map((model, index) => ({
-    key: model.evaluation.code,
-    label: model.evaluation.definition.nameCs,
-    color: TREND_COLORS[index] ?? '#1d4ed8',
-    points: model.evaluation.sparkline,
-  }));
+  const primaryKpi = data.kpis[0];
+  const supportingKpis = data.kpis.slice(1, 4);
+  const keyMetrics = data.metrics.slice(0, 3);
+  const relatedLinks = [...data.section.relatedAnalytics, ...data.section.relatedOperational];
 
   return (
     <main className="px-5 py-6 md:px-8">
@@ -37,7 +32,7 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
               </div>
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.section.eyebrow}</p>
-                <p className="text-sm text-zinc-500">AURES HR Analytics</p>
+                <p className="text-sm text-zinc-500">Přehled pro řízení lidí</p>
               </div>
             </div>
             <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
@@ -46,13 +41,13 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
             <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">{data.section.description}</p>
           </div>
           <div className="max-w-md rounded-lg border border-violet-200 bg-violet-50 p-4">
-            <p className="text-sm font-semibold text-violet-950">Executive signal</p>
+            <p className="text-sm font-semibold text-violet-950">Co je důležité</p>
             <p className="mt-2 text-sm leading-6 text-violet-900">{data.executiveSignalCs}</p>
           </div>
         </div>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {data.metrics.map((metric) => (
+        <div className="mt-7 grid gap-3 sm:grid-cols-3">
+          {keyMetrics.map((metric) => (
             <div key={metric.label} className="rounded-md border border-zinc-200 bg-zinc-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{metric.label}</p>
               <p className={cn('mt-2 inline-flex rounded-md px-2 py-1 font-mono text-2xl font-semibold tracking-normal', TONE_CLASS[metric.tone])}>
@@ -64,24 +59,8 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-2">
-        {data.kpis.map((model, index) => (
-          <KpiCard key={model.evaluation.code} model={model} featured={index === 0} />
-        ))}
-      </section>
-
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <Panel title="Trend KPI" subtitle="12M pohled z KPI enginu">
-          <div className="mb-3 flex flex-wrap gap-3 text-xs text-zinc-500">
-            {trendSeries.map((series) => (
-              <span key={series.key} className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: series.color }} />
-                {series.label}
-              </span>
-            ))}
-          </div>
-          <SectionTrendChart series={trendSeries} />
-        </Panel>
+      <section className="mt-6 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        {primaryKpi ? <KpiCard model={primaryKpi} featured variant="simple" /> : null}
         <Panel title={data.primaryBreakdown.title} subtitle={data.primaryBreakdown.subtitle}>
           <SectionBreakdownChart
             rows={data.primaryBreakdown.rows}
@@ -91,40 +70,27 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
         </Panel>
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Panel title={data.secondaryBreakdown.title} subtitle={data.secondaryBreakdown.subtitle}>
-          <SectionBreakdownChart
-            rows={data.secondaryBreakdown.rows}
-            valueLabel={data.secondaryBreakdown.valueLabel}
-            secondaryLabel={data.secondaryBreakdown.secondaryLabel}
-          />
-        </Panel>
-        <Panel title={data.table.title} subtitle={data.table.subtitle}>
-          {data.table.rows.length > 0 ? (
-            <div className="overflow-hidden rounded-md border border-zinc-200">
-              {data.table.rows.map((row) => (
-                <div key={`${row.label}-${row.value}-${row.secondary}`} className="grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0 md:grid-cols-[1.2fr_0.55fr_0.55fr_1.5fr]">
-                  <p className="text-sm font-medium text-zinc-950">{row.label}</p>
-                  <p className="font-mono text-sm text-zinc-800">{row.value}</p>
-                  <p className="font-mono text-sm text-zinc-600">{row.secondary}</p>
-                  <p className="text-sm text-zinc-500">{row.detail}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              icon={TableRowsSplit}
-              title="Bez řádkových dat"
-              description="Pro aktuální období není k dispozici žádný detail."
-            />
-          )}
-        </Panel>
-      </section>
-
       <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.8fr]">
-        <Panel title="Doporučené akce" subtitle="Akční backlog pro HR a vlastníky metrik">
+        <Panel title="Podpůrné metriky" subtitle="Jen čísla, která pomáhají vysvětlit hlavní metriku">
           <div className="space-y-3">
-            {data.actions.map((action) => (
+            {supportingKpis.map((model) => (
+              <div key={model.evaluation.code} className="flex items-center justify-between gap-4 rounded-md border border-zinc-200 bg-zinc-50 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-zinc-950">{model.evaluation.definition.nameCs}</p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    {Math.abs(model.evaluation.trend.mom ?? 0) < 0.01
+                      ? 'beze změny proti předchozímu měsíci'
+                      : `${(model.evaluation.trend.mom ?? 0) > 0 ? 'vyšší' : 'nižší'} než předchozí měsíc`}
+                  </p>
+                </div>
+                <p className="shrink-0 font-mono text-xl font-semibold text-zinc-950">{model.evaluation.formattedValue}</p>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Co udělat" subtitle="Nejbližší praktický krok pro HR">
+          <div className="space-y-3">
+            {data.actions.slice(0, 2).map((action) => (
               <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                 <p className="text-sm leading-6 text-zinc-700">{action}</p>
@@ -132,21 +98,26 @@ export function GenericSectionPage({ data }: { data: SectionDashboardData }) {
             ))}
           </div>
         </Panel>
-        <Panel title="Navazující pohledy" subtitle="Drill-down cíle pro finální Power BI zadání">
-          <div className="space-y-3">
-            {[...data.section.relatedAnalytics, ...data.section.relatedOperational].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center justify-between gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-800 hover:border-blue-200 hover:bg-blue-50"
-              >
-                {link.label}
-                <ArrowUpRight className="h-4 w-4 text-blue-700" />
-              </Link>
-            ))}
-          </div>
-        </Panel>
       </section>
+
+      {relatedLinks.length > 0 ? (
+        <section className="mt-6">
+          <Panel title="Detailní pohledy" subtitle="Použít až ve chvíli, kdy je potřeba dohledat konkrétní tým, roli nebo záznam">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {relatedLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex items-center justify-between gap-3 rounded-md border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-800 hover:border-blue-200 hover:bg-blue-50"
+                >
+                  {link.label}
+                  <ArrowUpRight className="h-4 w-4 text-blue-700" />
+                </Link>
+              ))}
+            </div>
+          </Panel>
+        </section>
+      ) : null}
     </main>
   );
 }

@@ -1,56 +1,74 @@
 [
   {
+    "code": "HR_STATS",
+    "scenario": "green",
+    "tone": "positive",
+    "textCs": "Co vidím: stav zaměstnanců je pod kontrolou a neukazuje skokový výkyv. Porovnání beru proti předchozímu měsíci a personálnímu plánu. Nejpravděpodobnější vysvětlení je běžný pohyb v divizích, ne systémový problém. Jako první bych ověřil divize s největší odchylkou proti plánu."
+  },
+  {
+    "code": "HR_STATS",
+    "scenario": "amber",
+    "tone": "watch",
+    "textCs": "Co vidím: počet lidí nebo úvazků se začíná vzdalovat plánovanému stavu. Změnu čtu proti předchozímu měsíci a proti cíli v personálním plánu. Pravděpodobně ji táhne konkrétní divize nebo země. Jako první bych otevřel detail po divizích a nechal HRBP potvrdit, jestli jde o plánovaný růst, neobsazené pozice, nebo datový rozdíl."
+  },
+  {
+    "code": "HR_STATS",
+    "scenario": "red",
+    "tone": "risk",
+    "textCs": "Co vidím: stav zaměstnanců je mimo domluvenou toleranci vůči plánu. Porovnání je proti předchozímu měsíci a cílovému počtu lidí. Nejpravděpodobnější příčina je souběh odchodů, pomalejšího náboru nebo změny úvazků ve vybrané části firmy. Jako první bych chtěl seznam hlavních divizí podle odchylky a vysvětlení vlastníka."
+  },
+  {
     "code": "FLUCT",
     "scenario": "red",
     "tone": "risk",
-    "textCs": "Odchody jsou nad tolerancí a mají provozní dopad. Nejrychlejší další krok je spojit retenční analýzu s konkrétními manažery a tenure cohortami, neřešit pouze celofiremní průměr."
+    "textCs": "Co vidím: odchody jsou nad tolerancí a už mají provozní dopad. Srovnání dává smysl číst proti předchozímu měsíci a stejnému období loni. Pokud se problém koncentruje v jedné divizi nebo u lidí s podobnou délkou působení, nejde o běžný šum. Jako první bych spojil analýzu odchodů s konkrétními manažery a týmy."
   },
   {
     "code": "FLUCT_CRIT",
     "scenario": "red",
     "tone": "risk",
-    "textCs": "U klíčových pozic je důležitější absolutní počet odchodů než samotné procento. Pokud se driver koncentruje v jedné divizi, doporučuji okamžitě ověřit nástupnictví a stabilizační plán."
+    "textCs": "Co vidím: odchody z klíčových pozic jsou rizikové i při menším absolutním počtu lidí. Porovnávám je proti minulému měsíci a dostupnému nástupnictví. Pokud se soustředí v jedné divizi, může jít o riziko kontinuity vedení. Jako první bych ověřil nástupnický plán a stabilizační kroky u konkrétních rolí."
   },
   {
     "code": "ENPS",
     "scenario": "amber",
     "tone": "watch",
-    "textCs": "eNPS je ve sledovaném pásmu. Samotná hodnota ještě nemusí být problém, ale v kombinaci s rostoucí fluktuací ukazuje segmenty, kde se vyplatí udělat manažerský follow-up."
+    "textCs": "Co vidím: eNPS je ve sledovaném pásmu. Samotná hodnota ještě nemusí být problém, ale proti minulému měření ukazuje, kde může slábnout důvěra nebo energie týmu. Pokud se překrývá s rostoucí fluktuací, má prioritu manažerský rozhovor. Jako první bych vybral tři segmenty s nízkým výsledkem a dostatečnou účastí."
   },
   {
     "code": "TTF_CRIT",
     "scenario": "red",
     "tone": "risk",
-    "textCs": "Doba obsazení klíčových pozic je riziková hlavně tam, kde zároveň chybí successor. Pro demo je vhodné ukázat propojení recruitmentu, retention a succession v jednom příběhu."
+    "textCs": "Co vidím: klíčové pozice se obsazují pomalu a prodlužují provozní riziko. Porovnání beru proti předchozímu měsíci a cílovému náborovému času. Nejpravděpodobnější příčina bude v některém kroku náboru nebo v dostupnosti manažerů, kteří rozhodují o kandidátech. Jako první bych otevřel průchod náborem a hledal nejdelší čekání."
   },
   {
     "code": "WAGE_KPI",
     "scenario": "amber",
     "tone": "watch",
-    "textCs": "Mzdové náklady samy o sobě nejsou problém, dokud víme, které role a divize růst táhnou. Důležitý je rozpad na base, variable a non-personal složky."
+    "textCs": "Co vidím: mzdové náklady jsou ke sledování, ale samy o sobě ještě neříkají, jestli je růst špatně. Porovnání je potřeba číst proti rozpočtu a změně počtu lidí. Nejpravděpodobnější příčina bude mix divizí, rolí nebo variabilní složka. Jako první bych rozdělil náklad na základní mzdu, variabilní složku a ostatní náklady."
   },
   {
     "code": "*",
     "scenario": "anomaly",
     "tone": "hypothesis",
-    "textCs": "Metrika se odchýlila od vlastní historie. Doporučuji nejdřív ověřit, zda jde o skutečný byznys signál, nebo efekt změny ve vstupních datech."
+    "textCs": "Co vidím: metrika se odchýlila od vlastní historie. Porovnání beru hlavně proti posledním měsícům, ne jen proti cíli. Může jít o skutečný byznys signál, ale také o změnu ve vstupních datech. Jako první bych ověřil datový zdroj a potom segment, který změnu táhne."
   },
   {
     "code": "*",
     "scenario": "red",
     "tone": "risk",
-    "textCs": "Metrika je mimo toleranci. Priorita je najít největší přispěvatele změny a převést výstup do konkrétní akce pro vlastníka metriky."
+    "textCs": "Co vidím: metrika je mimo toleranci a potřebuje vlastníka. Porovnání proti předchozímu období říká, jestli se problém zhoršuje, nebo jen zůstává nevyřešený. Nejpravděpodobnější příčina bude v jednom až dvou segmentech. Jako první bych našel největší přispěvatele změny a domluvil konkrétní akci."
   },
   {
     "code": "*",
     "scenario": "amber",
     "tone": "watch",
-    "textCs": "Metrika není kritická, ale trend si zaslouží sledování. Doporučuji porovnat aktuální driver s minulým obdobím a potvrdit, zda se problém šíří."
+    "textCs": "Co vidím: metrika není kritická, ale trend si zaslouží sledování. Porovnání proti předchozímu období pomůže odlišit jednorázový výkyv od začínajícího problému. Nejpravděpodobnější příčina je segment, který se nově posunul mimo běžný rozsah. Jako první bych potvrdil, zda se problém šíří, nebo zůstává lokální."
   },
   {
     "code": "*",
     "scenario": "green",
     "tone": "positive",
-    "textCs": "Metrika je v dobrém stavu. Pro dashboard má smysl ukázat, které segmenty výsledek drží v zeleném pásmu, aby bylo jasné, co opakovat jinde."
+    "textCs": "Co vidím: metrika je v dobrém stavu. Porovnání proti předchozímu období má smysl použít hlavně k potvrzení stability. Pokud je výsledek tažen konkrétním segmentem, stojí za to pochopit proč. Jako první bych pojmenoval, co funguje, aby se to dalo zopakovat jinde."
   }
 ]

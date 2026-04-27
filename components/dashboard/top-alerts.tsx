@@ -9,13 +9,13 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
     <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-950">Top alerts</h2>
-          <p className="mt-1 text-sm text-zinc-500">Nejvyšší rizika podle priority, statusu a změny.</p>
+          <h2 className="text-lg font-semibold text-zinc-950">Co řešit teď</h2>
+          <p className="mt-1 text-sm text-zinc-500">Nejdůležitější signály pro další krok.</p>
         </div>
         <AlertTriangle className="h-5 w-5 text-rose-500" />
       </div>
       <div className="mt-5 space-y-3">
-        {alerts.length > 0 ? alerts.map((alert) => (
+        {alerts.length > 0 ? alerts.slice(0, 3).map((alert) => (
           <Link
             key={alert.code}
             href={alert.href}
@@ -33,12 +33,6 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-zinc-950">{alert.title}</p>
                   <p className="mt-1 text-sm leading-6 text-zinc-600">{alert.reasonCs}</p>
-                  <p className="mt-2 font-mono text-xs text-zinc-500">
-                    Severity {alert.severityScore}/100 · {alert.thresholdDistanceCs}
-                  </p>
-                  <p className="mt-1 text-xs font-medium text-zinc-500">
-                    Owner: {alert.owner} · stáří {alert.ageDays} dnů
-                  </p>
                 </div>
               </div>
               <div className="shrink-0 text-right">
@@ -47,7 +41,7 @@ export function TopAlerts({ alerts }: { alerts: readonly ExecutiveAlert[] }) {
               </div>
             </div>
             <p className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-aures-blue-700">
-              Otevřít sekci <ArrowRight className="h-3.5 w-3.5" />
+              Zobrazit detail <ArrowRight className="h-3.5 w-3.5" />
             </p>
           </Link>
         )) : (

@@ -8,8 +8,8 @@ export function ExecutiveSummary({ summary }: { summary: string }) {
           <Sparkles className="h-5 w-5" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-violet-950">AI Executive Summary</h2>
-          <p className="text-sm text-violet-700">pre-written demo insight nad deterministickými KPI</p>
+          <h2 className="text-lg font-semibold text-violet-950">AI vhled</h2>
+          <p className="text-sm text-violet-700">stručné shrnutí pro rozhodnutí</p>
         </div>
       </div>
       <p className="mt-5 font-serif text-xl italic leading-8 text-violet-950">{summary}</p>

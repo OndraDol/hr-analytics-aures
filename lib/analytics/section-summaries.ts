@@ -1,5 +1,6 @@
 import type { AIInsightProvider } from '@/lib/ai/insight-provider';
 import { buildKpiCardModel, type KpiCardModel } from '@/lib/analytics/kpi-engine';
+import { buildRetentionSummary } from '@/lib/analytics/retention-summary';
 import type { DataProvider, Period } from '@/lib/data/provider';
 import type { SectionDefinition } from '@/lib/sections/catalog';
 import type {
@@ -143,6 +144,7 @@ export async function buildSectionDashboard(
   if (section.slug === 'workforce-movement') return buildWorkforceMovement(payload);
   if (section.slug === 'cost-structure') return buildCostStructure(payload);
   if (section.slug === 'recruitment') return buildRecruitment(payload);
+  if (section.slug === 'retention') return buildRetention(payload);
   if (section.slug === 'succession') return buildSuccession(payload);
   if (section.slug === 'engagement') return buildEngagement(payload);
   if (section.slug === 'talent-growth') return buildTalentGrowth(payload);
@@ -200,15 +202,15 @@ async function buildHrStatistics({
     period,
     kpis,
     metrics: [
-      { label: 'Aktivní HC', value: formatNumber(active.length), detail: `${formatNumber(fte, 1)} FTE`, tone: 'blue' },
+      { label: 'Aktivní lidé', value: formatNumber(active.length), detail: `${formatNumber(fte, 1)} přepočtených úvazků`, tone: 'blue' },
       { label: 'Ženy celkem', value: formatPct(femalePct), detail: `${formatPct(womenManagementPct)} v managementu`, tone: 'emerald' },
       { label: 'Průměrný věk', value: formatNumber(averageAge, 1), detail: 'aktivní populace', tone: 'zinc' },
-      { label: 'Raw gender pay gap', value: formatPct(payGap), detail: `${formatCzk(maleSalary)} vs ${formatCzk(femaleSalary)}`, tone: payGap > 8 ? 'orange' : 'blue' },
+      { label: 'Rozdíl v odměnách', value: formatPct(payGap), detail: `${formatCzk(maleSalary)} vs ${formatCzk(femaleSalary)}`, tone: payGap > 8 ? 'orange' : 'blue' },
     ],
     primaryBreakdown: {
       title: 'Populace podle země',
       subtitle: 'Aktivní zaměstnanci podle země odvozené z divizní struktury',
-      valueLabel: 'HC',
+      valueLabel: 'lidé',
       rows: Array.from(countryCounts.entries()).map(([label, value]) => ({
         label,
         value,
@@ -217,23 +219,23 @@ async function buildHrStatistics({
     },
     secondaryBreakdown: {
       title: 'Věková struktura',
-      subtitle: 'Hrubá demografie pro ESG a workforce plánování',
-      valueLabel: 'HC',
+      subtitle: 'Hrubá demografie pro ESG a plánování lidí',
+      valueLabel: 'lidé',
       rows: ageBuckets,
     },
     table: {
-      title: 'DEI signály',
-      subtitle: 'Rychlé kontroly, které mají ve finálním BI vést do detailního C&B pohledu',
+      title: 'Rovnost a odměňování',
+      subtitle: 'Rychlé kontroly pro navazující detail odměňování',
       rows: [
-        { label: 'Management mix', value: formatPct(womenManagementPct), secondary: `${formatNumber(managers.length)} osob`, detail: 'B0-B2 podle grade heuristiky' },
-        { label: 'Průměrná mzda mužů', value: formatCzk(maleSalary), secondary: 'base salary', detail: 'mock payroll nad reálnou kostrou zaměstnanců' },
-        { label: 'Průměrná mzda žen', value: formatCzk(femaleSalary), secondary: 'base salary', detail: 'slouží jako signál pro detailní pay-gap analýzu' },
+        { label: 'Ženy ve vedení', value: formatPct(womenManagementPct), secondary: `${formatNumber(managers.length)} osob`, detail: 'vedoucí úrovně podle pracovních pozic' },
+        { label: 'Průměrná mzda mužů', value: formatCzk(maleSalary), secondary: 'základní mzda', detail: 'orientační výpočet nad ukázkovými mzdami' },
+        { label: 'Průměrná mzda žen', value: formatCzk(femaleSalary), secondary: 'základní mzda', detail: 'signál pro detailní kontrolu odměňování' },
       ],
     },
-    executiveSignalCs: 'Populační základ je stabilní, ale HR statistiky už ukazují témata pro řízení DEI: zastoupení žen v managementu a raw pay gap mají vlastní detailní rozpad.',
+    executiveSignalCs: 'Stav lidí je celkově stabilní. Důležité je sledovat, kde se počet lidí a úvazků liší od plánu a jestli se nemění zastoupení žen ve vedení nebo rozdíl v odměnách.',
     actions: [
-      'Srovnat HC/FTE proti staffplanu po divizích.',
-      'Otevřít gender pay gap detail pro role s největší mzdovou odchylkou.',
+      'Srovnat počet lidí a úvazků proti personálnímu plánu po divizích.',
+      'Otevřít detail odměňování u rolí s největší mzdovou odchylkou.',
       'Doplnit ESG definice pro země, kontrakty a management level.',
     ],
   };
@@ -283,12 +285,12 @@ async function buildWorkforceMovement({
     metrics: [
       { label: 'Nástupy', value: formatNumber(hires.length), detail: 'v období', tone: 'emerald' },
       { label: 'Odchody', value: formatNumber(leavers.length), detail: 'v období', tone: 'rose' },
-      { label: 'Čistá změna', value: formatNumber(net), detail: net >= 0 ? 'růst kapacity' : 'pokles kapacity', tone: net >= 0 ? 'blue' : 'orange' },
+      { label: 'Čistá změna', value: formatNumber(net), detail: net >= 0 ? 'kapacita roste' : 'kapacita klesá', tone: net >= 0 ? 'blue' : 'orange' },
       { label: 'Aktivní populace', value: formatNumber(employees.filter((employee) => activeOn(employee, period.to)).length), detail: 'ke konci období', tone: 'zinc' },
     ],
     primaryBreakdown: {
-      title: 'Nástupy vs. odchody podle divize',
-      subtitle: 'Top divize s největším objemem pohybu',
+      title: 'Nástupy a odchody podle divize',
+      subtitle: 'Divize s největším pohybem lidí',
       valueLabel: 'nástupy',
       secondaryLabel: 'odchody',
       rows: topRows(rows, 8),
@@ -296,7 +298,7 @@ async function buildWorkforceMovement({
     secondaryBreakdown: {
       title: 'Největší čisté změny',
       subtitle: 'Divize seřazené podle absolutního rozdílu nástupů a odchodů',
-      valueLabel: 'abs. net',
+      valueLabel: 'čistá změna',
       rows: Array.from(byDivision.entries())
         .map(([divisionId, row]) => {
           const netChange = row.hires - row.leavers;
@@ -311,7 +313,7 @@ async function buildWorkforceMovement({
     },
     table: {
       title: 'Divizní pohyb',
-      subtitle: 'Připravené pro drill-down na konkrétní role a manažery',
+      subtitle: 'Připravené pro dohledání konkrétních rolí a manažerů',
       rows: rows.slice(0, 6).map((row) => ({
         label: row.label,
         value: formatNumber(row.value),
@@ -321,9 +323,9 @@ async function buildWorkforceMovement({
     },
     executiveSignalCs: 'Pohyb zaměstnanců ukazuje, kde se kapacita reálně mění. Největší pozornost má patřit divizím s vysokým objemem nástupů i odchodů současně.',
     actions: [
-      'U divizí s negativním net změnou potvrdit hiring plán a otevřené pozice.',
+      'U divizí s poklesem kapacity potvrdit náborový plán a otevřené pozice.',
       'Oddělit plánovaný růst od neplánovaných odchodů.',
-      'Napojit movement drill-down na attrition a recruitment funnel.',
+      'Napojit pohyb lidí na detail odchodů a průchod náborem.',
     ],
   };
 }
@@ -371,25 +373,25 @@ async function buildCostStructure({
     period,
     kpis,
     metrics: [
-      { label: 'Mzdové náklady', value: formatCzkShort(totalCost), detail: 'Q1 total cost', tone: 'orange' },
-      { label: 'Průměrná mzda', value: formatCzk(avgWage), detail: 'base salary / měsíc', tone: 'blue' },
-      { label: 'Actual FTE', value: formatNumber(actualFte, 1), detail: `${formatPct((actualFte / Math.max(capFte, 1)) * 100)} proti cap`, tone: 'emerald' },
-      { label: 'Vacancy gap', value: formatNumber(Math.max(capFte - actualFte, 0), 1), detail: 'FTE proti plánu', tone: capFte > actualFte ? 'orange' : 'zinc' },
+      { label: 'Mzdové náklady', value: formatCzkShort(totalCost), detail: 'náklady za období', tone: 'orange' },
+      { label: 'Průměrná mzda', value: formatCzk(avgWage), detail: 'základní mzda za měsíc', tone: 'blue' },
+      { label: 'Obsazené úvazky', value: formatNumber(actualFte, 1), detail: `${formatPct((actualFte / Math.max(capFte, 1)) * 100)} proti plánu`, tone: 'emerald' },
+      { label: 'Chybějící úvazky', value: formatNumber(Math.max(capFte - actualFte, 0), 1), detail: 'proti plánu', tone: capFte > actualFte ? 'orange' : 'zinc' },
     ],
     primaryBreakdown: {
       title: 'Struktura mzdových nákladů',
-      subtitle: 'Základní mzda, variabilní složka, benefity a non-personal costs',
+      subtitle: 'Základní mzda, variabilní složka, benefity a ostatní osobní náklady',
       valueLabel: 'Kč',
       rows: [
         { label: 'Základní mzda', value: base, detail: formatCzkShort(base) },
         { label: 'Variabilní složka', value: variable, detail: formatCzkShort(variable) },
         { label: 'Benefity', value: benefits, detail: formatCzkShort(benefits) },
-        { label: 'Non-personal', value: nonPersonal, detail: formatCzkShort(nonPersonal) },
+        { label: 'Ostatní náklady', value: nonPersonal, detail: formatCzkShort(nonPersonal) },
       ],
     },
     secondaryBreakdown: {
       title: 'Náklady podle divize',
-      subtitle: 'Top divize podle Q1 total cost',
+      subtitle: 'Divize s nejvyššími náklady v období',
       valueLabel: 'Kč',
       rows: topRows(
         Array.from(byDivision.entries()).map(([divisionId, value]) => ({
@@ -401,7 +403,7 @@ async function buildCostStructure({
     },
     table: {
       title: 'Kapacitní plán',
-      subtitle: 'Actual FTE proti cap FTE ze staffplanu',
+      subtitle: 'Obsazené úvazky proti personálnímu plánu',
       rows: Array.from(positionByDivision.entries())
         .map(([divisionId, rows]) => {
           const cap = sum(rows, (row) => row.capFte);
@@ -423,10 +425,10 @@ async function buildCostStructure({
           detail: row.detail,
         })),
     },
-    executiveSignalCs: 'Nákladová sekce propojuje payroll a staffplan: nejde jen o sumu mezd, ale o vysvětlení, zda růst nákladu odpovídá skutečné kapacitě.',
+    executiveSignalCs: 'Náklady je potřeba číst společně s obsazenými úvazky. Nejde jen o sumu mezd, ale o to, jestli růst nákladů odpovídá skutečné kapacitě.',
     actions: [
-      'Rozpadnout růst total cost podle divize, grade a mzdové složky.',
-      'U největších vacancy gapů sladit hiring plán s budgetem.',
+      'Rozpadnout růst nákladů podle divize, úrovně role a mzdové složky.',
+      'U největších chybějících úvazků sladit náborový plán s rozpočtem.',
       'Porovnat průměrnou mzdu se segmenty s vysokou fluktuací.',
     ],
   };
@@ -475,14 +477,14 @@ async function buildRecruitment({
     period,
     kpis,
     metrics: [
-      { label: 'Otevřené requisitions', value: formatNumber(requisitions.length), detail: 'touch Q1 2026', tone: 'blue' },
-      { label: 'Obsazeno', value: formatNumber(filled.length), detail: `${formatPct((filled.length / Math.max(requisitions.length, 1)) * 100)} conversion`, tone: 'emerald' },
-      { label: 'Klíčové role', value: formatNumber(critical.length), detail: 'critical requisitions', tone: 'orange' },
-      { label: 'Náklad / hire', value: formatCzk(avgCost), detail: 'obsazené role', tone: 'violet' },
+      { label: 'Otevřené pozice', value: formatNumber(requisitions.length), detail: 'v náboru za období', tone: 'blue' },
+      { label: 'Obsazeno', value: formatNumber(filled.length), detail: `${formatPct((filled.length / Math.max(requisitions.length, 1)) * 100)} úspěšnost`, tone: 'emerald' },
+      { label: 'Klíčové role', value: formatNumber(critical.length), detail: 'pozice s vyšším dopadem', tone: 'orange' },
+      { label: 'Náklad na nástup', value: formatCzk(avgCost), detail: 'obsazené role', tone: 'violet' },
     ],
     primaryBreakdown: {
-      title: 'Recruitment funnel',
-      subtitle: 'Kumulovaný průchod kandidátů napříč aktivními requisitions',
+      title: 'Průchod náborem',
+      subtitle: 'Kolik kandidátů zůstává v jednotlivých krocích náboru',
       valueLabel: 'kandidáti',
       rows: stageOrder.map((stage) => ({
         label: stageLabels[stage] ?? stage,
@@ -492,9 +494,9 @@ async function buildRecruitment({
     },
     secondaryBreakdown: {
       title: 'Zdroje kandidátů',
-      subtitle: 'Kanály podle počtu requisitions a obsazených rolí',
-      valueLabel: 'requisitions',
-      secondaryLabel: 'hired',
+      subtitle: 'Kanály podle počtu pozic a obsazených rolí',
+      valueLabel: 'pozice',
+      secondaryLabel: 'obsazeno',
       rows: topRows(
         Array.from(channelCounts.entries()).map(([label, row]) => ({
           label,
@@ -505,7 +507,7 @@ async function buildRecruitment({
       ),
     },
     table: {
-      title: 'Recruitment risk list',
+      title: 'Rizikové nábory',
       subtitle: 'Role s vysokým dopadem na rychlost a náklady náboru',
       rows: requisitions
         .slice()
@@ -513,16 +515,82 @@ async function buildRecruitment({
         .slice(0, 6)
         .map((row) => ({
           label: row.id,
-          value: row.critical ? 'critical' : 'standard',
+          value: row.critical ? 'klíčová' : 'standardní',
           secondary: formatCzk(row.cost),
-          detail: `${row.channel} · approved ${row.approvedDate}`,
+          detail: `${row.channel} · schváleno ${row.approvedDate}`,
         })),
     },
-    executiveSignalCs: 'Recruitment sekce propojuje rychlost, funnel a náklady. Největší riziko je kombinace critical role, drahého kanálu a nízké konverze do nástupu.',
+    executiveSignalCs: 'Nábor je potřeba číst přes rychlost, cenu a úspěšnost. Největší riziko vzniká tam, kde jde o klíčovou roli, drahý zdroj kandidátů a slabý průchod do nástupu.',
     actions: [
-      'U critical requisitions zkrátit schvalování a interview SLA.',
-      'Porovnat kanály podle ceny, konverze a kvality náboru.',
-      'Doplnit time-to-productivity follow-up po 90 dnech.',
+      'U klíčových pozic zkrátit schvalování a čekání na pohovor.',
+      'Porovnat zdroje kandidátů podle ceny, úspěšnosti a kvality náboru.',
+      'Doplnit kontrolu zapracování po 90 dnech.',
+    ],
+  };
+}
+
+async function buildRetention({
+  provider,
+  section,
+  period,
+  kpis,
+}: {
+  provider: DataProvider;
+  section: SectionDefinition;
+  period: Period;
+  kpis: KpiCardModel[];
+}): Promise<SectionDashboardData> {
+  const summary = await buildRetentionSummary(provider, period);
+  const criticalShare =
+    summary.totalLeavers > 0 ? (summary.totalCriticalLeavers / summary.totalLeavers) * 100 : 0;
+
+  return {
+    section,
+    period,
+    kpis,
+    metrics: [
+      { label: 'Aktivní lidé', value: formatNumber(summary.activeHeadcount), detail: 'ke konci období', tone: 'blue' },
+      { label: 'Odchody', value: formatNumber(summary.totalLeavers), detail: 'za období', tone: 'rose' },
+      { label: 'Klíčové odchody', value: formatNumber(summary.totalCriticalLeavers), detail: formatPct(criticalShare), tone: summary.totalCriticalLeavers > 0 ? 'orange' : 'emerald' },
+      { label: 'Rizikové divize', value: formatNumber(summary.segments.filter((segment) => segment.riskScore > 10).length), detail: 'podle odchodů a klíčových rolí', tone: 'violet' },
+    ],
+    primaryBreakdown: {
+      title: 'Odchody podle divize',
+      subtitle: 'Divize, kde odchody nejvíc ovlivňují provoz nebo klíčové role',
+      valueLabel: 'odchody',
+      secondaryLabel: 'klíčové odchody',
+      rows: summary.segments.slice(0, 8).map((segment) => ({
+        label: segment.divisionName,
+        value: segment.leavers,
+        secondary: segment.criticalLeavers,
+        detail: `${formatPct(segment.attritionRate)} fluktuace`,
+      })),
+    },
+    secondaryBreakdown: {
+      title: 'Rizikové divize',
+      subtitle: 'Seřazeno podle kombinace odchodů a dopadu na klíčové role',
+      valueLabel: 'riziko',
+      rows: summary.segments.slice(0, 8).map((segment) => ({
+        label: segment.divisionName,
+        value: Math.round(segment.riskScore * 10) / 10,
+        detail: `${formatNumber(segment.leavers)} odchodů, ${formatNumber(segment.criticalLeavers)} klíčových`,
+      })),
+    },
+    table: {
+      title: 'Divize k ověření',
+      subtitle: 'Krátký seznam pro HRBP a manažery',
+      rows: summary.segments.slice(0, 6).map((segment) => ({
+        label: segment.divisionName,
+        value: formatNumber(segment.leavers),
+        secondary: formatNumber(segment.criticalLeavers),
+        detail: `${formatPct(segment.attritionRate)} fluktuace`,
+      })),
+    },
+    executiveSignalCs: 'Udržení lidí je problém hlavně tam, kde se běžné odchody potkají s klíčovými rolemi. Nejprve je potřeba ověřit divize s největším dopadem, ne celofiremní průměr.',
+    actions: [
+      'Ověřit u HRBP tři divize s největším dopadem odchodů.',
+      'U klíčových odchodů zkontrolovat nástupnictví a stabilizační plán.',
+      'Oddělit plánované odchody od odchodů, které vytvářejí provozní riziko.',
     ],
   };
 }
@@ -562,26 +630,26 @@ async function buildSuccession({
     period,
     kpis,
     metrics: [
-      { label: 'Kritické role', value: formatNumber(plans.length), detail: 'v succession mapě', tone: 'violet' },
-      { label: 'Ready now', value: formatNumber(readyNow), detail: formatPct((readyNow / Math.max(plans.length, 1)) * 100), tone: 'emerald' },
-      { label: 'Ready 1-2 roky', value: formatNumber(readyLater), detail: 'rozvojový pipeline', tone: 'blue' },
-      { label: 'Gaps', value: formatNumber(gaps), detail: 'bez nástupce', tone: gaps > 0 ? 'rose' : 'zinc' },
+      { label: 'Klíčové role', value: formatNumber(plans.length), detail: 'v mapě nástupnictví', tone: 'violet' },
+      { label: 'Nástupce připraven', value: formatNumber(readyNow), detail: formatPct((readyNow / Math.max(plans.length, 1)) * 100), tone: 'emerald' },
+      { label: 'Připraven do 2 let', value: formatNumber(readyLater), detail: 'potřebuje rozvoj', tone: 'blue' },
+      { label: 'Bez nástupce', value: formatNumber(gaps), detail: 'mezery v pokrytí', tone: gaps > 0 ? 'rose' : 'zinc' },
     ],
     primaryBreakdown: {
-      title: 'Readiness portfolio',
+      title: 'Připravenost nástupců',
       subtitle: 'Pokrytí klíčových rolí podle připravenosti nástupce',
       valueLabel: 'role',
       rows: [
-        { label: 'Ready now', value: readyNow, detail: 'okamžité pokrytí' },
-        { label: 'Ready 1-2 roky', value: readyLater, detail: 'rozvojový plán' },
-        { label: 'Gap', value: gaps, detail: 'bez nástupce' },
+        { label: 'Připraven teď', value: readyNow, detail: 'okamžité pokrytí' },
+        { label: 'Připraven do 2 let', value: readyLater, detail: 'rozvojový plán' },
+        { label: 'Bez nástupce', value: gaps, detail: 'chybí pokrytí' },
       ],
     },
     secondaryBreakdown: {
-      title: 'Gaps podle divize',
+      title: 'Mezery podle divize',
       subtitle: 'Kde je největší riziko kontinuity',
-      valueLabel: 'gaps',
-      secondaryLabel: 'covered',
+      valueLabel: 'bez nástupce',
+      secondaryLabel: 'pokryto',
       rows: topRows(
         Array.from(byDivision.entries()).map(([divisionId, row]) => ({
           label: labels.get(divisionId) ?? divisionId,
@@ -601,17 +669,17 @@ async function buildSuccession({
           const position = positionById.get(plan.criticalPositionId);
           return {
             label: position?.title ?? plan.criticalPositionId,
-            value: 'gap',
+            value: 'bez nástupce',
             secondary: position ? labels.get(position.divisionId) ?? position.divisionId : 'bez divize',
             detail: 'vyžaduje vlastníka rozvojové akce',
           };
         }),
     },
-    executiveSignalCs: 'Succession dashboard ukazuje, které kritické role by v případě odchodu způsobily provozní riziko. Gaps mají být řízené jako akční backlog, ne jako statický seznam.',
+    executiveSignalCs: 'Nástupnictví ukazuje, které klíčové role by při odchodu člověka ohrozily provoz. Mezery bez nástupce mají být řízené jako konkrétní úkol, ne jako statický seznam.',
     actions: [
-      'Každé gap roli přiřadit HRBP a cílové datum nástupnického plánu.',
-      'Ready 1-2 roky propojit s konkrétními rozvojovými aktivitami.',
-      'Spojit succession gaps s retenčním rizikem klíčových pozic.',
+      'Každé roli bez nástupce přiřadit HRBP a cílové datum plánu.',
+      'Lidi připravené do 2 let propojit s konkrétními rozvojovými aktivitami.',
+      'Spojit mezery v nástupnictví s retenčním rizikem klíčových pozic.',
     ],
   };
 }
@@ -658,24 +726,24 @@ async function buildEngagement({
     period,
     kpis,
     metrics: [
-      { label: 'eNPS', value: formatNumber(averageScore, 1), detail: 'poslední vlna', tone: averageScore >= 20 ? 'emerald' : 'orange' },
+      { label: 'eNPS', value: formatNumber(averageScore, 1), detail: 'poslední měření', tone: averageScore >= 20 ? 'emerald' : 'orange' },
       { label: 'Participace', value: formatPct(participation), detail: `${formatNumber(responded.length)} odpovědí`, tone: 'blue' },
-      { label: 'Promoters', value: formatNumber(promoters), detail: formatPct((promoters / Math.max(responded.length, 1)) * 100), tone: 'emerald' },
-      { label: 'Detractors', value: formatNumber(detractors), detail: formatPct((detractors / Math.max(responded.length, 1)) * 100), tone: detractors > promoters ? 'rose' : 'zinc' },
+      { label: 'Podporovatelé', value: formatNumber(promoters), detail: formatPct((promoters / Math.max(responded.length, 1)) * 100), tone: 'emerald' },
+      { label: 'Kritické hlasy', value: formatNumber(detractors), detail: formatPct((detractors / Math.max(responded.length, 1)) * 100), tone: detractors > promoters ? 'rose' : 'zinc' },
     ],
     primaryBreakdown: {
       title: 'eNPS segmenty',
       subtitle: 'Rozpad odpovědí podle nálady zaměstnanců',
       valueLabel: 'odpovědi',
       rows: [
-        { label: 'Promoters', value: promoters, detail: 'score >= 50' },
-        { label: 'Passives', value: passives, detail: 'score 0-49' },
-        { label: 'Detractors', value: detractors, detail: 'score < 0' },
+        { label: 'Podporovatelé', value: promoters, detail: 'silně pozitivní odpovědi' },
+        { label: 'Neutrální odpovědi', value: passives, detail: 'bez silného signálu' },
+        { label: 'Kritické hlasy', value: detractors, detail: 'negativní odpovědi' },
       ],
     },
     secondaryBreakdown: {
       title: 'eNPS podle divize',
-      subtitle: 'Nejnižší segmenty k follow-up akci',
+      subtitle: 'Nejnižší segmenty pro navazující rozhovor',
       valueLabel: 'eNPS',
       rows: Array.from(byDivision.entries())
         .map(([divisionId, rows]) => ({
@@ -687,14 +755,14 @@ async function buildEngagement({
         .slice(0, 8),
     },
     table: {
-      title: 'Engagement vs. attrition signál',
-      subtitle: 'Segmenty, kde nízké eNPS potkává odchody v období',
+      title: 'Zapojení a odchody',
+      subtitle: 'Segmenty, kde se nízké eNPS potkává s odchody',
       rows: Array.from(byDivision.entries())
         .map(([divisionId, rows]) => ({
           label: labels.get(divisionId) ?? divisionId,
           value: formatNumber(mean(rows, (row) => row.score), 1),
           secondary: formatNumber(leaversByDivision.get(divisionId) ?? 0),
-          detail: 'eNPS score / odchody Q1',
+          detail: 'eNPS / odchody za období',
           raw: mean(rows, (row) => row.score) - (leaversByDivision.get(divisionId) ?? 0),
         }))
         .sort((a, b) => a.raw - b.raw)
@@ -706,11 +774,11 @@ async function buildEngagement({
           detail: row.detail,
         })),
     },
-    executiveSignalCs: 'Engagement dashboard ukazuje nejen průměrné eNPS, ale segmenty pro follow-up. Největší prioritu mají týmy s nízkým score a současným retenčním tlakem.',
+    executiveSignalCs: 'Zapojení lidí není jen průměrné eNPS. Prioritu mají týmy s nízkým výsledkem, dostatečnou účastí a současným tlakem na odchody.',
     actions: [
-      'Pro nejnižší eNPS segmenty připravit manažerský follow-up do 30 dnů.',
-      'Porovnat detractors s fluktuací a nemocností.',
-      'Oddělit nízké score od nízké participace, protože vyžadují odlišnou akci.',
+      'Pro nejnižší eNPS segmenty připravit manažerský rozhovor do 30 dnů.',
+      'Porovnat kritické hlasy s fluktuací a nemocností.',
+      'Oddělit nízký výsledek od nízké účasti, protože vyžadují odlišnou akci.',
     ],
   };
 }
@@ -758,9 +826,9 @@ async function buildTalentGrowth({
     period,
     kpis,
     metrics: [
-      { label: 'High potential', value: formatPct((highPotential / Math.max(reviews.length, 1)) * 100), detail: `${formatNumber(highPotential)} lidí`, tone: 'violet' },
+      { label: 'Vysoký potenciál', value: formatPct((highPotential / Math.max(reviews.length, 1)) * 100), detail: `${formatNumber(highPotential)} lidí`, tone: 'violet' },
       { label: 'Top výkon', value: formatPct((topPerformance / Math.max(reviews.length, 1)) * 100), detail: 'rating 4-5', tone: 'emerald' },
-      { label: 'Talent pool', value: formatNumber(talentPool), detail: 'flag v appraisal', tone: 'blue' },
+      { label: 'Talentová skupina', value: formatNumber(talentPool), detail: 'označeno v hodnocení', tone: 'blue' },
       { label: 'Školení Q1', value: formatNumber(trainingHours, 0), detail: `${formatCzkShort(trainingCost)} investice`, tone: 'orange' },
     ],
     primaryBreakdown: {
@@ -768,24 +836,24 @@ async function buildTalentGrowth({
       subtitle: 'Distribuce potenciálu z ročního hodnocení',
       valueLabel: 'lidé',
       rows: [
-        { label: 'Very high', value: potentialCounts.get('very_high') ?? 0, detail: 'akcelerační pool' },
-        { label: 'High', value: potentialCounts.get('high') ?? 0, detail: 'talent pipeline' },
-        { label: 'Medium', value: potentialCounts.get('med') ?? 0, detail: 'stabilní růst' },
-        { label: 'Low', value: potentialCounts.get('low') ?? 0, detail: 'bez růstového signálu' },
+        { label: 'Velmi vysoký', value: potentialCounts.get('very_high') ?? 0, detail: 'rychlý rozvoj' },
+        { label: 'Vysoký', value: potentialCounts.get('high') ?? 0, detail: 'silný růstový potenciál' },
+        { label: 'Střední', value: potentialCounts.get('med') ?? 0, detail: 'stabilní růst' },
+        { label: 'Nízký', value: potentialCounts.get('low') ?? 0, detail: 'bez růstového signálu' },
       ],
     },
     secondaryBreakdown: {
       title: 'Výkonové hodnocení',
-      subtitle: 'Rozdělení ratingu 1-5',
+      subtitle: 'Rozdělení hodnocení 1-5',
       valueLabel: 'lidé',
       rows: ['5', '4', '3', '2', '1'].map((rating) => ({
-        label: `Rating ${rating}`,
+        label: `Hodnocení ${rating}`,
         value: ratingCounts.get(rating) ?? 0,
         detail: rating === '5' || rating === '4' ? 'top výkon' : 'standard / rozvoj',
       })),
     },
     table: {
-      title: 'Talent pool podle divize',
+      title: 'Talentová skupina podle divize',
       subtitle: 'Kde je nejsilnější interní růstová kapacita',
       rows: Array.from(byDivision.entries())
         .map(([divisionId, row]) => ({
@@ -804,11 +872,11 @@ async function buildTalentGrowth({
           detail: row.detail,
         })),
     },
-    executiveSignalCs: 'Talent & Growth ukazuje, zda má firma dostatečný interní pipeline pro další růst. Silný talent pool má být propojený se succession gaps a interní mobilitou.',
+    executiveSignalCs: 'Talenty a rozvoj ukazují, jestli má firma dost lidí pro budoucí růst. Silná talentová skupina má být propojená s nástupnictvím a interní mobilitou.',
     actions: [
-      'Kalibrovat high-potential segmenty mezi divizemi.',
-      'Napojit talent pool na otevřené critical role a succession gaps.',
-      'Vyhodnotit návratnost školení podle výkonového ratingu.',
+      'Sjednotit hodnocení vysokého potenciálu mezi divizemi.',
+      'Napojit talentovou skupinu na otevřené klíčové role a mezery v nástupnictví.',
+      'Vyhodnotit přínos školení podle výkonového hodnocení.',
     ],
   };
 }

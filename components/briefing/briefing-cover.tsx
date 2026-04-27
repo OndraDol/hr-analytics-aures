@@ -8,7 +8,7 @@ export function BriefingCover({ data }: { data: ExecutiveBriefingData }) {
         <div>
           <AuresMonogram className="h-16 w-16" />
           <p className="mt-8 text-sm font-semibold uppercase tracking-[0.28em] text-aures-blue-700">
-            AURES Holdings · HR Analytics
+            AURES Holdings · Přehled lidí
           </p>
           <h1 className="mt-5 max-w-3xl font-serif text-6xl font-semibold leading-tight text-aures-graphite-950">
             {data.coverData.titleCs}
@@ -16,9 +16,9 @@ export function BriefingCover({ data }: { data: ExecutiveBriefingData }) {
           <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-600">{data.coverData.subtitleCs}</p>
         </div>
         <div className="grid gap-4 border-t border-zinc-200 pt-6 md:grid-cols-3">
-          <CoverFact label="Health score" value={`${data.dashboard.healthScore}/100`} />
-          <CoverFact label="Top alerts" value={data.dashboard.topAlerts.length.toString()} />
-          <CoverFact label="Generated" value={data.coverData.generatedLabelCs} />
+          <CoverFact label="Stav lidí" value={`${data.dashboard.healthScore}/100`} />
+          <CoverFact label="K řešení" value={data.dashboard.topAlerts.length.toString()} />
+          <CoverFact label="Období" value={data.coverData.generatedLabelCs} />
         </div>
       </div>
     </section>

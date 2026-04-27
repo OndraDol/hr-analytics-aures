@@ -82,7 +82,7 @@ export function CopilotSidebar({ open, onClose, context }: CopilotSidebarProps) 
                 Demo Copilot
               </p>
               <h2 className="mt-1 text-xl font-semibold tracking-normal text-zinc-950">
-                {context.sectionTitle ?? 'HR Analytics'}
+                {context.sectionTitle ?? 'Přehled lidí'}
               </h2>
               <p className="mt-1 text-sm text-zinc-500">
                 {context.sectionLabel ?? 'Kontext'} · předpřipravené odpovědi

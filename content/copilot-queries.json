@@ -4,69 +4,69 @@
     "labelCs": "Co ukázat vedení jako první?",
     "context": "executive",
     "suggestedFor": ["/"],
-    "answerMarkdownCs": "### Priorita pro leadership\nZačněte kombinací HR Health Score, top alertů a změn proti minulému měsíci. Vedení tím během pár minut uvidí, kde je stav stabilní a kde se vytváří riziko.\n\nDoporučený průchod:\n- otevřít [Executive dashboard](/)\n- rozkliknout nejhorší alert\n- pokračovat do [Attrition deep dive](/analytika/attrition), pokud alert souvisí s odchody\n\nPro demo je důležité ukázat, že prototyp není jen sada grafů, ale vede uživatele k rozhodnutí."
+    "answerMarkdownCs": "### Priorita pro vedení\nZačněte kombinací celkového stavu HR, hlavních rizik a změn proti minulému měsíci. Vedení tím během pár minut uvidí, kde je stav stabilní a kde se vytváří riziko.\n\nDoporučený průchod:\n- otevřít [hlavní přehled](/)\n- rozkliknout největší riziko\n- pokračovat do [detailu odchodů](/analytika/attrition), pokud riziko souvisí s odchody\n\nPro demo je důležité ukázat, že prototyp není jen sada grafů, ale vede uživatele k rozhodnutí."
   },
   {
     "id": "attrition-growth",
     "labelCs": "Proč roste fluktuace?",
     "context": "analytics",
     "suggestedFor": ["/sekce/retention", "/analytika/attrition", "/sekce/workforce-movement"],
-    "answerMarkdownCs": "### Pravděpodobné vysvětlení fluktuace\nRůst fluktuace je potřeba číst přes tři vrstvy: divize, kritičnost role a tenure. Pokud se odchody koncentrují v několika divizích a zároveň zasahují kritické role, nejde o běžný šum.\n\nCo zkontrolovat:\n- segmenty s nejvyšším rizikem v [Attrition deep dive](/analytika/attrition)\n- detail pohybu zaměstnanců v [Nástupy a odchody](/sekce/workforce-movement)\n- operativní seznam posledních odchodů v [Hired & fired](/operativa/hired-fired)\n\nPrvní akce: vytáhnout top 3 segmenty podle rizika a potvrdit s HRBP, jestli jde o známý problém manažera, mzdy, náborového fitu nebo onboarding kvality."
+    "answerMarkdownCs": "### Pravděpodobné vysvětlení fluktuace\nRůst fluktuace je potřeba číst přes tři vrstvy: divize, důležitost role a délka působení ve firmě. Pokud se odchody koncentrují v několika divizích a zároveň zasahují klíčové role, nejde o běžný šum.\n\nCo zkontrolovat:\n- segmenty s nejvyšším rizikem v [detailu odchodů](/analytika/attrition)\n- detail pohybu zaměstnanců v [Nástupy a odchody](/sekce/workforce-movement)\n- operativní seznam posledních odchodů v [seznamu nástupů a odchodů](/operativa/hired-fired)\n\nPrvní akce: vytáhnout tři nejrizikovější segmenty a potvrdit s HRBP, jestli jde o známý problém manažera, mzdy, náborového fitu nebo zapracování."
   },
   {
     "id": "retention-risk",
     "labelCs": "Kde je největší retenční riziko?",
     "context": "section",
     "suggestedFor": ["/sekce/retention", "/analytika/attrition"],
-    "answerMarkdownCs": "### Retenční riziko\nNejvětší prioritu mají segmenty, kde se potkává vysoká fluktuace, nízké eNPS a kritické pozice. Samotná vysoká fluktuace ještě nemusí být problém, pokud se týká krátkodobých nebo plánovaných rolí.\n\nDoporučené pořadí analýzy:\n- [Attrition deep dive](/analytika/attrition) pro rizikové segmenty\n- [Retention](/sekce/retention) pro KPI a doporučené akce\n- [Org chart](/operativa/org-chart) pro dopad na manažerské týmy\n\nVýstupem pro HR by měl být krátký seznam konkrétních týmů, vlastníků a navržených intervencí."
+    "answerMarkdownCs": "### Riziko odchodů\nNejvětší prioritu mají segmenty, kde se potkává vysoká fluktuace, nízké eNPS a klíčové pozice. Samotná vysoká fluktuace ještě nemusí být problém, pokud se týká krátkodobých nebo plánovaných rolí.\n\nDoporučené pořadí analýzy:\n- [Detail odchodů](/analytika/attrition) pro rizikové segmenty\n- [Udržení lidí](/sekce/retention) pro hlavní metriku a doporučené akce\n- [Organizační struktura](/operativa/org-chart) pro dopad na manažerské týmy\n\nVýstupem pro HR by měl být krátký seznam konkrétních týmů, vlastníků a navržených kroků."
   },
   {
     "id": "pay-gap-explanation",
-    "labelCs": "Co vysvětluje pay gap?",
+    "labelCs": "Co vysvětluje rozdíl v odměnách?",
     "context": "analytics",
     "suggestedFor": ["/analytika/compensation-pay-gap", "/sekce/hr-statistics", "/sekce/cost-structure"],
-    "answerMarkdownCs": "### Pay gap interpretace\nPay gap je potřeba oddělit na raw rozdíl a rozdíl upravený o grade. Raw gap říká, jak vypadá celková mzdová distribuce; adjusted gap ukazuje, jestli rozdíl přetrvává i při podobné senioritě.\n\nDoporučený pohled:\n- otevřít [Compensation & pay gap](/analytika/compensation-pay-gap)\n- porovnat grade mix a mediány\n- ověřit vazbu na [HR statistiky](/sekce/hr-statistics) a [Náklady a strukturu](/sekce/cost-structure)\n\nPro leadership je důležité prezentovat obě čísla, protože samotný raw gap může být silně ovlivněný zastoupením žen a mužů v gradech."
+    "answerMarkdownCs": "### Interpretace rozdílu v odměnách\nRozdíl v odměnách je potřeba oddělit na celkový rozdíl a rozdíl očištěný o úroveň role. Celkový rozdíl říká, jak vypadá celá mzdová distribuce; očištěný pohled ukazuje, jestli rozdíl přetrvává i při podobné senioritě.\n\nDoporučený pohled:\n- otevřít [odměňování a rozdíly v odměnách](/analytika/compensation-pay-gap)\n- porovnat mix úrovní rolí a mediány\n- ověřit vazbu na [Stav zaměstnanců](/sekce/hr-statistics) a [Náklady a strukturu](/sekce/cost-structure)\n\nPro vedení je důležité prezentovat obě čísla, protože samotný celkový rozdíl může být silně ovlivněný zastoupením žen a mužů v úrovních rolí."
   },
   {
     "id": "recruitment-bottleneck",
     "labelCs": "Kde se ztrácí kandidáti?",
     "context": "analytics",
     "suggestedFor": ["/sekce/recruitment", "/analytika/recruitment-funnel"],
-    "answerMarkdownCs": "### Náborový bottleneck\nKandidáti se obvykle ztrácí ve fázi, kde nejvíc klesá konverze nebo se neúměrně prodlužuje čekání. Pro demo sledujte průchod od longlistu přes pohovory až po nabídku.\n\nKde začít:\n- [Recruitment funnel](/analytika/recruitment-funnel) pro propady mezi fázemi\n- [Recruitment](/sekce/recruitment) pro TTF, CpH a kvalitu náboru\n- [Hired & fired](/operativa/hired-fired) pro vazbu na reálné nástupy\n\nAkční interpretace: pokud je propad před nabídkou, řešte rychlost hiring managerů; pokud po nabídce, řešte konkurenceschopnost nabídky a candidate experience."
+    "answerMarkdownCs": "### Kde se nábor zasekává\nKandidáti se obvykle ztrácí v kroku, kde nejvíc klesá průchodnost nebo se neúměrně prodlužuje čekání. Pro demo sledujte cestu od prvního seznamu kandidátů přes pohovory až po nabídku.\n\nKde začít:\n- [Průchod náborem](/analytika/recruitment-funnel) pro propady mezi kroky\n- [Nábor](/sekce/recruitment) pro rychlost, cenu a kvalitu náboru\n- [Seznam nástupů a odchodů](/operativa/hired-fired) pro vazbu na reálné nástupy\n\nAkční interpretace: pokud je propad před nabídkou, řešte rychlost manažerů; pokud po nabídce, řešte konkurenceschopnost nabídky a zkušenost kandidáta."
   },
   {
     "id": "weekly-hr-actions",
     "labelCs": "Co má HR udělat tento týden?",
     "context": "global",
     "suggestedFor": ["/", "/operativa/hired-fired", "/operativa/vacation-balances"],
-    "answerMarkdownCs": "### Týdenní akční backlog\nPro tento týden bych doporučil krátký operativní cyklus nad riziky, která mají majitele a jasnou akci.\n\nPriorita:\n- zkontrolovat poslední nástupy a odchody v [Hired & fired](/operativa/hired-fired)\n- projít kritické retenční segmenty v [Attrition deep dive](/analytika/attrition)\n- ověřit vysoké zůstatky v [Vacation balances](/operativa/vacation-balances)\n- připravit leadership update z [Executive dashboardu](/)\n\nSmyslem je ukázat, že BI může být pracovní nástroj pro týdenní řízení, nejen měsíční prezentace."
+    "answerMarkdownCs": "### Týdenní seznam akcí\nPro tento týden bych doporučil krátký operativní cyklus nad riziky, která mají vlastníka a jasnou akci.\n\nPriorita:\n- zkontrolovat poslední nástupy a odchody v [seznamu nástupů a odchodů](/operativa/hired-fired)\n- projít kritické segmenty odchodů v [detailu odchodů](/analytika/attrition)\n- ověřit vysoké zůstatky v [zůstatcích dovolené](/operativa/vacation-balances)\n- připravit krátký update pro vedení z [hlavního přehledu](/)\n\nSmyslem je ukázat, že BI může být pracovní nástroj pro týdenní řízení, nejen měsíční prezentace."
   },
   {
     "id": "absence-problem",
     "labelCs": "Kde máme problém s nemocností?",
     "context": "analytics",
     "suggestedFor": ["/analytika/absence-coverage", "/sekce/engagement"],
-    "answerMarkdownCs": "### Nemocnost a coverage\nProblém s nemocností je nejvážnější tam, kde se vysoká absence překrývá s nízkým pokrytím směn. Samotná nemocnost bez dopadu na provoz nemusí být stejná priorita jako menší absence v kritickém týmu.\n\nDoporučené kroky:\n- otevřít [Absence & coverage](/analytika/absence-coverage)\n- porovnat nemocnost podle divize a coverage signál\n- ověřit vztah k [Engagement](/sekce/engagement)\n\nPokud se potvrdí lokální problém, další akce patří HRBP a provoznímu manažerovi dané divize."
+    "answerMarkdownCs": "### Nemocnost a pokrytí směn\nProblém s nemocností je nejvážnější tam, kde se vysoká absence překrývá s nízkým pokrytím směn. Samotná nemocnost bez dopadu na provoz nemusí být stejná priorita jako menší absence v kritickém týmu.\n\nDoporučené kroky:\n- otevřít [absenci a pokrytí směn](/analytika/absence-coverage)\n- porovnat nemocnost podle divize a signál pokrytí směn\n- ověřit vztah ke [spokojenosti a zapojení](/sekce/engagement)\n\nPokud se potvrdí lokální problém, další akce patří HRBP a provoznímu manažerovi dané divize."
   },
   {
     "id": "enps-followup",
-    "labelCs": "Které segmenty potřebují eNPS follow-up?",
+    "labelCs": "Které týmy potřebují eNPS rozhovor?",
     "context": "operational",
     "suggestedFor": ["/operativa/enps-latest", "/sekce/engagement"],
-    "answerMarkdownCs": "### eNPS follow-up\nFollow-up má nejvyšší hodnotu tam, kde je nízké skóre a zároveň dostatečná participace. Nízké skóre z malé vzorky je spíš signál k ověření než hotový závěr.\n\nDoporučený postup:\n- projít [eNPS latest](/operativa/enps-latest)\n- navázat přes [Engagement](/sekce/engagement)\n- porovnat segmenty s [Attrition deep dive](/analytika/attrition)\n\nPraktický výstup: 3 segmenty pro follow-up, vlastník, termín a otázka, kterou chce HR v daném týmu ověřit."
+    "answerMarkdownCs": "### eNPS rozhovor\nNavazující rozhovor má nejvyšší hodnotu tam, kde je nízký výsledek a zároveň dostatečná účast. Nízký výsledek z malého vzorku je spíš signál k ověření než hotový závěr.\n\nDoporučený postup:\n- projít [poslední eNPS měření](/operativa/enps-latest)\n- navázat přes [spokojenost a zapojení](/sekce/engagement)\n- porovnat segmenty s [detailem odchodů](/analytika/attrition)\n\nPraktický výstup: 3 týmy pro rozhovor, vlastník, termín a otázka, kterou chce HR v daném týmu ověřit."
   },
   {
     "id": "succession-gaps",
     "labelCs": "Kde chybí nástupci?",
     "context": "section",
     "suggestedFor": ["/sekce/succession", "/operativa/org-chart"],
-    "answerMarkdownCs": "### Nástupnické mezery\nSuccession gap je kritický hlavně u pozic, které jsou zároveň označené jako critical a mají vysoký dopad na provoz nebo leadership kontinuitu.\n\nDoporučený průchod:\n- [Nástupnictví](/sekce/succession) pro KPI a gaps\n- [Org chart](/operativa/org-chart) pro manažerský kontext\n- [Attrition deep dive](/analytika/attrition) pro riziko odchodu držitelů rolí\n\nPrioritizace by měla kombinovat kritičnost role, readiness successora a aktuální retenční riziko incumbentů."
+    "answerMarkdownCs": "### Nástupnické mezery\nMezera v nástupnictví je kritická hlavně u pozic, které mají vysoký dopad na provoz nebo kontinuitu vedení.\n\nDoporučený průchod:\n- [Nástupnictví](/sekce/succession) pro hlavní metriky a mezery\n- [Organizační struktura](/operativa/org-chart) pro manažerský kontext\n- [Detail odchodů](/analytika/attrition) pro riziko odchodu držitelů rolí\n\nPrioritizace by měla kombinovat důležitost role, připravenost nástupce a aktuální riziko odchodu člověka v roli."
   },
   {
     "id": "demo-narrative",
     "labelCs": "Jak odvyprávět demo?",
     "context": "global",
     "suggestedFor": ["/"],
-    "answerMarkdownCs": "### Doporučený demo příběh\nZačněte tím, že prototyp odpovídá na otázky vedení bez ručního skládání reportů. Pak ukažte jednu cestu od signálu k detailu a akci.\n\nScénář:\n- [Executive dashboard](/): co je největší problém\n- [Retention](/sekce/retention): jak vypadá metrika a doporučená akce\n- [Attrition deep dive](/analytika/attrition): proč se problém děje\n- [Hired & fired](/operativa/hired-fired): konkrétní operativní dopad\n\nZávěr pro HR Director: finální Power BI má stavět na stejném myšlení, ne jen překreslit tabulky."
+    "answerMarkdownCs": "### Doporučený demo příběh\nZačněte tím, že prototyp odpovídá na otázky vedení bez ručního skládání reportů. Pak ukažte jednu cestu od signálu k detailu a akci.\n\nScénář:\n- [Hlavní přehled](/): co je největší problém\n- [Udržení lidí](/sekce/retention): jak vypadá metrika a doporučená akce\n- [Detail odchodů](/analytika/attrition): proč se problém děje\n- [Seznam nástupů a odchodů](/operativa/hired-fired): konkrétní operativní dopad\n\nZávěr pro HR Director: finální Power BI má stavět na stejném myšlení, ne jen překreslit tabulky."
   }
 ]

@@ -60,6 +60,9 @@ describe('buildKpiCardModel', () => {
     expect(model.evaluation.status).toBe('red');
     expect(model.drivers.length).toBeGreaterThan(0);
     expect(model.narrativeCs).toContain('Fluktuace');
+    expect(model.narrativeCs).toContain('proti předchozímu měsíci');
+    expect(model.narrativeCs).toContain('Nejvíc to vysvětluje');
+    expect(model.narrativeCs).toContain('Dopad pro HR');
     expect(model.action.severity).toBe('red');
     expect(model.aiInsight?.textCs.length).toBeGreaterThan(0);
   });

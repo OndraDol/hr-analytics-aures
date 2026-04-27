@@ -24,6 +24,11 @@ describe('KPI_CATALOG', () => {
     }
   });
 
+  it('uses a human-readable label for headcount context', () => {
+    expect(getKpiDefinition('HR_STATS').nameCs).toBe('Stav zaměstnanců');
+    expect(getKpiDefinition('HR_STATS').definitionCs).toContain('Kolik lidí');
+  });
+
   it('evaluates up/down/target thresholds deterministically', () => {
     expect(evaluateStatus(getKpiDefinition('FLUCT'), 18)).toBe('green');
     expect(evaluateStatus(getKpiDefinition('FLUCT'), 30)).toBe('amber');

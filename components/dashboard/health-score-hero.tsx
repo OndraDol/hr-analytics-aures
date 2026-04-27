@@ -20,13 +20,13 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
       <div className="grid gap-7 xl:grid-cols-[0.95fr_1.05fr] xl:items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aures-blue-700">
-            HR Analytics - Q1 2026
+            Přehled lidí - Q1 2026
           </p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl font-semibold tracking-normal text-zinc-950 md:text-7xl">
-            Executive přehled zdraví organizace
+            Přehled lidí v organizaci
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600">
-            Souhrn KPI napříč HR statistikou, náborem, retencí, náklady, engagementem a talentem.
+            Rychle ukazuje, kde je stav dobrý, kde vzniká riziko a co má HR řešit jako první.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <StatusTile label="Zelené KPI" value={greenCount} color="text-emerald-600" />
@@ -50,7 +50,7 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
               </div>
               <div>
                 <p className="text-sm font-semibold text-zinc-950">{data.healthLabel}</p>
-                <p className="text-xs text-zinc-500">poslední aktualizace před 2 hodinami</p>
+                <p className="text-xs text-zinc-500">aktuální snapshot Q1 2026</p>
               </div>
             </div>
             <div className="mt-5 grid gap-3">

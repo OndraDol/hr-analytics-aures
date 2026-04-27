@@ -9,8 +9,8 @@ export function SectionScorecards({ scorecards }: { scorecards: readonly Section
     <section>
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-zinc-950">Sekce I-VIII</h2>
-          <p className="mt-1 text-sm text-zinc-500">Rychlý stav každé oblasti reportingu.</p>
+          <h2 className="text-lg font-semibold text-zinc-950">Oblasti lidí</h2>
+          <p className="mt-1 text-sm text-zinc-500">Rychlý stav hlavních HR témat.</p>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

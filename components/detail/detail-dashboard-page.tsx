@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { SectionBreakdownChart } from '@/components/charts/section-charts';
-import { DataQualityChip } from '@/components/detail/data-quality-chip';
 import type { DetailDashboardData, DetailMetric } from '@/lib/analytics/detail-types';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +15,8 @@ const TONE_CLASS: Record<DetailMetric['tone'], string> = {
 
 export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
   const Icon = data.icon;
-  const hasDataQuality = data.table.rows.some((row) => row.dataQuality);
+  const keyMetrics = data.metrics.slice(0, 3);
+  const visibleRows = data.table.rows.slice(0, 6);
 
   return (
     <main className="px-5 py-6 md:px-8">
@@ -29,7 +29,7 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
               </div>
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.eyebrow}</p>
-                <p className="text-sm text-zinc-500">Q1 2026 · AURES HR Analytics</p>
+                <p className="text-sm text-zinc-500">Q1 2026 · Přehled lidí</p>
               </div>
             </div>
             <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
@@ -46,8 +46,8 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
           </div>
         </div>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {data.metrics.map((metric) => (
+        <div className="mt-7 grid gap-3 sm:grid-cols-3">
+          {keyMetrics.map((metric) => (
             <div key={metric.label} className="rounded-md border border-zinc-200 bg-zinc-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">{metric.label}</p>
               <p className={cn('mt-2 inline-flex rounded-md px-2 py-1 font-mono text-2xl font-semibold tracking-normal', TONE_CLASS[metric.tone])}>
@@ -79,21 +79,14 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
       <section className="mt-6 grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
         <Panel title={data.table.title} subtitle={data.table.subtitle}>
           <div className="overflow-hidden rounded-md border border-zinc-200">
-            {data.table.rows.length > 0 ? (
-              data.table.rows.map((row) => (
+            {visibleRows.length > 0 ? (
+              visibleRows.map((row) => (
                 <div
                   key={`${row.label}-${row.value}-${row.secondary}-${row.detail}`}
-                  className={cn(
-                    'grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0',
-                    hasDataQuality
-                      ? 'md:grid-cols-[1.05fr_0.45fr_0.65fr_0.7fr_1.3fr]'
-                      : 'md:grid-cols-[1.15fr_0.55fr_0.75fr_1.55fr]',
-                  )}
+                  className="grid gap-3 border-b border-zinc-200 bg-white px-4 py-3 last:border-b-0 md:grid-cols-[1.15fr_0.55fr_1.55fr]"
                 >
                   <p className="text-sm font-medium text-zinc-950">{row.label}</p>
                   <p className="font-mono text-sm text-zinc-800">{row.value}</p>
-                  <p className="font-mono text-sm text-zinc-600">{row.secondary}</p>
-                  {hasDataQuality ? <DataQualityChip value={row.dataQuality} /> : null}
                   <p className="text-sm text-zinc-500">{row.detail}</p>
                 </div>
               ))
@@ -104,7 +97,7 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
         </Panel>
         <Panel title="Akční výstup" subtitle="Co má z pohledu následovat">
           <div className="space-y-3">
-            {data.actions.map((action) => (
+            {data.actions.slice(0, 2).map((action) => (
               <div key={action} className="flex gap-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
                 <p className="text-sm leading-6 text-zinc-700">{action}</p>

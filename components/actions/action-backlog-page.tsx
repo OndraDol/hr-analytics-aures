@@ -30,16 +30,16 @@ export function ActionBacklogPage({ data }: { data: ActionBacklogData }) {
               </div>
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">
-                  Akční backlog
+                  Akční úkoly
                 </p>
                 <p className="text-sm text-zinc-500">Q1 2026 · doporučení z KPI vrstvy</p>
               </div>
             </div>
             <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
-              Prioritizované HR akce
+              Prioritizované HR úkoly
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
-              Jedno místo pro úkoly, které vycházejí ze statusu KPI, priority metriky, vlastníka a nejsilnějšího driveru.
+              Jedno místo pro úkoly, které teď nejvíc pomohou snížit riziko nebo zlepšit kapacity.
             </p>
           </div>
           <div className="grid min-w-[260px] gap-3 rounded-lg border border-blue-100 bg-blue-50 p-4">
@@ -69,11 +69,11 @@ export function ActionBacklogPage({ data }: { data: ActionBacklogData }) {
         </div>
 
         <aside className="h-fit rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-zinc-950">Jak backlog číst</h2>
+          <h2 className="text-lg font-semibold text-zinc-950">Jak úkoly číst</h2>
           <div className="mt-4 space-y-3">
             <GuideItem
               title="Priorita"
-              body="Řazení kombinuje KPI status, prioritu v návrhu a velikost změny proti minulému období."
+              body="Nahoře jsou věci, které mají největší dopad na lidi, provoz nebo vedení týmu."
             />
             <GuideItem
               title="Termín"
@@ -81,7 +81,7 @@ export function ActionBacklogPage({ data }: { data: ActionBacklogData }) {
             />
             <GuideItem
               title="Vlastník"
-              body="Vlastník je převzatý z KPI katalogu a slouží jako výchozí odpovědná role pro Power BI zadání."
+              body="Role ukazuje, kdo má být u rozhodnutí nebo následného ověření."
             />
           </div>
         </aside>
@@ -124,11 +124,10 @@ function ActionItemCard({ item, rank }: { item: ActionBacklogItem; rank: number 
         </Link>
       </div>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-5">
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
         <Fact label="KPI / sekce" value={`${item.sectionTitle} · ${item.value}`} />
         <Fact label="Owner" value={item.owner} icon={UserRound} />
         <Fact label="Termín" value={item.dueLabelCs} icon={Clock3} />
-        <Fact label="Severity" value={`${item.impactScore}/100`} />
         <Fact label="Driver" value={item.driverCs} />
       </div>
       </div>

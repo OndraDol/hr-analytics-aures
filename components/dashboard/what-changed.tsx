@@ -40,11 +40,10 @@ function ChangeColumn({
         {title}
       </p>
       <div className="mt-4 space-y-3">
-        {items.length > 0 ? items.map((item) => (
+        {items.length > 0 ? items.slice(0, 2).map((item) => (
           <div key={`${title}-${item.code}`} className="rounded-md bg-zinc-50 p-3">
             <p className="text-sm font-medium text-zinc-950">{item.title}</p>
             <p className="mt-1 text-sm leading-6 text-zinc-600">{item.reasonCs}</p>
-            <p className="mt-2 font-mono text-xs text-zinc-500">Severity {item.severityScore}/100 · {item.thresholdDistanceCs}</p>
           </div>
         )) : (
           <div className="rounded-md bg-zinc-50 p-3">

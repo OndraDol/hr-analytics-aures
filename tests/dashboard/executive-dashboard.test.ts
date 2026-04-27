@@ -19,12 +19,16 @@ describe('buildExecutiveDashboard', () => {
     expect(dashboard.topAlerts.length).toBeGreaterThan(0);
     expect(dashboard.topAlerts[0]!.severityScore).toBeGreaterThan(0);
     expect(dashboard.topAlerts[0]!.thresholdDistanceCs.length).toBeGreaterThan(0);
+    expect(dashboard.topAlerts[0]!.comparisonCs).toContain('proti předchozímu měsíci');
+    expect(dashboard.topAlerts[0]!.driverCs.length).toBeGreaterThan(20);
+    expect(dashboard.topAlerts[0]!.reasonCs).not.toContain('se posunula proti minulému období');
     expect(dashboard.topAlerts.every((alert) => alert.rank >= 1 && alert.rank <= 5)).toBe(true);
     expect(dashboard.topAlerts[0]!.rank).toBe(1);
     expect(dashboard.topAlerts[0]!.owner.length).toBeGreaterThan(0);
     expect(dashboard.topAlerts[0]!.ageDays).toBeGreaterThan(0);
     expect(dashboard.sectionScorecards).toHaveLength(SECTION_CATALOG.length);
     expect(dashboard.aiSummaryCs.length).toBeGreaterThan(30);
+    expect(dashboard.aiSummaryCs).toContain('Doporučení pro HR');
   });
 
   it('orders top alerts by status severity and priority', async () => {

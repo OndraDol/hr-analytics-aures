@@ -16,4 +16,21 @@ describe('SECTION_CATALOG', () => {
       expect(section.relatedOperational.length).toBeGreaterThan(0);
     }
   });
+
+  it('names the first section for HR users, not analysts', () => {
+    expect(SECTION_CATALOG[0]!.title).toBe('Stav zaměstnanců');
+    expect(SECTION_CATALOG[0]!.description).toContain('Kolik lidí');
+  });
+
+  it('uses Czech section labels in the main navigation', () => {
+    const labels = SECTION_CATALOG.flatMap((section) => [
+      section.title,
+      section.shortTitle,
+      section.description,
+      ...section.relatedAnalytics.map((link) => link.label),
+      ...section.relatedOperational.map((link) => link.label),
+    ]).join(' ');
+
+    expect(labels).not.toMatch(/\bRecruitment\b|\bRetention\b|\bSuccession\b|\bEngagement\b|\bTalent\b|deep dive|funnel|candidate experience/i);
+  });
 });

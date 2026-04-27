@@ -14,7 +14,7 @@ export default async function Home() {
   const dashboard = await buildExecutiveDashboard(mockDataProvider, PERIOD);
 
   return (
-    <AppShell activeHref="/" sectionLabel="Executive" sectionTitle="HR Analytics - Q1 2026">
+    <AppShell activeHref="/" sectionLabel="Vedení" sectionTitle="Přehled lidí - Q1 2026">
       <main className="px-5 py-6 md:px-8">
         <MotionStack>
           <HealthScoreHero data={dashboard} />

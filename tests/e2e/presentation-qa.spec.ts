@@ -1,18 +1,18 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
 const desktopRoutes = [
-  { path: '/', title: /Executive přehled zdraví organizace/ },
-  { path: '/akce', title: /Akční backlog/ },
+  { path: '/', title: /Přehled lidí v organizaci/ },
+  { path: '/akce', title: /Prioritizované HR úkoly/ },
   { path: '/briefing', title: /PDF podklad pro HR Directorku/ },
-  { path: '/sekce/retention', title: /Retention/ },
-  { path: '/analytika/recruitment-funnel', title: /Recruitment funnel|Náborový funnel/ },
+  { path: '/sekce/retention', title: /Udržení lidí/ },
+  { path: '/analytika/recruitment-funnel', title: /Průchod náborem/ },
   { path: '/operativa/esg', title: /ESG/ },
 ];
 
 const mobileRoutes = [
-  { path: '/', title: /Executive přehled zdraví organizace/ },
+  { path: '/', title: /Přehled lidí v organizaci/ },
   { path: '/briefing', title: /PDF podklad pro HR Directorku/ },
-  { path: '/akce', title: /Akční backlog/ },
+  { path: '/akce', title: /Prioritizované HR úkoly/ },
 ];
 
 test.beforeEach(async ({ page }) => {
@@ -35,7 +35,7 @@ test('desktop presentation routes render without viewport overflow', async ({ pa
   for (const route of desktopRoutes) {
     await openStable(page, route.path);
     await expect(page.getByText(route.title).first()).toBeVisible();
-    await expect(page.getByText('HR Analytics').first()).toBeVisible();
+    await expect(page.getByText('Přehled lidí').first()).toBeVisible();
     await expect(page.locator('body')).not.toContainText("code: 'HR_STATS'");
     await expectNoHorizontalOverflow(page, route.path);
     await captureQaScreenshot(page, testInfo, `desktop-${slugFor(route.path)}.png`);
@@ -50,8 +50,8 @@ test('mobile presentation routes expose compact navigation and fit the viewport'
     await expect(page.getByText(route.title).first()).toBeVisible();
     await expect(page.getByText('Navigace')).toBeVisible();
     await page.getByText('Navigace').click();
-    await expect(page.getByRole('link', { name: /Executive/ }).first()).toBeVisible();
-    await expect(page.getByRole('link', { name: /PDF briefing/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Hlavní přehled/ }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /PDF podklad/ }).first()).toBeVisible();
     await expectNoHorizontalOverflow(page, route.path);
     await captureQaScreenshot(page, testInfo, `mobile-${slugFor(route.path)}.png`);
   }

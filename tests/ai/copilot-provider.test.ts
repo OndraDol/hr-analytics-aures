@@ -26,7 +26,7 @@ describe('MockCopilotProvider', () => {
 
   it('returns executive suggestions for the root dashboard', async () => {
     const provider = new MockCopilotProvider();
-    const items = await provider.list({ activeHref: '/', sectionLabel: 'Executive' });
+    const items = await provider.list({ activeHref: '/', sectionLabel: 'Vedení' });
 
     expect(items[0]?.id).toBe('leadership-priorities');
     expect(items.map((item) => item.id)).toContain('demo-narrative');
@@ -38,19 +38,19 @@ describe('MockCopilotProvider', () => {
     });
 
     expect(answer.source).toBe('mock');
-    expect(answer.labelCs).toBe('Co vysvětluje pay gap?');
+    expect(answer.labelCs).toBe('Co vysvětluje rozdíl v odměnách?');
     expect(answer.answerMarkdownCs).toContain('/analytika/compensation-pay-gap');
   });
 
   it('returns a fallback answer for an unknown query', async () => {
     const answer = await new MockCopilotProvider().answer('missing-query', {
       activeHref: '/sekce/recruitment',
-      sectionTitle: 'Recruitment',
+      sectionTitle: 'Nábor',
     });
 
     expect(answer.source).toBe('fallback');
     expect(answer.context).toBe('section');
-    expect(answer.answerMarkdownCs).toContain('Recruitment');
+    expect(answer.answerMarkdownCs).toContain('Nábor');
   });
 
   it('only links to existing application routes', () => {

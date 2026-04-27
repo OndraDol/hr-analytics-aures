@@ -20,8 +20,8 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'HR Analytics — AURES Holdings',
-  description: 'Interaktivní HR reporting prototyp',
+  title: 'Přehled lidí — AURES Holdings',
+  description: 'Manažerský přehled lidí, kapacit a HR priorit',
 };
 
 export default function RootLayout({

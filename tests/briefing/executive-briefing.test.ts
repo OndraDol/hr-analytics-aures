@@ -17,7 +17,7 @@ describe('executive briefing', () => {
     expect(briefing.dashboard.sectionScorecards).toHaveLength(SECTION_CATALOG.length);
     expect(statusTotal).toBe(briefing.dashboard.allEvaluations.length);
     expect(briefing.generatedLabelCs).toContain('Q1 2026');
-    expect(briefing.coverData.titleCs).toBe('Executive briefing Q1 2026');
+    expect(briefing.coverData.titleCs).toBe('Přehled lidí Q1 2026');
     expect(briefing.pages.length).toBeGreaterThan(0);
   });
 });
