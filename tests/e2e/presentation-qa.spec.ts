@@ -1,7 +1,7 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test';
 
 const desktopRoutes = [
-  { path: '/', title: /Přehled lidí v organizaci/ },
+  { path: '/', title: /HR Overview/ },
   { path: '/akce', title: /Prioritizované HR úkoly/ },
   { path: '/briefing', title: /PDF podklad pro HR Directorku/ },
   { path: '/sekce/retention', title: /Udržení lidí/ },
@@ -10,7 +10,7 @@ const desktopRoutes = [
 ];
 
 const mobileRoutes = [
-  { path: '/', title: /Přehled lidí v organizaci/ },
+  { path: '/', title: /HR Overview/ },
   { path: '/briefing', title: /PDF podklad pro HR Directorku/ },
   { path: '/akce', title: /Prioritizované HR úkoly/ },
 ];
@@ -35,7 +35,7 @@ test('desktop presentation routes render without viewport overflow', async ({ pa
   for (const route of desktopRoutes) {
     await openStable(page, route.path);
     await expect(page.getByText(route.title).first()).toBeVisible();
-    await expect(page.getByText('Přehled lidí').first()).toBeVisible();
+    await expect(page.getByText('HR Overview').first()).toBeVisible();
     await expect(page.locator('body')).not.toContainText("code: 'HR_STATS'");
     await expectNoHorizontalOverflow(page, route.path);
     await captureQaScreenshot(page, testInfo, `desktop-${slugFor(route.path)}.png`);

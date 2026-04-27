@@ -35,10 +35,10 @@ describe('KPI_CATALOG', () => {
     expect(evaluateStatus(getKpiDefinition('FLUCT'), 31)).toBe('red');
     expect(evaluateStatus(getKpiDefinition('SUCCESSION'), 80)).toBe('green');
     expect(evaluateStatus(getKpiDefinition('CAP_KPI'), 96)).toBe('green');
-    expect(getKpiDefinition('TTF').thresholds).toMatchObject({ green: 27, amber: 30, red: 32 });
-    expect(getKpiDefinition('TTF_CRIT').thresholds).toMatchObject({ green: 30, amber: 33, red: 40 });
-    expect(getKpiDefinition('CPH').thresholds).toMatchObject({ green: 16000, amber: 17000, red: 18000 });
-    expect(getKpiDefinition('QUALITY_HIRE').thresholds).toMatchObject({ green: 32, amber: 30, red: 25 });
+    expect(getKpiDefinition('TTF').thresholds).toMatchObject({ green: 38, amber: 50, red: 60 });
+    expect(getKpiDefinition('TTF_CRIT').thresholds).toMatchObject({ green: 40, amber: 55, red: 65 });
+    expect(getKpiDefinition('CPH').thresholds).toMatchObject({ green: 80000, amber: 110000, red: 150000 });
+    expect(getKpiDefinition('QUALITY_HIRE').thresholds).toMatchObject({ green: 22, amber: 18, red: 12 });
     expect(getKpiDefinition('ENPS').thresholds).toMatchObject({ green: 15, amber: 10, red: 5 });
   });
 

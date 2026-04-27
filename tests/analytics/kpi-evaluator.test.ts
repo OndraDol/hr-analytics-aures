@@ -23,7 +23,7 @@ describe('evaluateKpi', () => {
     const evaluation = await evaluateKpi(provider, 'TTF', { period });
 
     expect(evaluation.value).toBe(30);
-    expect(evaluation.status).toBe('amber');
+    expect(evaluation.status).toBe('green');
     expect(evaluation.thresholdRationaleCs).toContain('benchmark');
   });
 

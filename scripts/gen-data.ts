@@ -325,7 +325,7 @@ const main = (): void => {
     const channel =
       Array.from(sourceCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'Direct';
     const agencyMultiplier = /agent|person|extern/i.test(channel) ? 1.45 : 1;
-    const cost = Math.round((18_000 + rows.length * 1_450 + rng() * 22_000) * agencyMultiplier);
+    const cost = Math.round((9_000 + rows.length * 700 + rng() * 12_000) * agencyMultiplier);
     const critical =
       position.criticalFlag ||
       /manager|vedouc|regional|specialista|technik|account|leader/i.test(vacancy.title);

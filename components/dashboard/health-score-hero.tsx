@@ -20,13 +20,13 @@ export function HealthScoreHero({ data }: { data: ExecutiveDashboardData }) {
       <div className="grid gap-7 xl:grid-cols-[0.95fr_1.05fr] xl:items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aures-blue-700">
-            Přehled lidí - Q1 2026
+            HR Overview · Q1 2026
           </p>
-          <h1 className="mt-4 max-w-3xl font-serif text-5xl font-semibold tracking-normal text-zinc-950 md:text-7xl">
-            Přehled lidí v organizaci
+          <h1 className="mt-4 max-w-3xl font-serif text-5xl font-semibold tracking-normal text-zinc-950 md:text-6xl">
+            HR Overview
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600">
-            Rychle ukazuje, kde je stav dobrý, kde vzniká riziko a co má HR řešit jako první.
+          <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-700">
+            {data.aiSummaryCs}
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <StatusTile label="Zelené KPI" value={greenCount} color="text-emerald-600" />

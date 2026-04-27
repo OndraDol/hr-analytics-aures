@@ -8,7 +8,7 @@ export function BriefingCover({ data }: { data: ExecutiveBriefingData }) {
         <div>
           <AuresMonogram className="h-16 w-16" />
           <p className="mt-8 text-sm font-semibold uppercase tracking-[0.28em] text-aures-blue-700">
-            AURES Holdings · Přehled lidí
+            AURES Holdings · HR Overview
           </p>
           <h1 className="mt-5 max-w-3xl font-serif text-6xl font-semibold leading-tight text-aures-graphite-950">
             {data.coverData.titleCs}

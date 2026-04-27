@@ -42,10 +42,10 @@ export function ExecutiveBriefingPage({ data }: { data: ExecutiveBriefingData })
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-aures-blue-700">
-                AURES Holdings · Přehled lidí
+                AURES Holdings · HR Overview
               </p>
               <h2 className="mt-4 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">
-                Přehled lidí Q1 2026
+                HR Overview · Q1 2026
               </h2>
               <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
                 Souhrn stavu organizace, hlavních rizik a navazujících rozhodnutí.

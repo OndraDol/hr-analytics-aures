@@ -35,7 +35,7 @@ export function SectionScorecards({ scorecards }: { scorecards: readonly Section
                 <StatusBadge status={evaluation.status} />
               </div>
               <p className="mt-4 font-mono text-2xl font-semibold text-zinc-950">{evaluation.formattedValue}</p>
-              <div className="mt-3 h-12">
+              <div className="mt-3">
                 <Sparkline points={evaluation.sparkline} />
               </div>
               <p className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-blue-700">

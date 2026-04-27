@@ -29,7 +29,7 @@ export function DetailDashboardPage({ data }: { data: DetailDashboardData }) {
               </div>
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-700">{data.eyebrow}</p>
-                <p className="text-sm text-zinc-500">Q1 2026 · Přehled lidí</p>
+                <p className="text-sm text-zinc-500">Q1 2026 · HR Overview</p>
               </div>
             </div>
             <h1 className="mt-5 text-4xl font-semibold tracking-normal text-zinc-950 md:text-5xl">

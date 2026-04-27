@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ topic: st
   const { topic: slug } = await params;
   const topic = getAnalyticsTopicBySlug(slug);
   if (!topic) return {};
-  return { title: `${topic.title} | AURES Přehled lidí` };
+  return { title: `${topic.title} | AURES HR Overview` };
 }
 
 export default async function AnalyticsTopicPage({ params }: { params: Promise<{ topic: string }> }) {

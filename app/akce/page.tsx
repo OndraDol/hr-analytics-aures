@@ -7,7 +7,7 @@ import { mockDataProvider } from '@/lib/data/mock-provider';
 const PERIOD = { from: '2026-01-01', to: '2026-03-31' };
 
 export const metadata: Metadata = {
-  title: 'Akční úkoly | AURES Přehled lidí',
+  title: 'Akční úkoly | AURES HR Overview',
 };
 
 export default async function ActionsPage() {

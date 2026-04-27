@@ -63,8 +63,8 @@ export function KpiCardHeadlineZone({ model }: { model: KpiCardModel }) {
               : `${trendDirection} o ${trendAmount} proti předchozímu měsíci`}
           </p>
         </div>
-        <div className="w-36 shrink-0">
-          <Sparkline points={model.evaluation.sparkline} />
+        <div className="w-44 shrink-0 sm:w-52">
+          <Sparkline points={model.evaluation.sparkline} compact />
         </div>
       </div>
     </div>

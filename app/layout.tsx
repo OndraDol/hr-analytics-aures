@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'Přehled lidí — AURES Holdings',
+  title: 'HR Overview — AURES Holdings',
   description: 'Manažerský přehled lidí, kapacit a HR priorit',
 };
 

@@ -40,7 +40,7 @@ export async function buildExecutiveBriefing(
     statusCounts,
     generatedLabelCs: 'Q1 2026',
     coverData: {
-      titleCs: 'Přehled lidí Q1 2026',
+      titleCs: 'HR Overview · Q1 2026',
       subtitleCs: 'Podklad pro rozhodnutí a prioritizaci HR kroků.',
       generatedLabelCs: 'Q1 2026',
     },

@@ -2,13 +2,15 @@
 
 > Živý pracovní dokument. Zapisujeme sem postupně pochopení požadavků, rozhodnutí, otevřené otázky, strukturu datasetu a další postup. Zdrojový podklad: `HR_reporting_ver2.xlsx`.
 
-Poslední aktualizace: 2026-04-26
+Poslední aktualizace: 2026-04-27
 
 ---
 
-## Aktuální stav projektu (2026-04-26)
+## Aktuální stav projektu (2026-04-27)
 
-**v1 = 100 % hotová. v2 Perfection Pass je implementovaný a stabilizovaný. M18/M19 doplňují prezentační QA.**
+**v1 = 100 % hotová. v2 Perfection Pass + HR Overview UX Pass jsou implementované a stabilizované.**
+
+**HR Overview UX Pass (2026-04-27):** rename "Přehled lidí" → "HR Overview", homepage z 6 panelů na 3 zóny (hero / 3 alert karty s mini timeline grafem / mapa oblastí), sekce/[slug] z 6 vrstev na 5 s plnošířkovým trend chartem, sparkline rebuild s viditelnými min/max + endpoint hodnotou + X osou + threshold line, kalibrace KPI thresholdů a recruitment cost generátoru pro realistickou Q1 2026 story (12 green / 7 amber / 1 red headline). Detail viz `docs/releases/v2-hr-overview-pass.md`.
 
 Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). **v2 Perfection Pass** (M12–M17) je také dokončený a posouvá prototyp z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
 

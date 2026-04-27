@@ -1,10 +1,10 @@
 # Next Session Handoff — HR Analytics AURES
 
-Poslední aktualizace: 2026-04-26
+Poslední aktualizace: 2026-04-27
 
-## Aktuální stav — v2 hotová, M18/M19 QA doplněné
+## Aktuální stav — v2 hotová, HR Overview UX pass nasazen
 
-V1 prototyp i **v2 Perfection Pass** jsou hotové. M18 UX polish QA a M19 Presentation QA doplnily mobilní navigaci, briefing empty states, AURES token konzistenci a Playwright browser guardy. Projekt je ve stavu decision-ready executive cockpitu pro HR Directorku Kateřinu Topolovou.
+V1 prototyp + **v2 Perfection Pass** + **HR Overview UX Pass (2026-04-27)** jsou hotové. Stránky jsou méně fragmentované, AI komentáře sjednocené (jeden text na stránku), všechny sparkliny mají osy a endpoint hodnoty, mock data dávají realistický Q1 2026 příběh (1 red headline + 2 amber, health score 60). Detail v `docs/releases/v2-hr-overview-pass.md`.
 
 **Master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](plans/2026-04-25-v2-perfection-master-plan.md) definuje 6 milníků M12–M17:
 

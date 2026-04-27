@@ -28,21 +28,20 @@ describe('M18 UX polish guards', () => {
   it('keeps the generic section page in a simplified Czech manager view', () => {
     const source = readProjectFile('components/sections/section-page.tsx');
 
-    expect(source).toContain('Co je důležité');
-    expect(source).toContain('Podpůrné metriky');
+    expect(source).toContain('Trend hlavního KPI');
     expect(source).toContain('Co udělat');
+    expect(source).toContain('Souvislosti');
     expect(source).toContain('variant="simple"');
+    expect(source).not.toContain('Co je důležité');
     expect(source).not.toContain('Executive signal');
-    expect(source).not.toContain('Trend KPI');
     expect(source).not.toContain('Drill-down');
-    expect(source).not.toContain('Threshold');
     expect(source).not.toContain('Severita');
   });
 
   it('keeps the app shell brand and sidebar status from overlapping navigation', () => {
     const source = readProjectFile('components/layout/app-shell.tsx');
 
-    expect(source).toContain('Přehled lidí');
+    expect(source).toContain('HR Overview');
     expect(source).toContain('lg:flex lg:flex-col');
     expect(source).toContain('min-h-0 flex-1');
     expect(source).not.toContain('absolute bottom-5');

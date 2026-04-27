@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const section = getSectionBySlug(slug);
   if (!section) return {};
-  return { title: `${section.title} | AURES Přehled lidí` };
+  return { title: `${section.title} | AURES HR Overview` };
 }
 
 export default async function SectionPage({ params }: { params: Promise<{ slug: string }> }) {

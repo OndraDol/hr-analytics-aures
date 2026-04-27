@@ -12,7 +12,7 @@ export function AppShell({
   children,
   activeHref = '/',
   sectionLabel = 'Vedení',
-  sectionTitle = 'Přehled lidí',
+  sectionTitle = 'HR Overview',
 }: {
   children: React.ReactNode;
   activeHref?: string;
@@ -64,7 +64,7 @@ export function AppShell({
             <AuresMonogram />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-aures-blue-200">AURES Holdings</p>
-              <p className="mt-1 text-xl font-semibold text-white">Přehled lidí</p>
+              <p className="mt-1 text-xl font-semibold text-white">HR Overview</p>
             </div>
           </Link>
         </div>

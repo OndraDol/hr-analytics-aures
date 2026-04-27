@@ -149,12 +149,22 @@ async function calculateKpiValue(
       if (code === 'FLUCT') return true;
       return employeeById.get(event.employeeId)?.criticalPositionFlag === true;
     }).length;
-    const denominator =
-      code === 'FLUCT'
-        ? await activeAverageHeadcount(provider, period, filter)
-        : (await activeEmployeesAt(provider, period.to, filter)).filter(
-            (employee) => employee.criticalPositionFlag,
-          ).length;
+    let denominator: number;
+    if (code === 'FLUCT') {
+      denominator = await activeAverageHeadcount(provider, period, filter);
+    } else {
+      const startCritical = (await activeEmployeesAt(provider, period.from, filter)).filter(
+        (employee) => employee.criticalPositionFlag,
+      );
+      const endCritical = (await activeEmployeesAt(provider, period.to, filter)).filter(
+        (employee) => employee.criticalPositionFlag,
+      );
+      const pool = new Set<string>([
+        ...startCritical.map((employee) => employee.id),
+        ...endCritical.map((employee) => employee.id),
+      ]);
+      denominator = pool.size || endCritical.length;
+    }
     return { value: denominator > 0 ? (terms / denominator) * 100 : 0, dataQuality: 'hybrid' };
   }
 
