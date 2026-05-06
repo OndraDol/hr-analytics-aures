@@ -1,7 +1,9 @@
 import type { Period } from '@/lib/data/provider';
 import type { KpiDefinition } from '@/lib/kpi/catalog';
-import { formatKpiValue } from './format';
+import { formatDelta, formatKpiValue } from './format';
 import type { KpiDriver, KpiEvaluation } from './types';
+
+const DRIVER_NOISE_FLOOR = 0.05;
 
 const MONTHS_CS = [
   'leden',
@@ -53,14 +55,14 @@ export function comparisonSentence(evaluation: KpiEvaluation): string {
   if (Math.abs(delta) < 0.01) {
     return `Za ${currentLabel} je hodnota prakticky stejná ${periodPhrase}.`;
   }
-  const formattedDelta = formatKpiValue(Math.abs(delta), evaluation.definition.unit);
+  const formattedDelta = formatDelta(Math.abs(delta), evaluation.definition.unit);
   return `Za ${currentLabel} je hodnota ${trendDirectionCs(evaluation, delta)} o ${formattedDelta} ${periodPhrase}.`;
 }
 
 export function yearComparisonSentence(evaluation: KpiEvaluation): string | null {
   const delta = evaluation.trend.yoy;
   if (delta == null || Math.abs(delta) < 0.01) return null;
-  const formattedDelta = formatKpiValue(Math.abs(delta), evaluation.definition.unit);
+  const formattedDelta = formatDelta(Math.abs(delta), evaluation.definition.unit);
   const direction = delta > 0 ? 'vyšší' : 'nižší';
   return `Meziročně je ${direction} o ${formattedDelta}.`;
 }
@@ -69,12 +71,13 @@ export function driverSentence(
   definition: KpiDefinition,
   drivers: readonly KpiDriver[],
 ): string {
-  const topDriver = drivers[0];
+  const meaningful = drivers.filter((driver) => Math.abs(driver.delta) >= DRIVER_NOISE_FLOOR);
+  const topDriver = meaningful[0];
   if (!topDriver) {
-    return `Příčinu je potřeba ověřit v detailu ${definition.owner}; v datech není jeden dominantní segment.`;
+    return `Změna se rozkládá rovnoměrně mezi segmenty — žádná divize není dominantní. Detail je v ${definition.owner}.`;
   }
-  const formattedDelta = formatKpiValue(Math.abs(topDriver.delta), definition.unit);
-  const direction = topDriver.delta > 0 ? 'přidalo' : topDriver.delta < 0 ? 'ubralo' : 'drží stav';
+  const formattedDelta = formatDelta(Math.abs(topDriver.delta), definition.unit);
+  const direction = topDriver.delta > 0 ? 'přidalo' : 'ubralo';
   return `Nejvíc to vysvětluje ${topDriver.label}: ${direction} ${formattedDelta} proti předchozímu měsíci.`;
 }
 

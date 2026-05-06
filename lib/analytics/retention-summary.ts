@@ -1,4 +1,5 @@
 import type { DataProvider, Period } from '@/lib/data/provider';
+import { formatDivisionLabel } from './format';
 import type { KpiDriver, KpiEvaluation } from './types';
 
 export interface RetentionSegment {
@@ -28,7 +29,7 @@ export async function buildRetentionSummary(
     provider.getWorkforceEvents(period),
     provider.getDivisions(),
   ]);
-  const divisionNameById = new Map(divisions.map((division) => [division.id, division.name]));
+  const divisionNameById = new Map(divisions.map((division) => [division.id, formatDivisionLabel(division.name)]));
   const employeeById = new Map(employees.map((employee) => [employee.id, employee]));
   const byDivision = new Map<string, RetentionSegment>();
 

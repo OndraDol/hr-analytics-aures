@@ -9,6 +9,7 @@ import {
 import type { DataProvider, Period } from '@/lib/data/provider';
 import type { Employee, ENPSResponse } from '@/lib/types';
 import type { DetailDashboardData, DetailTableRow } from './detail-types';
+import { formatDivisionLabel } from './format';
 
 export type OperationalViewSlug =
   | 'hired-fired'
@@ -119,7 +120,7 @@ const employeeMap = (employees: readonly Employee[]): Map<string, Employee> =>
 
 const divisionLabels = async (provider: DataProvider): Promise<Map<string, string>> => {
   const divisions = await provider.getDivisions();
-  return new Map(divisions.map((division) => [division.id, division.name]));
+  return new Map(divisions.map((division) => [division.id, formatDivisionLabel(division.name)]));
 };
 
 const divisionCountries = async (provider: DataProvider): Promise<Map<string, string>> => {

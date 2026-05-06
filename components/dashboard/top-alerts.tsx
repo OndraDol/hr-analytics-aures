@@ -118,6 +118,27 @@ export function TopAlerts({ alerts, evaluations, changes }: TopAlertsProps) {
 
                 <p className="mt-4 line-clamp-3 text-sm leading-6 text-zinc-600">{alert.reasonCs}</p>
 
+                {alert.peoplePreview.length > 0 ? (
+                  <div className="mt-3 rounded-md border border-zinc-100 bg-zinc-50/70 p-2.5 text-xs leading-5 text-zinc-700">
+                    <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+                      Konkrétně
+                    </p>
+                    <ul className="mt-1 space-y-0.5">
+                      {alert.peoplePreview.map((person, idx) => (
+                        <li key={`${person.name}-${idx}`}>
+                          <span className="font-medium text-zinc-900">{person.name}</span>
+                          <span className="text-zinc-500"> — {person.role}, {person.division}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {alert.peopleTotalCount > alert.peoplePreview.length ? (
+                      <p className="mt-1 text-[11px] text-zinc-500">
+                        +{alert.peopleTotalCount - alert.peoplePreview.length} dalších v detailu
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 <footer className="mt-4 flex items-center justify-between gap-2 border-t border-zinc-100 pt-3">
                   {delta ? <DeltaChip tone={delta} /> : <span className="text-[11px] text-zinc-400">stav drží trend</span>}
                   <Link

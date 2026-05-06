@@ -1,5 +1,5 @@
 import type { AIInsightProvider } from '@/lib/ai/insight-provider';
-import { formatEmployeeName } from '@/lib/analytics/format';
+import { formatDivisionLabel, formatEmployeeName } from '@/lib/analytics/format';
 import { buildKpiCardModel, type KpiCardModel } from '@/lib/analytics/kpi-engine';
 import { buildRetentionSummary } from '@/lib/analytics/retention-summary';
 import type { DataProvider, Period } from '@/lib/data/provider';
@@ -114,7 +114,7 @@ const topRows = (
 
 const divisionLabels = async (provider: DataProvider): Promise<Map<string, string>> => {
   const divisions = await provider.getDivisions();
-  return new Map(divisions.map((division) => [division.id, division.name]));
+  return new Map(divisions.map((division) => [division.id, formatDivisionLabel(division.name)]));
 };
 
 const divisionCountries = async (provider: DataProvider): Promise<Map<string, string>> => {

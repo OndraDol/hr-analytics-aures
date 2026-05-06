@@ -10,12 +10,15 @@ describe('cross-cutting analytics dashboards', () => {
       ANALYTICS_TOPICS.map((topic) => buildCrossCuttingDashboard(mockDataProvider, topic, PERIOD)),
     );
 
-    expect(dashboards).toHaveLength(4);
+    expect(dashboards).toHaveLength(7);
     expect(dashboards.map((dashboard) => dashboard.slug)).toEqual([
       'attrition',
       'recruitment-funnel',
       'compensation-pay-gap',
       'absence-coverage',
+      'succession-coverage',
+      'engagement-pulse',
+      'talent-pipeline',
     ]);
 
     for (const dashboard of dashboards) {

@@ -125,7 +125,7 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     icon: Network,
     accent: '#7c3aed',
     href: '/sekce/succession',
-    relatedAnalytics: [{ label: 'Riziko u klíčových rolí', href: '/analytika/attrition' }],
+    relatedAnalytics: [{ label: 'Pokrytí kritických rolí', href: '/analytika/succession-coverage' }],
     relatedOperational: [{ label: 'Organizační struktura', href: '/operativa/org-chart' }],
   },
   {
@@ -140,7 +140,7 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     icon: Activity,
     accent: '#10b981',
     href: '/sekce/engagement',
-    relatedAnalytics: [{ label: 'Vazba na odchody', href: '/analytika/attrition' }],
+    relatedAnalytics: [{ label: 'Zapojení vs odchody', href: '/analytika/engagement-pulse' }],
     relatedOperational: [{ label: 'Poslední eNPS měření', href: '/operativa/enps-latest' }],
   },
   {
@@ -155,7 +155,7 @@ export const SECTION_CATALOG: readonly SectionDefinition[] = [
     icon: Sparkles,
     accent: '#db2777',
     href: '/sekce/talent-growth',
-    relatedAnalytics: [{ label: 'Detail odchodů', href: '/analytika/attrition' }],
+    relatedAnalytics: [{ label: 'Růstový potenciál a 9-box', href: '/analytika/talent-pipeline' }],
     relatedOperational: [{ label: 'Lidé pro ESG reporting', href: '/operativa/esg' }],
   },
 ] as const;

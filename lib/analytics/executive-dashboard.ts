@@ -2,6 +2,7 @@ import type { DataProvider, Period } from '@/lib/data/provider';
 import { evaluateKpi } from '@/lib/analytics/kpi-evaluator';
 import { detectHypotheses } from '@/lib/analytics/cross-kpi-correlator';
 import { analyzeDrivers } from '@/lib/analytics/driver-analyzer';
+import { formatDivisionLabel, formatEmployeeName } from '@/lib/analytics/format';
 import {
   comparisonSentence,
   driverSentence,
@@ -11,6 +12,13 @@ import {
 import type { CrossKpiHypothesis, KpiEvaluation } from '@/lib/analytics/types';
 import { KPI_CATALOG, type KpiCode, type KpiStatus } from '@/lib/kpi/catalog';
 import { SECTION_CATALOG, type SectionDefinition } from '@/lib/sections/catalog';
+
+export interface PeoplePreview {
+  name: string;
+  role: string;
+  division: string;
+  context: string;
+}
 
 export interface ExecutiveAlert {
   code: KpiCode;
@@ -29,6 +37,8 @@ export interface ExecutiveAlert {
   reasonCs: string;
   driverCs: string;
   comparisonCs: string;
+  peoplePreview: PeoplePreview[];
+  peopleTotalCount: number;
 }
 
 export interface ExecutiveChangeGroup {
@@ -83,6 +93,7 @@ const alertFromEvaluation = async (
     evaluation.status === 'red'
       ? `${evaluation.definition.nameCs} je ${statusHuman(evaluation.status)} a potřebuje rozhodnutí vlastníka. ${comparisonCs} ${driverCs}`
       : `${evaluation.definition.nameCs} je ${statusHuman(evaluation.status)}. ${comparisonCs} ${driverCs}`;
+  const { preview, total } = await peoplePreviewFor(provider, evaluation);
 
   return {
     code: evaluation.code,
@@ -101,8 +112,75 @@ const alertFromEvaluation = async (
     reasonCs,
     driverCs,
     comparisonCs,
+    peoplePreview: preview,
+    peopleTotalCount: total,
   };
 };
+
+async function peoplePreviewFor(
+  provider: DataProvider,
+  evaluation: KpiEvaluation,
+): Promise<{ preview: PeoplePreview[]; total: number }> {
+  const code = evaluation.code;
+  const wantsLeavers = code === 'FLUCT' || code === 'FLUCT_CRIT' || code === 'WF_MOVEMENT';
+  const wantsSuccession = code === 'SUCCESSION';
+  if (!wantsLeavers && !wantsSuccession) return { preview: [], total: 0 };
+
+  const [employees, divisions, positions] = await Promise.all([
+    provider.getEmployees(),
+    provider.getDivisions(),
+    provider.getPositions(),
+  ]);
+  const employeeById = new Map(employees.map((employee) => [employee.id, employee]));
+  const divisionLabelById = new Map(
+    divisions.map((division) => [division.id, formatDivisionLabel(division.name)]),
+  );
+  const positionById = new Map(positions.map((position) => [position.id, position]));
+
+  if (wantsLeavers) {
+    const events = await provider.getWorkforceEvents(evaluation.period);
+    const leaverEvents = events.filter((event) => event.type === 'terminate');
+    const leavers = leaverEvents
+      .map((event) => employeeById.get(event.employeeId))
+      .filter((employee): employee is NonNullable<typeof employee> => Boolean(employee));
+    const filtered =
+      code === 'FLUCT_CRIT'
+        ? leavers.filter((employee) => employee.criticalPositionFlag)
+        : leavers;
+    const sorted = [...filtered].sort((a, b) => {
+      const aDate = a.terminationDate ?? '';
+      const bDate = b.terminationDate ?? '';
+      return bDate.localeCompare(aDate);
+    });
+    const previews = sorted.slice(0, 2).map((employee) => ({
+      name: formatEmployeeName(employee),
+      role: positionById.get(employee.positionId)?.title ?? employee.positionId,
+      division: divisionLabelById.get(employee.divisionId) ?? employee.divisionId,
+      context: employee.terminationDate ? `odešel ${employee.terminationDate}` : 'odchod v tomto období',
+    }));
+    return { preview: previews, total: sorted.length };
+  }
+
+  // succession — top kritické pozice bez nástupce, s jménem incumbenta
+  const plans = await provider.getSuccessionPlans();
+  const planByPosition = new Map(plans.map((plan) => [plan.criticalPositionId, plan]));
+  const gaps = positions.filter((position) => {
+    if (!position.criticalFlag) return false;
+    const plan = planByPosition.get(position.id);
+    return !plan || plan.readiness === 'gap' || !plan.successorEmployeeId;
+  });
+  const previews = gaps.slice(0, 2).map((position) => {
+    const plan = planByPosition.get(position.id);
+    const incumbent = plan?.incumbentEmployeeId ? employeeById.get(plan.incumbentEmployeeId) : null;
+    return {
+      name: incumbent ? formatEmployeeName(incumbent) : 'bez incumbenta',
+      role: position.title,
+      division: divisionLabelById.get(position.divisionId) ?? position.divisionId,
+      context: 'kritická role bez nástupce',
+    };
+  });
+  return { preview: previews, total: gaps.length };
+}
 
 const rankAlert = (alert: ExecutiveAlert): number =>
   alert.severityScore + (4 - alert.priority) * 6 + Math.min(Math.abs(alert.delta), 12);

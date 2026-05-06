@@ -1,6 +1,7 @@
 import type { DataProvider, Period } from '@/lib/data/provider';
 import type { Employee, RecruitmentRequisition } from '@/lib/types';
 import { shiftPeriodMonths } from './date';
+import { formatDivisionLabel } from './format';
 import type { KpiDriver, KpiDriverGroup, KpiEvaluation } from './types';
 
 const employeeMap = async (provider: DataProvider): Promise<Map<string, Employee>> => {
@@ -10,7 +11,7 @@ const employeeMap = async (provider: DataProvider): Promise<Map<string, Employee
 
 const divisionLabels = async (provider: DataProvider): Promise<Map<string, string>> => {
   const divisions = await provider.getDivisions();
-  return new Map(divisions.map((division) => [division.id, division.name]));
+  return new Map(divisions.map((division) => [division.id, formatDivisionLabel(division.name)]));
 };
 
 const add = (map: Map<string, number>, key: string, value: number): void => {
@@ -34,7 +35,7 @@ const buildDrivers = (
         share: totalAbs > 0 ? Math.abs(value) / totalAbs : 0,
       };
     })
-    .sort((a, b) => Math.abs(b.delta || b.value) - Math.abs(a.delta || a.value))
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
     .slice(0, 5);
 };
 

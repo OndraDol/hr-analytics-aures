@@ -2,7 +2,10 @@ import {
   BriefcaseBusiness,
   CircleDollarSign,
   HeartPulse,
+  ShieldCheck,
+  Sparkles,
   Stethoscope,
+  Users2,
 } from 'lucide-react';
 import type { DataProvider, Period } from '@/lib/data/provider';
 import type {
@@ -11,14 +14,22 @@ import type {
   ENPSResponse,
   Grade,
   PayrollMonth,
+  PerformanceReview,
+  Position,
+  SuccessionPlan,
+  WorkforceEvent,
 } from '@/lib/types';
 import type { DetailDashboardData, DetailMetric } from './detail-types';
+import { formatDivisionLabel, formatEmployeeName } from './format';
 
 export type AnalyticsTopicSlug =
   | 'attrition'
   | 'recruitment-funnel'
   | 'compensation-pay-gap'
-  | 'absence-coverage';
+  | 'absence-coverage'
+  | 'succession-coverage'
+  | 'engagement-pulse'
+  | 'talent-pipeline';
 
 export interface AnalyticsTopicDefinition {
   slug: AnalyticsTopicSlug;
@@ -65,12 +76,42 @@ export const ANALYTICS_TOPICS: readonly AnalyticsTopicDefinition[] = [
   {
     slug: 'absence-coverage',
     href: '/analytika/absence-coverage',
-    title: 'Absence a pokrytí směn',
+    title: 'Absence a nemocnost',
     shortTitle: 'Absence',
     eyebrow: 'Detailní pohled',
-    description: 'Nemocnost, dovolené, dlouhodobé absence a provozní pokrytí směn podle divizí.',
+    description: 'Nemocnost, dovolené a dlouhodobé absence po divizích a grade.',
     accent: '#7c3aed',
     icon: Stethoscope,
+  },
+  {
+    slug: 'succession-coverage',
+    href: '/analytika/succession-coverage',
+    title: 'Pokrytí kritických rolí',
+    shortTitle: 'Nástupnictví',
+    eyebrow: 'Detailní pohled',
+    description: 'Kritické pozice s incumbenty, ready/1-2Y/gap rozpad a top role bez nástupce.',
+    accent: '#0d9488',
+    icon: ShieldCheck,
+  },
+  {
+    slug: 'engagement-pulse',
+    href: '/analytika/engagement-pulse',
+    title: 'Engagement vs odchody',
+    shortTitle: 'Engagement',
+    eyebrow: 'Detailní pohled',
+    description: 'eNPS po divizích a grade, korelace s aktuální fluktuací, follow-up backlog.',
+    accent: '#9333ea',
+    icon: Sparkles,
+  },
+  {
+    slug: 'talent-pipeline',
+    href: '/analytika/talent-pipeline',
+    title: 'Talent pipeline a 9-box',
+    shortTitle: 'Talent',
+    eyebrow: 'Detailní pohled',
+    description: 'Matrix výkon × potenciál, talenti připravení k povýšení, retenční riziko HiPo.',
+    accent: '#2563eb',
+    icon: Users2,
   },
 ] as const;
 
@@ -129,7 +170,7 @@ const topRows = <T extends { value: number }>(rows: T[], count = 8): T[] =>
 
 const divisionLabels = async (provider: DataProvider): Promise<Map<string, string>> => {
   const divisions = await provider.getDivisions();
-  return new Map(divisions.map((division) => [division.id, division.name]));
+  return new Map(divisions.map((division) => [division.id, formatDivisionLabel(division.name)]));
 };
 
 const payrollByEmployeeAverage = (payroll: readonly PayrollMonth[]): Map<string, number> => {
@@ -171,6 +212,9 @@ export async function buildCrossCuttingDashboard(
   if (topic.slug === 'attrition') return buildAttrition(provider, topic, period);
   if (topic.slug === 'recruitment-funnel') return buildRecruitmentFunnel(provider, topic, period);
   if (topic.slug === 'compensation-pay-gap') return buildCompensationPayGap(provider, topic, period);
+  if (topic.slug === 'succession-coverage') return buildSuccessionCoverage(provider, topic, period);
+  if (topic.slug === 'engagement-pulse') return buildEngagementPulse(provider, topic, period);
+  if (topic.slug === 'talent-pipeline') return buildTalentPipeline(provider, topic, period);
   return buildAbsenceCoverage(provider, topic, period);
 }
 
@@ -711,4 +755,434 @@ async function buildAbsenceCoverage(
       { label: 'Org chart', href: '/operativa/org-chart' },
     ],
   };
+}
+
+async function buildSuccessionCoverage(
+  provider: DataProvider,
+  topic: AnalyticsTopicDefinition,
+  period: Period,
+): Promise<DetailDashboardData> {
+  const [employees, positions, plans, labels] = await Promise.all([
+    provider.getEmployees(),
+    provider.getPositions(),
+    provider.getSuccessionPlans(),
+    divisionLabels(provider),
+  ]);
+  const employeeById = employeeMap(employees);
+  const positionById = new Map(positions.map((position) => [position.id, position]));
+  const criticalPositions = positions.filter((position) => position.criticalFlag);
+  const planByPosition = new Map(plans.map((plan) => [plan.criticalPositionId, plan]));
+
+  let readyNow = 0;
+  let readyMid = 0;
+  let gap = 0;
+  let unplanned = 0;
+  for (const position of criticalPositions) {
+    const plan = planByPosition.get(position.id);
+    if (!plan) {
+      unplanned += 1;
+      continue;
+    }
+    if (plan.readiness === 'ready_now') readyNow += 1;
+    else if (plan.readiness === 'ready_1_2y') readyMid += 1;
+    else gap += 1;
+  }
+  const totalCritical = criticalPositions.length;
+  const coverageRate = totalCritical > 0 ? ((readyNow + readyMid) / totalCritical) * 100 : 0;
+  const gapRate = totalCritical > 0 ? ((gap + unplanned) / totalCritical) * 100 : 0;
+
+  const byDivision = new Map<string, { critical: number; covered: number; gap: number }>();
+  for (const position of criticalPositions) {
+    const row = byDivision.get(position.divisionId) ?? { critical: 0, covered: 0, gap: 0 };
+    row.critical += 1;
+    const plan = planByPosition.get(position.id);
+    if (plan && (plan.readiness === 'ready_now' || plan.readiness === 'ready_1_2y')) row.covered += 1;
+    else row.gap += 1;
+    byDivision.set(position.divisionId, row);
+  }
+  const divisionRows = topRows(
+    Array.from(byDivision.entries()).map(([divisionId, row]) => ({
+      label: labels.get(divisionId) ?? divisionId,
+      value: row.critical > 0 ? Math.round((row.covered / row.critical) * 100) : 0,
+      secondary: row.gap,
+      detail: `${row.critical} kritických rolí · ${row.gap} bez nástupce`,
+    })),
+  );
+
+  const readinessRows = [
+    { label: 'Ready now', value: readyNow, detail: 'okamžitě nastupitelný nástupce' },
+    { label: 'Ready 1–2Y', value: readyMid, detail: 'vyžaduje rozvoj' },
+    { label: 'Gap', value: gap, detail: 'identifikovaný plán bez kandidáta' },
+    { label: 'Bez plánu', value: unplanned, detail: 'role bez succession plánu' },
+  ];
+
+  const ageOf = (employeeId: string): number | null => {
+    const employee = employeeById.get(employeeId);
+    if (!employee?.birthDate) return null;
+    const fromMs = Date.parse(employee.birthDate);
+    const toMs = Date.parse(period.to);
+    if (!Number.isFinite(fromMs) || !Number.isFinite(toMs)) return null;
+    return Math.round((toMs - fromMs) / (365.25 * 86_400_000));
+  };
+
+  const tenureOf = (employeeId: string): number | null => {
+    const employee = employeeById.get(employeeId);
+    if (!employee?.hireDate) return null;
+    return Math.round(diffMonths(employee.hireDate, period.to) / 12 * 10) / 10;
+  };
+
+  const gapPositions = criticalPositions
+    .map((position) => {
+      const plan = planByPosition.get(position.id);
+      const incumbent = plan?.incumbentEmployeeId ? employeeById.get(plan.incumbentEmployeeId) ?? null : null;
+      const successor = plan?.successorEmployeeId ? employeeById.get(plan.successorEmployeeId) ?? null : null;
+      const isGap = !plan || plan.readiness === 'gap' || !plan.successorEmployeeId;
+      const age = incumbent ? ageOf(incumbent.id) : null;
+      const tenure = incumbent ? tenureOf(incumbent.id) : null;
+      const risk = (isGap ? 60 : 0) + (age && age >= 55 ? 20 : 0) + (tenure && tenure >= 10 ? 10 : 0);
+      return {
+        position,
+        incumbent,
+        successor,
+        isGap,
+        risk,
+        age,
+        tenure,
+      };
+    })
+    .filter((row) => row.isGap)
+    .sort((a, b) => b.risk - a.risk)
+    .slice(0, 12);
+
+  return {
+    ...topic,
+    period,
+    metrics: [
+      { label: 'Pokrytí kritických rolí', value: formatPct(coverageRate), detail: `${totalCritical} kritických pozic celkem`, tone: coverageRate >= 70 ? 'emerald' : coverageRate >= 50 ? 'orange' : 'rose' },
+      { label: 'Ready now', value: formatNumber(readyNow), detail: `${formatPct(totalCritical > 0 ? (readyNow / totalCritical) * 100 : 0)} kritických rolí`, tone: 'emerald' },
+      { label: 'Gap + bez plánu', value: formatNumber(gap + unplanned), detail: `${formatPct(gapRate)} kritických rolí`, tone: gapRate > 30 ? 'rose' : 'orange' },
+      { label: 'Bez succession plánu', value: formatNumber(unplanned), detail: 'role bez identifikovaného plánu', tone: unplanned > 0 ? 'orange' : 'emerald' },
+    ],
+    primaryBreakdown: {
+      title: 'Pokrytí podle divizí',
+      subtitle: 'Procento kritických rolí s ready/1-2Y nástupcem',
+      valueLabel: '% pokryto',
+      secondaryLabel: 'gap rolí',
+      rows: divisionRows,
+    },
+    secondaryBreakdown: {
+      title: 'Readiness rozpad',
+      subtitle: 'Stav nástupnictví podle připravenosti kandidáta',
+      valueLabel: 'pozic',
+      rows: readinessRows,
+    },
+    table: {
+      title: 'Top kritické role bez nástupce',
+      subtitle: 'Seřazeno podle rizika (gap + věk incumbenta + tenure)',
+      rows: gapPositions.map((row) => ({
+        label: row.position.title,
+        value: row.incumbent ? formatEmployeeName(row.incumbent) : 'Bez incumbenta',
+        secondary: labels.get(row.position.divisionId) ?? row.position.divisionId,
+        detail: [
+          row.age != null ? `${row.age} let` : null,
+          row.tenure != null ? `${formatNumber(row.tenure, 1)} let v roli` : null,
+          row.successor ? `nástupce: ${formatEmployeeName(row.successor)}` : 'bez kandidáta',
+        ].filter(Boolean).join(' · '),
+      })),
+    },
+    insightCs: 'Pokrytí nástupnictví rozhoduje o tom, zda neplánovaný odchod ohrozí provoz. Soustřeďte rozvojové plány na role s vyšším věkem incumbenta a delším tenure — riziko odchodu tam roste rychleji.',
+    actions: [
+      'Pro top 5 kritických rolí bez nástupce odsouhlasit do 30 dnů konkrétní plán rozvoje.',
+      'U incumbentů 55+ aktivovat plán předání znalostí, nezávisle na aktuálním riziku odchodu.',
+      'Propojit succession s talent-pipeline: kandidáti s rated „high potential" by měli mít alespoň jednu roli, kde jsou ready_1_2y nástupcem.',
+    ],
+    relatedLinks: [
+      { label: 'Sekce Nástupnictví', href: '/sekce/succession' },
+      { label: 'Talent pipeline', href: '/analytika/talent-pipeline' },
+      { label: 'Org chart', href: '/operativa/org-chart' },
+    ],
+  };
+}
+
+async function buildEngagementPulse(
+  provider: DataProvider,
+  topic: AnalyticsTopicDefinition,
+  period: Period,
+): Promise<DetailDashboardData> {
+  const [employees, events, enps, labels] = await Promise.all([
+    provider.getEmployees(),
+    provider.getWorkforceEvents(period),
+    provider.getEnpsResponses('2025-Q4'),
+    divisionLabels(provider),
+  ]);
+  const employeeById = employeeMap(employees);
+  const responded = enps.filter((row) => row.responded);
+  const total = enps.length;
+  const respondents = responded.length;
+  const promoters = responded.filter((row) => row.score >= 9).length;
+  const detractors = responded.filter((row) => row.score <= 6).length;
+  const overallEnps = respondents > 0 ? ((promoters - detractors) / respondents) * 100 : 0;
+  const participationRate = total > 0 ? (respondents / total) * 100 : 0;
+
+  const enpsByDivision = new Map<string, ENPSResponse[]>();
+  for (const row of responded) {
+    const list = enpsByDivision.get(row.segment.divisionId) ?? [];
+    list.push(row);
+    enpsByDivision.set(row.segment.divisionId, list);
+  }
+
+  const leaversByDivision = new Map<string, number>();
+  for (const event of events.filter((event) => event.type === 'terminate')) {
+    const employee = employeeById.get(event.employeeId);
+    if (employee) add(leaversByDivision, employee.divisionId, 1);
+  }
+  const activeByDivision = new Map<string, number>();
+  for (const employee of employees.filter((employee) => activeOn(employee, period.to))) {
+    add(activeByDivision, employee.divisionId, 1);
+  }
+
+  const enpsByGrade = new Map<Grade, ENPSResponse[]>();
+  for (const row of responded) {
+    const employee = employeeById.get(row.employeeId);
+    if (!employee) continue;
+    const list = enpsByGrade.get(employee.grade) ?? [];
+    list.push(row);
+    enpsByGrade.set(employee.grade, list);
+  }
+
+  const divisionRows = Array.from(enpsByDivision.entries()).map(([divisionId, rows]) => {
+    const proms = rows.filter((row) => row.score >= 9).length;
+    const dets = rows.filter((row) => row.score <= 6).length;
+    const score = rows.length > 0 ? ((proms - dets) / rows.length) * 100 : 0;
+    return {
+      label: labels.get(divisionId) ?? divisionId,
+      value: Math.round(score),
+      secondary: rows.length,
+      detail: `${dets} detractor odpovědí · ${proms} promotorů`,
+      score,
+    };
+  });
+
+  const sortedByScore = [...divisionRows].sort((a, b) => a.score - b.score).slice(0, 8);
+
+  const gradeRows = GRADE_ORDER.flatMap((grade) => {
+    const rows = enpsByGrade.get(grade) ?? [];
+    if (rows.length === 0) return [];
+    const proms = rows.filter((row) => row.score >= 9).length;
+    const dets = rows.filter((row) => row.score <= 6).length;
+    const score = ((proms - dets) / rows.length) * 100;
+    return [{
+      label: grade,
+      value: Math.round(score),
+      detail: `${rows.length} odpovědí`,
+    }];
+  });
+
+  const correlationRows = Array.from(enpsByDivision.entries())
+    .map(([divisionId, rows]) => {
+      const proms = rows.filter((row) => row.score >= 9).length;
+      const dets = rows.filter((row) => row.score <= 6).length;
+      const score = rows.length > 0 ? ((proms - dets) / rows.length) * 100 : 0;
+      const active = activeByDivision.get(divisionId) ?? 0;
+      const leaverCount = leaversByDivision.get(divisionId) ?? 0;
+      const attrition = active > 0 ? (leaverCount / active) * 100 : 0;
+      const redZone = score < 0 && attrition > 20;
+      return {
+        label: labels.get(divisionId) ?? divisionId,
+        value: Math.round(score).toString(),
+        secondary: formatPct(attrition),
+        detail: redZone
+          ? '🔴 red zone — nízké eNPS + rostoucí odchody'
+          : score < 0
+            ? 'nízké eNPS, fluktuace zvládnutelná'
+            : attrition > 25
+              ? 'vyšší fluktuace, ale eNPS drží'
+              : 'stabilní',
+        risk: (score < 0 ? 30 : 0) + Math.max(0, attrition - 20),
+      };
+    })
+    .sort((a, b) => b.risk - a.risk)
+    .slice(0, 10);
+
+  return {
+    ...topic,
+    period,
+    metrics: [
+      { label: 'Celkové eNPS', value: Math.round(overallEnps).toString(), detail: `${respondents}/${total} odpovědí`, tone: overallEnps >= 20 ? 'emerald' : overallEnps >= 0 ? 'orange' : 'rose' },
+      { label: 'Účast', value: formatPct(participationRate), detail: `${respondents} odpovědí`, tone: participationRate >= 60 ? 'emerald' : 'orange' },
+      { label: 'Detractorů', value: formatNumber(detractors), detail: `${formatPct(respondents > 0 ? (detractors / respondents) * 100 : 0)} odpovědí`, tone: detractors > respondents * 0.3 ? 'rose' : 'orange' },
+      { label: 'Promotorů', value: formatNumber(promoters), detail: `${formatPct(respondents > 0 ? (promoters / respondents) * 100 : 0)} odpovědí`, tone: 'emerald' },
+    ],
+    primaryBreakdown: {
+      title: 'eNPS po divizích',
+      subtitle: 'Nejnižších 8 — kde se začíná lámat angažovanost',
+      valueLabel: 'eNPS',
+      secondaryLabel: 'odpovědí',
+      rows: sortedByScore,
+    },
+    secondaryBreakdown: {
+      title: 'eNPS po grade',
+      subtitle: 'Rozdíl ve vnímání mezi B0 a B3',
+      valueLabel: 'eNPS',
+      rows: gradeRows,
+    },
+    table: {
+      title: 'Engagement vs odchody — red zone',
+      subtitle: 'Divize, kde nízké eNPS doprovází vyšší fluktuace',
+      rows: correlationRows.map((row) => ({
+        label: row.label,
+        value: row.value,
+        secondary: row.secondary,
+        detail: row.detail,
+      })),
+    },
+    insightCs: 'Engagement není o průměrném skóre — riziko vzniká tam, kde se nízké eNPS potkává s rostoucími odchody. Fokusujte 1:1 na red-zone divize a propojte s rozvojem manažerů.',
+    actions: [
+      'Pro red-zone divize naplánovat strukturovaný 1:1 cyklus do 30 dnů a propojit s HRBP.',
+      'U gradů s nejnižším eNPS ověřit kvalitu manažerského spanu a rozvojových plánů.',
+      'Detractor odpovědi propojit s pulse-survey otázkami za 6 týdnů, abychom viděli posun.',
+    ],
+    relatedLinks: [
+      { label: 'Engagement sekce', href: '/sekce/engagement' },
+      { label: 'eNPS latest', href: '/operativa/enps-latest' },
+      { label: 'Detail odchodů', href: '/analytika/attrition' },
+    ],
+  };
+}
+
+async function buildTalentPipeline(
+  provider: DataProvider,
+  topic: AnalyticsTopicDefinition,
+  period: Period,
+): Promise<DetailDashboardData> {
+  const [employees, positions, reviews, plans, labels] = await Promise.all([
+    provider.getEmployees(),
+    provider.getPositions(),
+    provider.getPerformanceReviews('2025'),
+    provider.getSuccessionPlans(),
+    divisionLabels(provider),
+  ]);
+  const employeeById = employeeMap(employees);
+  const positionById = new Map(positions.map((position) => [position.id, position]));
+  const reviewByEmployee = new Map(reviews.map((review) => [review.employeeId, review]));
+  const successorIds = new Set(
+    plans
+      .map((plan) => plan.successorEmployeeId)
+      .filter((id): id is string => Boolean(id)),
+  );
+
+  const activeEmployees = employees.filter((employee) => activeOn(employee, period.to));
+  const reviewed = activeEmployees.filter((employee) => reviewByEmployee.has(employee.id));
+  const reviewedRate = activeEmployees.length > 0 ? (reviewed.length / activeEmployees.length) * 100 : 0;
+
+  const potentialOrder: PerformanceReview['growthPotential'][] = ['low', 'med', 'high', 'very_high'];
+  const ratingOrder = [1, 2, 3, 4, 5] as const;
+  const matrix = new Map<string, number>();
+  for (const employee of reviewed) {
+    const review = reviewByEmployee.get(employee.id);
+    if (!review) continue;
+    const key = `${review.growthPotential}|${review.rating}`;
+    matrix.set(key, (matrix.get(key) ?? 0) + 1);
+  }
+
+  const isHiPo = (review: PerformanceReview): boolean =>
+    (review.growthPotential === 'high' || review.growthPotential === 'very_high') && review.rating >= 4;
+  const hipos = reviewed.filter((employee) => {
+    const review = reviewByEmployee.get(employee.id);
+    return review && isHiPo(review);
+  });
+  const stars = reviewed.filter((employee) => {
+    const review = reviewByEmployee.get(employee.id);
+    return review && review.growthPotential === 'very_high' && review.rating === 5;
+  });
+  const hiposWithoutSuccession = hipos.filter((employee) => !successorIds.has(employee.id));
+
+  const matrixRows = potentialOrder.flatMap((potential) =>
+    ratingOrder.map((rating) => ({
+      label: `${potentialLabel(potential)} · rating ${rating}`,
+      value: matrix.get(`${potential}|${rating}`) ?? 0,
+      detail: rating >= 4 && (potential === 'high' || potential === 'very_high') ? 'High-Potential box' : '',
+    })),
+  ).filter((row) => row.value > 0);
+
+  const byDivision = new Map<string, { total: number; hipos: number }>();
+  for (const employee of reviewed) {
+    const review = reviewByEmployee.get(employee.id);
+    if (!review) continue;
+    const row = byDivision.get(employee.divisionId) ?? { total: 0, hipos: 0 };
+    row.total += 1;
+    if (isHiPo(review)) row.hipos += 1;
+    byDivision.set(employee.divisionId, row);
+  }
+  const divisionRows = topRows(
+    Array.from(byDivision.entries()).map(([divisionId, row]) => ({
+      label: labels.get(divisionId) ?? divisionId,
+      value: row.hipos,
+      secondary: row.total > 0 ? Math.round((row.hipos / row.total) * 100) : 0,
+      detail: `${row.total} hodnocených · ${row.hipos} HiPo (${formatPct(row.total > 0 ? (row.hipos / row.total) * 100 : 0)})`,
+    })),
+  );
+
+  const tenureMonths = (employee: Employee) => diffMonths(employee.hireDate, period.to);
+  const hiposReady = [...hiposWithoutSuccession].sort(
+    (a, b) => tenureMonths(b) - tenureMonths(a),
+  ).slice(0, 12);
+
+  return {
+    ...topic,
+    period,
+    metrics: [
+      { label: 'High-Potential', value: formatNumber(hipos.length), detail: `${formatPct(reviewed.length > 0 ? (hipos.length / reviewed.length) * 100 : 0)} hodnocených`, tone: hipos.length >= 30 ? 'emerald' : 'orange' },
+      { label: 'Stars (5/very-high)', value: formatNumber(stars.length), detail: 'top výkon i potenciál', tone: 'blue' },
+      { label: 'Pokrytí hodnocením', value: formatPct(reviewedRate), detail: `${reviewed.length}/${activeEmployees.length} aktivních`, tone: reviewedRate >= 80 ? 'emerald' : 'orange' },
+      { label: 'HiPo bez nástupnictví', value: formatNumber(hiposWithoutSuccession.length), detail: 'kandidáti pro internal mobility', tone: hiposWithoutSuccession.length > 0 ? 'orange' : 'emerald' },
+    ],
+    primaryBreakdown: {
+      title: 'HiPo po divizích',
+      subtitle: 'Top 8 divizí podle počtu high-potential lidí',
+      valueLabel: 'HiPo',
+      secondaryLabel: '%',
+      rows: divisionRows,
+    },
+    secondaryBreakdown: {
+      title: '9-box rozpad',
+      subtitle: 'Distribuce výkonu × potenciálu (jen obsazené buňky)',
+      valueLabel: 'lidí',
+      rows: matrixRows,
+    },
+    table: {
+      title: 'HiPo bez aktivního nástupnictví',
+      subtitle: 'Kandidáti pro rozvojové plány a interní mobility',
+      rows: hiposReady.map((employee) => {
+        const review = reviewByEmployee.get(employee.id);
+        const position = positionById.get(employee.positionId);
+        return {
+          label: formatEmployeeName(employee),
+          value: position?.title ?? employee.positionId,
+          secondary: labels.get(employee.divisionId) ?? employee.divisionId,
+          detail: review
+            ? `rating ${review.rating} · ${potentialLabel(review.growthPotential)} potenciál · ${Math.round(tenureMonths(employee) / 12 * 10) / 10} let v roli`
+            : '',
+        };
+      }),
+    },
+    insightCs: 'Talent pipeline funguje, jen pokud má high-potential člověk konkrétní cílovou roli. Bez napojení na succession se HiPo dlouhodobě demotivuje a odchází mimo firmu.',
+    actions: [
+      'Pro každého z TOP 12 HiPo lidí přiřadit minimálně jednu kritickou roli, kde je nastaven jako ready_1_2y nástupce.',
+      'Sjednotit kalibraci hodnocení napříč divizemi — výrazné rozdíly v podílu HiPo často znamenají kalibrační šum, ne reálný rozdíl talentu.',
+      'Spojit talent pipeline s engagement-pulse: HiPo s nízkým eNPS = top retenční riziko.',
+    ],
+    relatedLinks: [
+      { label: 'Talent & Growth sekce', href: '/sekce/talent-growth' },
+      { label: 'Pokrytí kritických rolí', href: '/analytika/succession-coverage' },
+      { label: 'Engagement pulse', href: '/analytika/engagement-pulse' },
+    ],
+  };
+}
+
+function potentialLabel(potential: PerformanceReview['growthPotential']): string {
+  if (potential === 'low') return 'Nízký';
+  if (potential === 'med') return 'Střední';
+  if (potential === 'high') return 'Vysoký';
+  return 'Velmi vysoký';
 }
