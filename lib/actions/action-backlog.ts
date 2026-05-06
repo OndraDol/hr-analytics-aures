@@ -4,6 +4,7 @@ import { recommendAction } from '@/lib/analytics/action-recommender';
 import type { DataProvider, Period } from '@/lib/data/provider';
 import { KPI_CATALOG, type KpiCode, type KpiStatus } from '@/lib/kpi/catalog';
 import { SECTION_CATALOG } from '@/lib/sections/catalog';
+import { ownerLabel } from '@/lib/team/owners-map';
 
 export type ActionBacklogEffort = 'low' | 'medium' | 'high';
 export type ActionBacklogDue = 'this-week' | 'two-weeks' | 'monthly-review' | 'next-cycle';
@@ -120,7 +121,7 @@ export async function buildActionBacklog(
         titleCs: action.titleCs,
         recommendationCs: action.bodyCs,
         reasonCs: `${evaluation.thresholdDistance.messageCs}. ${evaluation.thresholdRationaleCs}`,
-        owner: definition.owner,
+        owner: ownerLabel(definition.owner),
         status: evaluation.status,
         priority: definition.priority,
         value: evaluation.formattedValue,

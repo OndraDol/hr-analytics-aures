@@ -1,6 +1,6 @@
 # HR Analytics — v2 Perfection Pass (M12–M17) — Master Plan
 
-> Master blueprint pro pokračování projektu HR Analytics AURES po dokončení v1 (M0–M11). Řeší přechod z „demo-ready" na „investment-ready" stav z pohledu HR Directorky Kateřiny Topolové.
+> Master blueprint pro pokračování projektu HR Analytics AURES po dokončení v1 (M0–M11). Řeší přechod z „demo-ready" na „investment-ready" stav z pohledu HR Directorky Marie Voršílkové.
 >
 > **Tento dokument je master overview.** M12–M17 jsou implementované ve v2 release; dokument zůstává jako auditní blueprint rozsahu a akceptačních kritérií.
 
@@ -23,7 +23,7 @@ V1 (M0–M11) je **100 % hotová** (`lib/project/progress.ts`: 11/11 milníků, 
 
 ### Co v1 nezvládá z pohledu HR Directorky
 
-Při auditu z perspektivy **Kateřiny Topolové** (HR Directorka, ráno v 7:30 mezi meetingy, 30 sekund na rozhodnutí, export PDF pro board) byly identifikovány tři kategorie mezer:
+Při auditu z perspektivy **Marie Voršílkové** (HR Directorka, ráno v 7:30 mezi meetingy, 30 sekund na rozhodnutí, export PDF pro board) byly identifikovány tři kategorie mezer:
 
 **A. Mezery proti zadání z `HR_reporting_ver2.xlsx`:**
 1. Recruitment KPI bez driver detailu — TTF=43 d (red), karta neřekne, *která* pozice/manager/stage drhne. Detail je v `/analytika/recruitment-funnel`, ale hlavní KPI card to nenavádí.
@@ -64,7 +64,7 @@ Při auditu z perspektivy **Kateřiny Topolové** (HR Directorka, ráno v 7:30 m
 
 ## Vize v2: „Decision-Ready Executive Cockpit"
 
-Kateřina Topolová otevře dashboard ráno v 7:30 mezi meetingy:
+Marie Voršílková otevře dashboard ráno v 7:30 mezi meetingy:
 
 - **Za 10 sekund** vidí, jestli je něco špatně (Health Score je vizuálně urgentní, ne pasivní).
 - **Za 30 sekund** vidí top 3 problémy + co s nimi má udělat (rank, owner, deadline).
@@ -90,7 +90,7 @@ Kateřina Topolová otevře dashboard ráno v 7:30 mezi meetingy:
 
 > KPI hierarchy zóny, alerts ranking 1–5, action backlog timeline, threshold confidence overlay.
 
-**Vize:** Kateřina za 10 s vidí, jestli je něco špatně, za 30 s top 3 problémy s ownerem a deadlinem.
+**Vize:** Marie za 10 s vidí, jestli je něco špatně, za 30 s top 3 problémy s ownerem a deadlinem.
 
 ### Scope
 

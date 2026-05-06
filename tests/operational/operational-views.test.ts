@@ -55,7 +55,7 @@ describe('operational views', () => {
 
     const dashboard = await buildOperationalDashboard(mockDataProvider, esgView!, PERIOD);
 
-    expect(dashboard.table.rows).toHaveLength(21);
+    expect(dashboard.table.rows).toHaveLength(20);
     expect(dashboard.table.rows.every((row) => row.dataQuality)).toBe(true);
     expect(dashboard.table.rows.some((row) => row.dataQuality === 'mock')).toBe(true);
     expect(dashboard.table.rows.some((row) => row.dataQuality === 'blocked')).toBe(true);

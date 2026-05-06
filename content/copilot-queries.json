@@ -68,5 +68,26 @@
     "context": "global",
     "suggestedFor": ["/"],
     "answerMarkdownCs": "### Doporučený demo příběh\nZačněte tím, že prototyp odpovídá na otázky vedení bez ručního skládání reportů. Pak ukažte jednu cestu od signálu k detailu a akci.\n\nScénář:\n- [Hlavní přehled](/): co je největší problém\n- [Udržení lidí](/sekce/retention): jak vypadá metrika a doporučená akce\n- [Detail odchodů](/analytika/attrition): proč se problém děje\n- [Seznam nástupů a odchodů](/operativa/hired-fired): konkrétní operativní dopad\n\nZávěr pro HR Director: finální Power BI má stavět na stejném myšlení, ne jen překreslit tabulky."
+  },
+  {
+    "id": "succession-coverage",
+    "labelCs": "Které kritické role jsou bez nástupce?",
+    "context": "section",
+    "suggestedFor": ["/sekce/succession", "/analytika/succession-coverage"],
+    "answerMarkdownCs": "### Pokrytí kritických rolí\nKritické role bez ready/1-2Y nástupce jsou nejhorší typ rizika — pokud incumbent náhle odejde, není kdo by převzal.\n\nDoporučený průchod:\n- [Pokrytí kritických rolí](/analytika/succession-coverage) — top 12 rolí bez nástupce s incumbenty, věkem a tenure\n- [Sekce Nástupnictví](/sekce/succession) — celkové pokrytí, rozpad ready/1-2Y/gap\n- [Talent pipeline](/analytika/talent-pipeline) — kandidáti, kteří by se mohli stát nástupci\n\nPriorita: incumbenti 55+ a s tenure 10+ let. Tam je odchod statisticky pravděpodobnější a předání know-how trvá déle."
+  },
+  {
+    "id": "talent-ready",
+    "labelCs": "Kteří talenti jsou připraveni na povýšení?",
+    "context": "section",
+    "suggestedFor": ["/sekce/talent-growth", "/analytika/talent-pipeline"],
+    "answerMarkdownCs": "### High-Potential připraveni k povýšení\nVýběr probíhá na průniku tří kritérií: rating ≥ 4, growth potential high/very high, tenure dostatečný pro převzetí role.\n\nKonkrétní pohled:\n- [Talent pipeline](/analytika/talent-pipeline) — 9-box matrix a tabulka HiPo bez aktivního nástupnictví\n- [Pokrytí kritických rolí](/analytika/succession-coverage) — kde je gap, který může HiPo zaplnit\n\nDoporučení: pro každého z top 12 HiPo přiřadit konkrétní cílovou roli. Bez napojení na succession se talent dlouhodobě demotivuje a odchází mimo firmu."
+  },
+  {
+    "id": "hipo-retention",
+    "labelCs": "Jak se daří retenci high-potential lidí?",
+    "context": "analytics",
+    "suggestedFor": ["/analytika/talent-pipeline", "/analytika/engagement-pulse", "/sekce/retention"],
+    "answerMarkdownCs": "### Retenční riziko HiPo\nHiPo s nízkým eNPS = top retenční riziko. Tihle lidé mají alternativy a pokud nevidí cestu uvnitř firmy, odcházejí.\n\nKombinace pohledů:\n- [Talent pipeline](/analytika/talent-pipeline) — kdo je HiPo a kde sedí v 9-boxu\n- [Engagement vs odchody](/analytika/engagement-pulse) — divize s nízkým eNPS a rostoucí fluktuací (red zone)\n- [Sekce Udržení lidí](/sekce/retention) — souhrnný retenční signál\n\nAkce: 1:1 review s každým HiPo v red-zone divizi do 30 dnů. Diskutovat konkrétní rozvojový plán a další roli, ne jen mzdu."
   }
 ]

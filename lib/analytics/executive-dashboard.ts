@@ -12,6 +12,7 @@ import {
 import type { CrossKpiHypothesis, KpiEvaluation } from '@/lib/analytics/types';
 import { KPI_CATALOG, type KpiCode, type KpiStatus } from '@/lib/kpi/catalog';
 import { SECTION_CATALOG, type SectionDefinition } from '@/lib/sections/catalog';
+import { ownerLabel } from '@/lib/team/owners-map';
 
 export interface PeoplePreview {
   name: string;
@@ -106,7 +107,7 @@ const alertFromEvaluation = async (
     severityScore: evaluation.severityScore,
     thresholdDistanceCs: evaluation.thresholdDistance.messageCs,
     thresholdConfidenceCs: evaluation.thresholdMetadata.confidence,
-    owner: evaluation.definition.owner,
+    owner: ownerLabel(evaluation.definition.owner),
     ageDays: ageDaysFor(evaluation),
     href: sectionHrefForKpi(evaluation.code),
     reasonCs,

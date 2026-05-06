@@ -14,7 +14,7 @@ Poslední aktualizace: 2026-04-27
 
 **UX Cleanup Pass v3 (2026-04-27):** méně preskriptivních doporučení (KPI Decision zone skryta v simple variantě, sekční "Co udělat" → `<details>`), peopleHighlight panel s konkrétními jmény (Retention / Workforce-Movement / Succession), Recharts overflow guard (`min-w-0`), `max-w-screen-2xl` na hlavní layout, mobile sticky pills lišta sekcí, "Stav aplikace" widget odstraněn, password gate `AURESHR12345` přes `localStorage`. Detail viz `docs/releases/v2-ux-cleanup-pass.md`.
 
-Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). **v2 Perfection Pass** (M12–M17) je také dokončený a posouvá prototyp z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Kateřiny Topolové.
+Webový prezentační prototyp v1 (M0–M11) je dokončený na 100 % (`lib/project/progress.ts`: 11/11 milníků, 100/100 procentních bodů). **v2 Perfection Pass** (M12–M17) je také dokončený a posouvá prototyp z „demo-ready" do „investment-ready" stavu z pohledu HR Directorky Marie Voršílkové.
 
 **v2 master plán:** [`docs/plans/2026-04-25-v2-perfection-master-plan.md`](docs/plans/2026-04-25-v2-perfection-master-plan.md) — 6 milníků M12–M17:
 
@@ -223,7 +223,7 @@ HR Director chce **komplexní BI reporting HR oddělení**, který:
 ## 3) Otevřené otázky (čím dál tím detailnější)
 
 ### A. Kontext a cíl projektu
-1. **Kdo je HR Director** — autor návrhu (potřebujeme jméno pro schvalování priorit)? Kateřina Topolová? Kdo je primární business owner projektu?
+1. **Kdo je HR Director** — autor návrhu (potřebujeme jméno pro schvalování priorit)? Marie Voršílková (potvrzeno 2026-05-06). Primární business owner projektu.
 2. **Cílová platforma** — PowerBI (nad stávajícím modelem), nebo budujeme nový DWH / semantic layer (Fabric, Databricks, Snowflake, …)? Pokud PowerBI, existuje dataset / dataflow nad kterým stavíme?
 3. **Rozsah zemí v 1. fázi** — jen CZ, nebo rovnou CZ+SK+PL? (každá země může mít odlišné zdroje / číselníky.)
 4. **Časový rámec / milníky** — existuje deadline (ESG reporting za FY, roční hodnocení, atd.)?
@@ -718,7 +718,7 @@ Místo živých volání Claude API použijeme **pre-written „AI insights"** v
 
 ## 23) v2 Perfection Pass — master plán schválen (2026-04-25)
 
-**Kontext:** v1 prototyp je technicky 100 %, ale audit z perspektivy HR Directorky Kateřiny Topolové odhalil tři kategorie mezer (zadání-vs-implementace, UX, vizuální design). Cíl v2 = posunout produkt z „demo-ready" na „investment-ready" stav, aby HR Directorka:
+**Kontext:** v1 prototyp je technicky 100 %, ale audit z perspektivy HR Directorky Marie Voršílkové odhalil tři kategorie mezer (zadání-vs-implementace, UX, vizuální design). Cíl v2 = posunout produkt z „demo-ready" na „investment-ready" stav, aby HR Directorka:
 - za 10 sekund viděla, jestli je něco špatně,
 - za 30 sekund identifikovala top 3 problémy s ownerem a deadlinem,
 - za 3 minuty pochopila, co se změnilo a kam zaměřit pozornost,

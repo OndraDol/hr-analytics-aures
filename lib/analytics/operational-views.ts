@@ -369,9 +369,9 @@ async function buildVacationBalances(
     ...view,
     period,
     metrics: [
-      { label: 'Zůstatek celkem', value: formatNumber(totalBalance, 0), detail: 'odhad dnů', tone: 'violet' },
-      { label: 'Průměr / osoba', value: formatNumber(totalBalance / Math.max(active.length, 1), 1), detail: 'dne dovolené', tone: 'blue' },
-      { label: '10+ dnů', value: formatNumber(bucketRows.find((row) => row.label === '10+ dnů')?.value ?? 0), detail: 'prioritní follow-up', tone: 'orange' },
+      { label: 'Zůstatek celkem', value: formatNumber(totalBalance, 0), detail: 'odhad dnů — vyšší = riziko vyplacení', tone: totalBalance / Math.max(active.length, 1) > 15 ? 'orange' : 'violet' },
+      { label: 'Průměr / osoba', value: formatNumber(totalBalance / Math.max(active.length, 1), 1), detail: 'dne dovolené', tone: totalBalance / Math.max(active.length, 1) > 15 ? 'orange' : 'blue' },
+      { label: '10+ dnů', value: formatNumber(bucketRows.find((row) => row.label === '10+ dnů')?.value ?? 0), detail: 'prioritní follow-up', tone: 'rose' },
       { label: 'Čerpáno YTD', value: formatNumber(sum(absence.filter((row) => row.type === 'vacation'), (row) => row.days), 0), detail: 'dny z absence feedu', tone: 'emerald' },
     ],
     primaryBreakdown: {
@@ -528,27 +528,31 @@ async function buildEsg(
   const reviewCoverage = (reviews.length / Math.max(active.length, 1)) * 100;
 
   const datapoints: DetailTableRow[] = [
-    { label: 'Počet zaměstnanců podle země', value: formatNumber(active.length), secondary: 'ready', dataQuality: 'ready', detail: 'country breakdown v grafu' },
-    { label: 'Zaměstnanci podle typu pracovního úvazku', value: formatNumber(contractTypes.size), secondary: 'ready', dataQuality: 'ready', detail: 'PP/DPP/DPČ/STATUTAR/ICO/UCEN' },
-    { label: 'Struktura zaměstnanců podle pohlaví', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', dataQuality: 'ready', detail: 'male/female podle HRIS skeletonu' },
-    { label: 'Struktura managementu podle pohlaví', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', dataQuality: 'needs-validation', detail: 'B0-B2 heuristika grade levelu' },
-    { label: 'Roční fluktuace zaměstnanců podle země', value: formatNumber(leavers.length), secondary: 'ready', dataQuality: 'ready', detail: 'YTD leavers, country segmentace přes HRIS' },
-    { label: 'Hodnocení náborového procesu', value: '4,1', secondary: 'mock', dataQuality: 'mock', detail: 'Employer Evaluation KPI, recruiter rating není v raw exportu plně auditní' },
-    { label: 'Roční fluktuace podle typu pracovní pozice', value: formatNumber(leavers.length), secondary: 'partial', dataQuality: 'partial', detail: 'job type je odvozený z role family/grade heuristiky' },
-    { label: '% zaměstnanců s hodnocením výkonu', value: formatPct(reviewCoverage), secondary: 'mock', dataQuality: 'mock', detail: 'annual appraisal fakta z mock vrstvy' },
-    { label: 'Školení podle oblasti zaměření', value: formatNumber(trainingAreas.size), secondary: 'mock', dataQuality: 'mock', detail: 'generated L&D areas' },
-    { label: 'Počet hodin školení a účastníků', value: formatNumber(trainingHours), secondary: 'mock', dataQuality: 'mock', detail: `${formatNumber(new Set(training.map((row) => row.employeeId)).size)} účastníků` },
-    { label: 'Počet hodin školení na zaměstnance', value: formatNumber(trainingHours / Math.max(active.length, 1), 1), secondary: 'mock', dataQuality: 'mock', detail: 'training hours / active HC' },
-    { label: 'Státní příslušnost podle země', value: formatNumber(nationalities.size), secondary: 'ready', dataQuality: 'ready', detail: 'nationality atribut v employee skeletonu' },
-    { label: 'Věková struktura zaměstnanců', value: formatNumber(avgAge, 1), secondary: 'ready', dataQuality: 'ready', detail: 'průměrný věk, detailní histogram v přehledu lidí' },
-    { label: 'Věková struktura managementu', value: formatNumber(avgManagerAge, 1), secondary: 'needs validation', dataQuality: 'needs-validation', detail: 'management = B0-B2 heuristika' },
-    { label: 'Management podle pohlaví', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', dataQuality: 'needs-validation', detail: 'duplicitní ESG požadavek ze sheetu' },
-    { label: 'Pracovní úrazy', value: formatNumber(accidents.length), secondary: 'mock', dataQuality: 'mock', detail: 'generated BOZP fakta podle divize' },
-    { label: 'ESRS S1-6 Pohlaví', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', dataQuality: 'ready', detail: 'gender datapoint' },
-    { label: 'ESRS S1-6 Fluktuace', value: formatNumber(leavers.length), secondary: 'ready', dataQuality: 'ready', detail: 'turnover datapoint z workforce events' },
-    { label: 'ESRS S1-7 Nezaměstnanci', value: formatNumber(externalWorkers.length), secondary: 'partial', dataQuality: 'partial', detail: 'DPP/DPČ/ICO proxy, vyžaduje HR potvrzení' },
-    { label: 'ESRS S1-11 Sociální ochrana', value: 'scope', secondary: 'blocked', dataQuality: 'blocked', detail: 'není ve zdrojových datech pro prezentační prototyp' },
-    { label: 'ESRS S1-13 Vzdělávání', value: formatNumber(trainingHours), secondary: 'mock', dataQuality: 'mock', detail: 'training datapoint z L&D generátoru' },
+    // Demografie
+    { label: '1. Počet zaměstnanců podle země', value: formatNumber(active.length), secondary: 'ready', dataQuality: 'ready', detail: 'Demografie · country breakdown v grafu' },
+    { label: '2. Věková struktura zaměstnanců', value: formatNumber(avgAge, 1), secondary: 'ready', dataQuality: 'ready', detail: 'Demografie · průměrný věk, histogram v přehledu lidí' },
+    { label: '3. Věková struktura managementu', value: formatNumber(avgManagerAge, 1), secondary: 'needs validation', dataQuality: 'needs-validation', detail: 'Demografie · management = B0-B2 heuristika' },
+    { label: '4. Státní příslušnost podle země', value: formatNumber(nationalities.size), secondary: 'ready', dataQuality: 'ready', detail: 'Demografie · nationality atribut v employee skeletonu' },
+    // DEI
+    { label: '5. Struktura zaměstnanců podle pohlaví', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', dataQuality: 'ready', detail: 'DEI · male/female podle HRIS skeletonu' },
+    { label: '6. Struktura managementu podle pohlaví', value: formatPct((womenManagers.length / Math.max(managers.length, 1)) * 100), secondary: 'needs validation', dataQuality: 'needs-validation', detail: 'DEI · B0-B2 heuristika grade levelu' },
+    { label: '7. ESRS S1-6 Pohlaví (regulatorní)', value: formatPct((women.length / Math.max(active.length, 1)) * 100), secondary: 'ready', dataQuality: 'ready', detail: 'DEI · gender datapoint pro ESRS audit' },
+    // Workforce
+    { label: '8. Zaměstnanci podle typu pracovního úvazku', value: formatNumber(contractTypes.size), secondary: 'ready', dataQuality: 'ready', detail: 'Workforce · PP/DPP/DPČ/STATUTAR/ICO/UCEN' },
+    { label: '9. Roční fluktuace zaměstnanců podle země', value: formatNumber(leavers.length), secondary: 'ready', dataQuality: 'ready', detail: 'Workforce · YTD leavers, country segmentace' },
+    { label: '10. Roční fluktuace podle typu pozice', value: formatNumber(leavers.length), secondary: 'partial', dataQuality: 'partial', detail: 'Workforce · job type odvozený z role family/grade heuristiky' },
+    { label: '11. ESRS S1-6 Fluktuace (regulatorní)', value: formatNumber(leavers.length), secondary: 'ready', dataQuality: 'ready', detail: 'Workforce · turnover datapoint z workforce events' },
+    { label: '12. ESRS S1-7 Nezaměstnanci (regulatorní)', value: formatNumber(externalWorkers.length), secondary: 'partial', dataQuality: 'partial', detail: 'Workforce · DPP/DPČ/ICO proxy, vyžaduje HR potvrzení' },
+    { label: '13. ESRS S1-11 Sociální ochrana (regulatorní)', value: 'scope', secondary: 'blocked', dataQuality: 'blocked', detail: 'Workforce · není ve zdrojových datech pro prezentační prototyp' },
+    // Safety
+    { label: '14. Pracovní úrazy', value: formatNumber(accidents.length), secondary: 'mock', dataQuality: 'mock', detail: 'Safety · BOZP fakta podle divize' },
+    // Learning & performance
+    { label: '15. Hodnocení náborového procesu', value: '4,1', secondary: 'mock', dataQuality: 'mock', detail: 'Learning · Employer Evaluation KPI' },
+    { label: '16. % zaměstnanců s hodnocením výkonu', value: formatPct(reviewCoverage), secondary: 'mock', dataQuality: 'mock', detail: 'Learning · annual appraisal fakta' },
+    { label: '17. Školení podle oblasti zaměření', value: formatNumber(trainingAreas.size), secondary: 'mock', dataQuality: 'mock', detail: 'Learning · L&D areas' },
+    { label: '18. Počet hodin školení a účastníků', value: formatNumber(trainingHours), secondary: 'mock', dataQuality: 'mock', detail: `Learning · ${formatNumber(new Set(training.map((row) => row.employeeId)).size)} účastníků` },
+    { label: '19. Počet hodin školení na zaměstnance', value: formatNumber(trainingHours / Math.max(active.length, 1), 1), secondary: 'mock', dataQuality: 'mock', detail: 'Learning · training hours / active HC' },
+    { label: '20. ESRS S1-13 Vzdělávání (regulatorní)', value: formatNumber(trainingHours), secondary: 'mock', dataQuality: 'mock', detail: 'Learning · training datapoint pro ESRS audit' },
   ];
 
   return {
